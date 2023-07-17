@@ -24,8 +24,8 @@ std::vector <float> getLinearEcuationX(std::vector<int>& pos1,std::vector<int>& 
 }
 std::vector <float> getLinearEcuationY(std::vector<int>& pos1,std::vector<int>& pos2)
 {
-    float m = (pos2[1]-pos1[1])/(pos2[0]-pos1[0]);
-    float b = pos1[1]-m*pos1[0];
+    float m = ((float)pos2[1]-(float)pos1[1])/((float)pos2[0]-(float)pos1[0]);
+    float b = (float)pos1[1]-m*(float)pos1[0];
     vector<float> ecuation{1/m,b/m};
     return ecuation;
 }
