@@ -85,10 +85,10 @@ void makeLine(std::vector<int>& pos1,std::vector<int>& pos2, int thickness, data
         cout<<"Vertical"<<endl;
         for (int i = 0; i < dy; i++)
         {
-            index += image.width;
             image.imageData[index].blue = 255;
             image.imageData[index].red = 255;
             image.imageData[index].green = 255;
+            index += image.width;
         }
     }
     // Horizontal
@@ -97,36 +97,50 @@ void makeLine(std::vector<int>& pos1,std::vector<int>& pos2, int thickness, data
         cout<<"Horizontal"<<endl;
         for (int i = 0; i < dx; i++)
         {
-            index = getPixelIndex(pos1[0]+i, pos1[1], image);
             image.imageData[index].blue = 255;
             image.imageData[index].red = 255;
             image.imageData[index].green = 255;
+            index = getPixelIndex(pos1[0]+i, pos1[1], image);
         }
     }
-    // else if (dx/dy>0)
-    // {
-    //     if (dx>dy)
-    //     {
-    //         int y = pos1[1];
-    //         for (int i = 0; i < dx; i++)
-    //         {   
-                
-                
-    //             int index = getPixelIndex(pos1[0]+i, y, image);
-    //             image.imageData[index].blue = 255;
-    //             image.imageData[index].red = 255;
-    //             image.imageData[index].green = 255;
-    //         }
-    //     }
-    //     else if (dy>dx)
-    //     {
-    //         for (int i = 0; i < dy; i++)
-    //         {
-    //             /* code */
-    //         }
-    //     }
+    else if ((float)dy/(float)dx>0)
+    {
+        if (dx>=dy)
+        {
+            cout<<"dx>=dy"<<endl;
+            std::vector<float> linearEcuation = getLinearEcuationX(pos1, pos2);
+            int y = pos1[1];
+            for(int x = pos1[0] ; x < dx ; x++)
+            {
+                image.imageData[index].blue = 255;
+                image.imageData[index].red = 255;
+                image.imageData[index].green = 255;
+                index = getPixelIndex(x,y,image);
+                float newy = (float)x*linearEcuation[0]+linearEcuation[1];
+                printf("newy:%f y:%f\n",newy,(float)y);
+                if(newy-(float)y>=0.5){y++;}
+            }            
+        }
+        // y=4x+2
+        else if (dy>dx)
+        {
+            cout<<"dx<dy"<<endl;
+            std::vector<float> linearEcuation = getLinearEcuationY(pos1, pos2);
+            int x = pos1[0];
+            for (int y = pos1[1] ; y < dy; y++ )
+            {
+                image.imageData[index].blue = 255;
+                image.imageData[index].red = 255;
+                image.imageData[index].green = 255;
+                index = getPixelIndex(x,y,image);
+                float newx = (float)y*linearEcuation[0]-linearEcuation[1];
+                printf("newx:%f x:%f\n",newx, (float)x);
+                if(newx-(float)x>=0.5){x++;}
+            }
+            
+        }
         
-    // }
+    }
 }
 int main (){
     const std::string filename = "image.bmp";
@@ -136,13 +150,21 @@ int main (){
     // Estatico
     image.width = 1000;image.height = 512;image.imageData = new Pixel[1000*512];
     clearAllImage(image);
-    //dy=0
-    vector<int> vect{10,10};
-    vector<int> vect1{100,10};
-    makeLine(vect,vect1,20,image);
-    vector<int> vect2{10,0};
-    vector<int> vect3{10,100};
-    makeLine(vect2,vect3,20,image);
+    // vector<int> vect{10,10};
+    // vector<int> vect1{100,10};
+    // makeLine(vect,vect1,20,image);
+    // vector<int> vect2{10,0};
+    // vector<int> vect3{10,100};
+    // makeLine(vect2,vect3,20,image);
+
+    vector<int> vect4={7,0};
+    vector<int> vect5={40,500};
+    makeLine(vect4,vect5,20,image);
+    vector<int> vect6={0,7};
+    vector<int> vect7={500,40};
+    makeLine(vect6,vect7,20,image);
     writeBmp(filename, image);
     return 0;
 }
+// y= 8x+50
+// y=2x+50
