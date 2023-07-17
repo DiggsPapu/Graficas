@@ -14,6 +14,7 @@
 #include <algorithm>
 #include <vector>
 #include <threads.h>
+#include "mathLibrary.h"
 using namespace std;
 struct Pixel {
     unsigned char red, green, blue;
@@ -33,8 +34,8 @@ struct dataImg {
     Pixel* imageData;
 };
 // Global variables
-// dataImg image;
-// Pixel currentC = {255,255,255};
+dataImg image;
+Pixel currentC = {255,255,255};
 int getPixelIndex (int x, int y, dataImg image){
     return y*image.width + x;
 }
@@ -75,15 +76,73 @@ void writeBmp(const std::string& filename, dataImg image) {
     file.write(reinterpret_cast<const char*>(rawData), image.width * image.height * 3);
     file.close();
 }
-
+void makeLine(std::vector<int>& pos1,std::vector<int>& pos2, int thickness, dataImg image){
+    int dx = -pos1[0]+pos2[0];int dy = -pos1[1]+pos2[1];
+    int index = getPixelIndex(pos1[0], pos1[1], image);
+    //Vertical
+    if (dx == 0)
+    {   
+        cout<<"Vertical"<<endl;
+        for (int i = 0; i < dy; i++)
+        {
+            index += image.width;
+            image.imageData[index].blue = 255;
+            image.imageData[index].red = 255;
+            image.imageData[index].green = 255;
+        }
+    }
+    // Horizontal
+    else if (dy == 0)
+    {   
+        cout<<"Horizontal"<<endl;
+        for (int i = 0; i < dx; i++)
+        {
+            index = getPixelIndex(pos1[0]+i, pos1[1], image);
+            image.imageData[index].blue = 255;
+            image.imageData[index].red = 255;
+            image.imageData[index].green = 255;
+        }
+    }
+    // else if (dx/dy>0)
+    // {
+    //     if (dx>dy)
+    //     {
+    //         int y = pos1[1];
+    //         for (int i = 0; i < dx; i++)
+    //         {   
+                
+                
+    //             int index = getPixelIndex(pos1[0]+i, y, image);
+    //             image.imageData[index].blue = 255;
+    //             image.imageData[index].red = 255;
+    //             image.imageData[index].green = 255;
+    //         }
+    //     }
+    //     else if (dy>dx)
+    //     {
+    //         for (int i = 0; i < dy; i++)
+    //         {
+    //             /* code */
+    //         }
+    //     }
+        
+    // }
+}
 int main (){
     const std::string filename = "image.bmp";
     dataImg image;
     // Dinamico
-    // cout<<"Enter the width: ";cin>>image.width;cout<<"Enter the height";cin>>image.height;
+    // cout<<"Enter the width: ";cin>>image.width;cout<<"Enter the height: ";cin>>image.height;image.imageData = new Pixel[image.width*image.height];
     // Estatico
     image.width = 1000;image.height = 512;image.imageData = new Pixel[1000*512];
     clearAllImage(image);
+    //dy=0
+    vector<int> vect{10,10};
+    vector<int> vect1{100,10};
+    makeLine(vect,vect1,20,image);
+    vector<int> vect2{10,0};
+    vector<int> vect3{10,100};
+    makeLine(vect2,vect3,20,image);
     writeBmp(filename, image);
     return 0;
 }
