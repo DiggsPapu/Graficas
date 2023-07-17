@@ -78,13 +78,37 @@ void writeBmp(const std::string& filename, dataImg image) {
     file.close();
 }
 void makeLine(std::vector<int>& pos1,std::vector<int>& pos2, int thickness, dataImg image){
+    std::vector<int> pos11 = pos1;
+    std::vector<int> pos22 = pos2;
+    if (pos1[0]>pos2[0])
+    {
+        printf("Entro al intercambio");
+        int temp = pos1[0];
+        pos1[0] = pos2[0];
+        pos2[0] = temp;
+        temp = pos1[1];
+        pos1[1] = pos2[1];
+        pos2[1] = temp;
+    }
+    printf("inicio: x:%d y:%d   fin: x:%d y:%d\n",pos1[0],pos1[1],pos2[0],pos2[1]);
     int dx = -pos1[0]+pos2[0];int dy = -pos1[1]+pos2[1];
     int index = getPixelIndex(pos1[0], pos1[1], image);
     //Vertical
     if (dx == 0)
     {   
+        if (pos1[1]>pos2[1])
+        {
+            printf("Entro al intercambio vertical");
+            int temp = pos1[0];
+            pos1[0] = pos2[0];
+            pos2[0] = temp;
+            temp = pos1[1];
+            pos1[1] = pos2[1];
+            pos2[1] = temp;
+            index = getPixelIndex(pos1[0], pos1[1], image);
+        }
         // cout<<"Vertical"<<endl;
-        for (int i = 0; i < dy; i++)
+        for (int y = pos1[1]; y < pos2[1]; y++)
         {
             image.imageData[index].blue = currentC.blue;
             image.imageData[index].red = currentC.red;
@@ -120,7 +144,7 @@ void makeLine(std::vector<int>& pos1,std::vector<int>& pos2, int thickness, data
                 image.imageData[index].green = currentC.green;
                 index = getPixelIndex(x,y,image);
                 float newy = (float)x*linearEcuation[0]+linearEcuation[1];
-                printf("newy:%f y:%f x:%d\n",newy,(float)y, x);
+                // printf("newy:%f y:%f x:%d\n",newy,(float)y, x);
                 if(newy-(float)y>=0.5){y++;}
             }            
         }
@@ -137,7 +161,7 @@ void makeLine(std::vector<int>& pos1,std::vector<int>& pos2, int thickness, data
                 image.imageData[index].green = currentC.green;
                 index = getPixelIndex(x,y,image);
                 float newx = (float)y*linearEcuation[0]-linearEcuation[1];
-                printf("newx:%f x:%f y:%f\n",newx, (float)x, (float)y);
+                // printf("newx:%f x:%f y:%f\n",newx, (float)x, (float)y);
                 if(newx-(float)x>=0.5){x++;}
             } 
         }   
@@ -152,7 +176,7 @@ void makeLine(std::vector<int>& pos1,std::vector<int>& pos2, int thickness, data
                 image.imageData[index].red = currentC.red;
                 image.imageData[index].green = currentC.green;
                 index = getPixelIndex(x,y,image);
-                printf("y:%f x:%d\n",(float)y, x);
+                // printf("y:%f x:%d\n",(float)y, x);
                 y++;
             }
         }    
@@ -172,7 +196,7 @@ void makeLine(std::vector<int>& pos1,std::vector<int>& pos2, int thickness, data
                 image.imageData[index].green = currentC.green;
                 index = getPixelIndex(x,y,image);
                 float newy = (float)x*linearEcuation[0]+linearEcuation[1];
-                printf("newy:%f y:%f x:%d\n",newy,(float)y, x);
+                // printf("newy:%f y:%f x:%d\n",newy,(float)y, x);
                 if(newy-(float)y<=-0.1){y--;}
             }            
         }
@@ -192,7 +216,7 @@ void makeLine(std::vector<int>& pos1,std::vector<int>& pos2, int thickness, data
                 image.imageData[index].green = currentC.green;
                 index = getPixelIndex(x,y,image);
                 float newx = (float)y*linearEcuation[0]-linearEcuation[1];
-                printf("newx:%f x:%f y:%d\n",newx, (float)x, y);
+                // printf("newx:%f x:%f y:%d\n",newx, (float)x, y);
                 if(newx-(float)x>=0.5){x++;}
             } 
         }  
@@ -207,10 +231,13 @@ void makeLine(std::vector<int>& pos1,std::vector<int>& pos2, int thickness, data
                 image.imageData[index].red = currentC.red;
                 image.imageData[index].green = currentC.green;
                 index = getPixelIndex(x,y,image);
+                // printf("x:%d y:%d\n", x, y);
                 y--;
             }
         }    
     }
+    pos1 = pos11;
+    pos2 = pos22;
 }
 void makeTriangle(std::vector<int>& pos1,std::vector<int>& pos2,std::vector<int>& pos3, dataImg image){
     currentC.green = 150;
@@ -234,29 +261,32 @@ int main (){
     // Estatico
     image.width = 1000;image.height = 512;image.imageData = new Pixel[1000*512];
     clearAllImage(image);
-    // vector<int> vect{10,500};
-    // vector<int> vect1{500,500};
+    vector<int> vect{10,500};
+    vector<int> vect1{500,250};
     // makeLine(vect,vect1,20,image);
-    // vector<int> vect2{10,0};
-    // vector<int> vect3{10,500};
+    vector<int> vect2{10,0};
+    vector<int> vect3{10,500};
     // makeLine(vect2,vect3,20,image);
-    // vector<int> vect4={7,0};
-    // vector<int> vect5={40,500};
+    vector<int> vect4={7,0};
+    vector<int> vect5={40,500};
     // makeLine(vect4,vect5,20,image);
-    // vector<int> vect6={0,300};
-    // vector<int> vect7={500,500};
+    vector<int> vect6={0,300};
+    vector<int> vect7={500,500};
     // makeLine(vect6,vect7,20,image);
-    // vector<int> vect8={7,500};
-    // vector<int> vect9={40,0};
+    vector<int> vect8={7,500};
+    vector<int> vect9={40,0};
     // makeLine(vect8,vect9,20,image);
-    // vector<int> vect10={0,500};
-    // vector<int> vect11={500,450};
+    vector<int> vect10={0,500};
+    vector<int> vect11={500,450};
     // makeLine(vect10,vect11,20,image);
 
     vector<int> vect12={500,300};
     vector<int> vect13={750,450};
     vector<int> vect14={900,100};
-    makeTriangle(vect12,vect13,vect14,image);
+    // makeTriangle(vect12,vect13,vect14,image);
+    // makeTriangle(vect3,vect7,vect2,image);
+    // makeTriangle(vect10,vect13,vect14,image);
+    // makeTriangle(vect1,vect14,vect7,image);
     // vector<int> vect15 = {200,0};
     // vector<int> vect16 = {400,200};
     // makeLine(vect15,vect16,20,image);
