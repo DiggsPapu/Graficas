@@ -53,6 +53,11 @@ Matrix getTranslationMatrix(float x, float y, float z){
     identityM.arr[0][3] = x;identityM.arr[1][3] = y;identityM.arr[2][3] = z;
     return identityM;
 }
+Matrix getScaleMatrix(float x, float y, float z){
+    Matrix identityM = getIdentityMatrix();
+    identityM.arr[0][0] = x;identityM.arr[1][1] = y;identityM.arr[2][2] = z;
+    return identityM;
+}
 void printMatrix(Matrix matrix) {
     cout<<endl;
     for (int i = 0 ; i < 4 ; i ++)
