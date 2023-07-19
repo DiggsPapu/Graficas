@@ -114,7 +114,7 @@ void makeLine(std::vector<float>& pos1,std::vector<float>& pos2, int thickness, 
             index = getPixelIndex(pos1[0], pos1[1], image);
         }
         // cout<<"Vertical"<<endl;
-        for (int y = pos1[1]; y < pos2[1]; y++)
+        for (int y = pos1[1]; y <= pos2[1]; y++)
         {
             image.imageData[index].blue = currentC.blue;
             image.imageData[index].red = currentC.red;
@@ -143,7 +143,7 @@ void makeLine(std::vector<float>& pos1,std::vector<float>& pos2, int thickness, 
             printf("%f %f\n",linearEcuation[0],linearEcuation[1]);
             int y = pos1[1];
             printf("%f,%f,%f\n",pos1[0], pos1[1],(float)dx);
-            for(int x = pos1[0] ; x < pos2[0] ; x++)
+            for(int x = pos1[0] ; x <= pos2[0] ; x++)
             {
                 image.imageData[index].blue = currentC.blue;
                 image.imageData[index].red = currentC.red;
@@ -160,7 +160,7 @@ void makeLine(std::vector<float>& pos1,std::vector<float>& pos2, int thickness, 
             cout<<"dy>dx"<<endl;
             std::vector<float> linearEcuation = getLinearEcuationY(pos1, pos2);
             int x = pos1[0];
-            for (int y = pos1[1] ; y < pos2[1]; y++ )
+            for (int y = pos1[1] ; y <= pos2[1]; y++ )
             {
                 image.imageData[index].blue = currentC.blue;
                 image.imageData[index].red = currentC.red;
@@ -175,7 +175,7 @@ void makeLine(std::vector<float>& pos1,std::vector<float>& pos2, int thickness, 
         {
             cout<<"dx=dy"<<endl;
             int y = pos1[1];
-            for (int x = pos1[0]; x < pos2[0]; x++)
+            for (int x = pos1[0]; x <= pos2[0]; x++)
             {
                 
                 image.imageData[index].blue = currentC.blue;
@@ -195,7 +195,7 @@ void makeLine(std::vector<float>& pos1,std::vector<float>& pos2, int thickness, 
             std::vector<float> linearEcuation = getLinearEcuationX(pos1, pos2);
             printf("%f  %f\n",linearEcuation[0],linearEcuation[1]);
             int y = pos1[1];
-            for(int x = pos1[0] ; x < pos2[0] ; x++)
+            for(int x = pos1[0] ; x <= pos2[0] ; x++)
             {
                 image.imageData[index].blue = currentC.blue;
                 image.imageData[index].red = currentC.red;
