@@ -15,6 +15,7 @@
 #include <algorithm>
 #include <vector>
 #include <threads.h>
+#include <list>
 #include "mathLibrary.h"
 using namespace std;
 struct Pixel {
@@ -33,6 +34,11 @@ struct BmpHeader {
 struct dataImg {
     int width,height;
     Pixel* imageData;
+};
+struct Triangle{
+    vector<float> v1;
+    vector<float> v2;
+    vector<float> v3;
 };
 // Global variables
 dataImg image;
@@ -77,9 +83,9 @@ void writeBmp(const std::string& filename, dataImg image) {
     file.write(reinterpret_cast<const char*>(rawData), image.width * image.height * 3);
     file.close();
 }
-void makeLine(std::vector<int>& pos1,std::vector<int>& pos2, int thickness, dataImg image){
-    std::vector<int> pos11 = pos1;
-    std::vector<int> pos22 = pos2;
+void makeLine(std::vector<float>& pos1,std::vector<float>& pos2, int thickness, dataImg image){
+    std::vector<float> pos11 = pos1;
+    std::vector<float> pos22 = pos2;
     if (pos1[0]>pos2[0])
     {
         printf("Entro al intercambio");
@@ -239,7 +245,7 @@ void makeLine(std::vector<int>& pos1,std::vector<int>& pos2, int thickness, data
     pos1 = pos11;
     pos2 = pos22;
 }
-void makeTriangle(std::vector<int>& pos1,std::vector<int>& pos2,std::vector<int>& pos3, dataImg image){
+void makeTriangle(std::vector<float>& pos1,std::vector<float>& pos2,std::vector<float>& pos3, dataImg image){
     currentC.green = 150;
     currentC.blue = 0;
     currentC.red = 20;
@@ -253,6 +259,25 @@ void makeTriangle(std::vector<int>& pos1,std::vector<int>& pos2,std::vector<int>
     currentC.red = 150;
     makeLine(pos1,pos3,20,image);
 }
+vector<Triangle> primitiveAssemblyTriangle(std::vector<std::vector<float>> & listOfVectors, dataImg image)
+{
+    vector<Triangle> triangles{};
+    for (int i = 0; i < listOfVectors.size()-3; i+=3)
+    {
+        Triangle triangle;
+        triangle.v1 = listOfVectors[i];
+        triangle.v2 = listOfVectors[i+1];
+        triangle.v3 = listOfVectors[i+2];
+        triangles.push_back(triangle);
+    }
+    return triangles;
+}
+void makePrimitiveTriangle(vector<Triangle> triangles, dataImg image) {
+    for (int i = 0; i < triangles.size(); i++)
+    {
+        makeTriangle(triangles[i].v1,triangles[i].v2,triangles[i].v3, image);
+    }   
+}
 int main (){
     const std::string filename = "image.bmp";
     dataImg image;
@@ -261,37 +286,49 @@ int main (){
     // Estatico
     image.width = 1000;image.height = 512;image.imageData = new Pixel[1000*512];
     clearAllImage(image);
-    vector<int> vect{10,500};
-    vector<int> vect1{500,250};
+    vector<float> vect{10,500};
+    vector<float> vect1{500,250};
     // makeLine(vect,vect1,20,image);
-    vector<int> vect2{10,0};
-    vector<int> vect3{10,500};
+    vector<float> vect2{10,0};
+    vector<float> vect3{10,500};
     // makeLine(vect2,vect3,20,image);
-    vector<int> vect4={7,0};
-    vector<int> vect5={40,500};
+    vector<float> vect4={7,0};
+    vector<float> vect5={40,500};
     // makeLine(vect4,vect5,20,image);
-    vector<int> vect6={0,300};
-    vector<int> vect7={500,500};
+    vector<float> vect6={0,300};
+    vector<float> vect7={500,500};
     // makeLine(vect6,vect7,20,image);
-    vector<int> vect8={7,500};
-    vector<int> vect9={40,0};
+    vector<float> vect8={7,500};
+    vector<float> vect9={40,0};
     // makeLine(vect8,vect9,20,image);
-    vector<int> vect10={0,500};
-    vector<int> vect11={500,450};
+    vector<float> vect10={0,500};
+    vector<float> vect11={500,450};
     // makeLine(vect10,vect11,20,image);
 
-    vector<int> vect12={500,300};
-    vector<int> vect13={750,450};
-    vector<int> vect14={900,100};
+    vector<float> vect12={500,300};
+    vector<float> vect13={750,450};
+    vector<float> vect14={900,100};
     // makeTriangle(vect12,vect13,vect14,image);
     // makeTriangle(vect3,vect7,vect2,image);
     // makeTriangle(vect10,vect13,vect14,image);
     // makeTriangle(vect1,vect14,vect7,image);
-    // vector<int> vect15 = {200,0};
-    // vector<int> vect16 = {400,200};
+    std::vector<std::vector<float>> vertices;
+    vertices.push_back(vect);
+    vertices.push_back(vect1);
+    vertices.push_back(vect2);
+    vertices.push_back(vect3);
+    vertices.push_back(vect4);
+    vertices.push_back(vect5);
+    vertices.push_back(vect6);
+    vertices.push_back(vect7);
+    vertices.push_back(vect8);
+    vertices.push_back(vect9);
+    vertices.push_back(vect10);
+    vertices.push_back(vect11);
+    makePrimitiveTriangle(primitiveAssemblyTriangle(vertices,image), image);
     // makeLine(vect15,vect16,20,image);
-    // vector<int> vect17 = {200,200};
-    // vector<int> vect18 = {400,0};
+    // vector<float> vect17 = {200,200};
+    // vector<float> vect18 = {400,0};
     // makeLine(vect17,vect18,20,image);
     writeBmp(filename, image);
     return 0;

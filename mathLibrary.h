@@ -15,14 +15,14 @@
 #include <vector>
 #include <threads.h>
 using namespace std;
-std::vector <float> getLinearEcuationX(std::vector<int>& pos1,std::vector<int>& pos2)
+std::vector <float> getLinearEcuationX(std::vector<float>& pos1,std::vector<float>& pos2)
 {
     float m = ((float)pos2[1]-(float)pos1[1])/((float)pos2[0]-(float)pos1[0]);
     float b = (float)pos1[1]-m*(float)pos1[0];
     vector<float> ecuation{m,b};
     return ecuation;
 }
-std::vector <float> getLinearEcuationY(std::vector<int>& pos1,std::vector<int>& pos2)
+std::vector <float> getLinearEcuationY(std::vector<float>& pos1,std::vector<float>& pos2)
 {
     float m = ((float)pos2[1]-(float)pos1[1])/((float)pos2[0]-(float)pos1[0]);
     float b = (float)pos1[1]-m*(float)pos1[0];
