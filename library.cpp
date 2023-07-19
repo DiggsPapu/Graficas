@@ -331,6 +331,7 @@ int main (){
     // vector<float> vect18 = {400,0};
     // makeLine(vect17,vect18,20,image);
     writeBmp(filename, image);
+    printMatrix(getTranslationMatrix(20.0,50.0,30.0));
     return 0;
 }
 // y= 8x+50

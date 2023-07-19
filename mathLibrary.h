@@ -32,7 +32,8 @@ std::vector <float> getLinearEcuationY(std::vector<float>& pos1,std::vector<floa
     vector<float> ecuation{1/m,b/m};
     return ecuation;
 }
-Matrix identityMatrix(){
+// Representa un objeto que no se ha rotado, trasladado o se le ha hecho alguna modificacion.
+Matrix getIdentityMatrix(){
     Matrix identityM;
     for (int i = 0; i < 4; i++)
     {
@@ -46,4 +47,20 @@ Matrix identityMatrix(){
         }
     }
     return identityM;    
+}
+Matrix getTranslationMatrix(float x, float y, float z){
+    Matrix identityM = getIdentityMatrix();
+    identityM.arr[0][3] = x;identityM.arr[1][3] = y;identityM.arr[2][3] = z;
+    return identityM;
+}
+void printMatrix(Matrix matrix) {
+    cout<<endl;
+    for (int i = 0 ; i < 4 ; i ++)
+    {
+        for (int j = 0; j < 4; j++)
+        {
+            cout <<matrix.arr[i][j]<<"   ";
+        }
+        cout<<endl;    
+    }
 }
