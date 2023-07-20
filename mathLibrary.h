@@ -90,6 +90,7 @@ Matrix  rotationMatrix(float angleX, float angleY, float angleZ){
     return dotProductMatrixMatrix(dotProductMatrixMatrix(x,y),z);
 }
 vector<float> dotProductMatrixVector(Matrix matrix, vector<float> vector){
+    float val1 = (matrix.arr[0][0]*vector[0]+matrix.arr[0][1]*vector[1]+matrix.arr[0][2]*vector[2]+matrix.arr[0][3]*1);
     std::vector<float> newV ={(matrix.arr[0][0]*vector[0]+matrix.arr[0][1]*vector[1]+matrix.arr[0][2]*vector[2]+matrix.arr[0][3]*1),(matrix.arr[1][0]*vector[0]+matrix.arr[1][1]*vector[1]+matrix.arr[1][2]*vector[2]+matrix.arr[1][3]*1),(matrix.arr[2][0]*vector[0]+matrix.arr[2][1]*vector[1]+matrix.arr[2][2]*vector[2]+matrix.arr[2][3]*1),(matrix.arr[3][0]*vector[0]+matrix.arr[3][1]*vector[1]+matrix.arr[3][2]*vector[2]+matrix.arr[3][3]*1)};
     return newV;
 }

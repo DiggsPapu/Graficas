@@ -275,8 +275,15 @@ vector<Triangle> primitiveAssemblyTriangle(std::vector<std::vector<float>> & lis
     triangles.push_back(triangle);
     return triangles;
 }
+vector<float> vertexShader(std::vector<float> vertice, Matrix modelMatrix){
+    vertice.push_back(1);
+    std::vector<float> transformedV = dotProductMatrixVector(modelMatrix, vertice);
+    vertice[0] = transformedV[0]/transformedV[3];
+    vertice[1] = transformedV[1]/transformedV[3];
+    vertice[2] = transformedV[2]/transformedV[3];
+    return vertice;
+}
 void makePrimitiveTriangle(vector<Triangle> triangles, dataImg image) {
-    
     for (int i = 0; i < triangles.size(); i++)
     {
         makeTriangle(triangles[i].v1,triangles[i].v2,triangles[i].v3, image);
@@ -290,50 +297,63 @@ int main (){
     // Estatico
     image.width = 1000;image.height = 512;image.imageData = new Pixel[1000*512];
     clearAllImage(image);
-    vector<float> vect{0,500};
-    vector<float> vect1{100,250};
+    vector<float> vect{0,500,0};
+    vector<float> vect1{100,250,0};
     // makeLine(vect,vect1,20,image);
-    vector<float> vect2{100,0};
-    vector<float> vect3{900,500};
+    vector<float> vect2{100,0,0};
+    vector<float> vect3{900,500,0};
     // makeLine(vect2,vect3,20,image);
-    vector<float> vect4={900,0};
-    vector<float> vect5={800,100};
+    vector<float> vect4={900,0,350};
+    vector<float> vect5={800,100,200};
     // makeLine(vect4,vect5,20,image);
-    vector<float> vect6={200,300};
-    vector<float> vect7={250,500};
+    vector<float> vect6={200,300,220};
+    vector<float> vect7={250,500,470};
     // makeLine(vect6,vect7,20,image);
-    vector<float> vect8={300,500};
-    vector<float> vect9={350,0};
+    vector<float> vect8={300,500,0};
+    vector<float> vect9={350,0,0};
     // makeLine(vect8,vect9,20,image);
-    vector<float> vect10={400,500};
-    vector<float> vect11={320,450};
+    vector<float> vect10={400,500,0};
+    vector<float> vect11={320,450,0};
     // makeLine(vect10,vect11,20,image);
 
-    vector<float> vect12={0,0};
-    vector<float> vect13={50,0};
-    vector<float> vect14={25,40};
+    vector<float> vect12={0,0,0};
+    vector<float> vect13={50,0,0};
+    vector<float> vect14={25,40,0};
     // makeTriangle(vect12,vect13,vect14,image);
     // makeTriangle(vect3,vect7,vect2,image);
     // makeTriangle(vect10,vect13,vect14,image);
     // makeTriangle(vect1,vect14,vect7,image);
     std::vector<std::vector<float>> vertices;
-    // vertices.push_back(vect);
-    // vertices.push_back(vect1);
-    // vertices.push_back(vect2);
-    // vertices.push_back(vect3);
-    // vertices.push_back(vect4);
-    // vertices.push_back(vect5);
-    // vertices.push_back(vect6);
-    // vertices.push_back(vect7);
-    // vertices.push_back(vect8);
-    // vertices.push_back(vect9);
-    // vertices.push_back(vect10);
-    // vertices.push_back(vect11);
+    vertices.push_back(vect);
+    vertices.push_back(vect1);
+    vertices.push_back(vect2);
+    vertices.push_back(vect3);
+    vertices.push_back(vect4);
+    vertices.push_back(vect5);
+    vertices.push_back(vect6);
+    vertices.push_back(vect7);
+    vertices.push_back(vect8);
+    vertices.push_back(vect9);
+    vertices.push_back(vect10);
+    vertices.push_back(vect11);
     vertices.push_back(vect12);
     vertices.push_back(vect13);
     vertices.push_back(vect14);
-    // makePrimitiveTriangle(primitiveAssemblyTriangle(vertices,image), image);
     printMatrix(getTranslationMatrix(4,3,2));
+    Matrix glMatrix = finalObjectMatrix(getTranslationMatrix(1000/2,512/2,0),rotationMatrix(0,0,0),getScaleMatrix(1,1,1));
+    std::vector<std::vector<float>> vertexShaderVertices;
+    
+    vertexShaderVertices.push_back(vertexShader(vect14,glMatrix));
+    vertexShaderVertices.push_back(vertexShader(vect12,glMatrix));
+    vertexShaderVertices.push_back(vertexShader(vect13,glMatrix));
+    makePrimitiveTriangle(primitiveAssemblyTriangle(vertexShaderVertices,image),image);
+    // for (int i = 0; i < vertices.size(); i++)
+    // {
+    //     printf("Init: %f,%f,%f",vertices[i][0],vertices[i][1],vertices[i][2]);
+    //     vertexShaderVertices.push_back(vertexShader(vertices[i],glMatrix));
+    //     printf(" end: %f,%f,%f\n",vertexShaderVertices[i][0],vertexShaderVertices[i][1],vertexShaderVertices[i][2]);
+    // }
+    // makePrimitiveTriangle(primitiveAssemblyTriangle(vertices,image), image);
     // printMatrix(getScaleMatrix(3,2,5));
     // printMatrix(dotProductMatrixMatrix(getTranslationMatrix(4,3,2), getScaleMatrix(3,2,5)));
     // printMatrix(rotationMatrix(80,60,20));
@@ -343,7 +363,7 @@ int main (){
     // makeLine(vect17,vect18,20,image);
     writeBmp(filename, image);
     vector<float> vect15={3,7,5,1};
-    printVector(dotProductMatrixVector(getTranslationMatrix(4,3,2),vect15));
+    // printVector(dotProductMatrixVector(getTranslationMatrix(4,3,2),vect15));
     // printMatrix(getScaleMatrix(20.0,50.0,30.0));
     return 0;
 }
