@@ -42,7 +42,7 @@ Matrix getIdentityMatrix(){
             identityM.arr[i][j]=(float)0;
             if (i == j)
             {
-                identityM.arr[i][j]=1;
+                identityM.arr[i][j] = 1;
             }
         }
     }
@@ -68,4 +68,15 @@ void printMatrix(Matrix matrix) {
         }
         cout<<endl;    
     }
+}
+Matrix dotProductMatrix(Matrix m1, Matrix m2){
+    Matrix result;
+    for (int i = 0; i < 4; i++)
+    {
+        result.arr[i][0] = m1.arr[i][0]*m2.arr[0][0] + m1.arr[i][1]*m2.arr[1][0]+m1.arr[i][2]*m2.arr[2][0]+m1.arr[i][3]*m2.arr[3][0];
+        result.arr[i][1] = m1.arr[i][0]*m2.arr[0][1] + m1.arr[i][1]*m2.arr[1][1]+m1.arr[i][2]*m2.arr[2][1]+m1.arr[i][3]*m2.arr[3][1];
+        result.arr[i][2] = m1.arr[i][0]*m2.arr[0][2] + m1.arr[i][1]*m2.arr[1][2]+m1.arr[i][2]*m2.arr[2][2]+m1.arr[i][3]*m2.arr[3][2];
+        result.arr[i][3] = m1.arr[i][0]*m2.arr[0][3] + m1.arr[i][1]*m2.arr[1][3]+m1.arr[i][2]*m2.arr[2][3]+m1.arr[i][3]*m2.arr[3][3];
+    }    
+    return result;    
 }

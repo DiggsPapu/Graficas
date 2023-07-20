@@ -232,7 +232,6 @@ void makeLine(std::vector<float>& pos1,std::vector<float>& pos2, int thickness, 
             int y = pos1[1];
             for (int x = pos1[0]; x <= pos2[0]; x++)
             {
-                
                 image.imageData[index].blue = currentC.blue;
                 image.imageData[index].red = currentC.red;
                 image.imageData[index].green = currentC.green;
@@ -331,12 +330,15 @@ int main (){
     vertices.push_back(vect10);
     vertices.push_back(vect11);
     makePrimitiveTriangle(primitiveAssemblyTriangle(vertices,image), image);
+    printMatrix(getTranslationMatrix(4,3,2));
+    printMatrix(getScaleMatrix(3,2,5));
+    printMatrix(dotProductMatrix(getTranslationMatrix(4,3,2), getScaleMatrix(3,2,5)));
     // makeLine(vect15,vect16,20,image);
     // vector<float> vect17 = {200,200};
     // vector<float> vect18 = {400,0};
     // makeLine(vect17,vect18,20,image);
     writeBmp(filename, image);
-    printMatrix(getScaleMatrix(20.0,50.0,30.0));
+    // printMatrix(getScaleMatrix(20.0,50.0,30.0));
     return 0;
 }
 // y= 8x+50
