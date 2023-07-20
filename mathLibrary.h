@@ -89,3 +89,6 @@ Matrix  rotationMatrix(float angleX, float angleY, float angleZ){
     Matrix z = getIdentityMatrix(); z.arr[0][0] = cos(toRadians(angleZ)); z.arr[0][1] = -sin(toRadians(angleZ)); z.arr[1][0] = sin(toRadians(angleZ)); z.arr[1][1] = cos(toRadians(angleZ)); 
     return dotProductMatrix(dotProductMatrix(x,y),z);
 }
+Matrix finalObjectMatrix(Matrix traslation, Matrix rotation, Matrix scale){
+    return dotProductMatrix(dotProductMatrix(traslation, rotation), scale);
+}
