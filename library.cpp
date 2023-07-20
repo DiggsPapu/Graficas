@@ -333,6 +333,7 @@ int main (){
     printMatrix(getTranslationMatrix(4,3,2));
     printMatrix(getScaleMatrix(3,2,5));
     printMatrix(dotProductMatrix(getTranslationMatrix(4,3,2), getScaleMatrix(3,2,5)));
+    printMatrix(rotationMatrix(80,60,20));
     // makeLine(vect15,vect16,20,image);
     // vector<float> vect17 = {200,200};
     // vector<float> vect18 = {400,0};

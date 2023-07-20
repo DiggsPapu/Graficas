@@ -80,3 +80,12 @@ Matrix dotProductMatrix(Matrix m1, Matrix m2){
     }    
     return result;    
 }
+float toRadians(float angle){
+    return angle*2*M_PI/360;
+}
+Matrix  rotationMatrix(float angleX, float angleY, float angleZ){
+    Matrix x = getIdentityMatrix(); x.arr[1][1] = cos(toRadians(angleX)); x.arr[1][2] = -sin(toRadians(angleX)); x.arr[2][1] = sin(toRadians(angleX)); x.arr[2][2] = cos(toRadians(angleX));
+    Matrix y = getIdentityMatrix(); y.arr[0][0] = cos(toRadians(angleY)); y.arr[0][2] = sin(toRadians(angleY)); y.arr[2][0] = -sin(toRadians(angleY)); y.arr[2][2] = cos(toRadians(angleY));
+    Matrix z = getIdentityMatrix(); z.arr[0][0] = cos(toRadians(angleZ)); z.arr[0][1] = -sin(toRadians(angleZ)); z.arr[1][0] = sin(toRadians(angleZ)); z.arr[1][1] = cos(toRadians(angleZ)); 
+    return dotProductMatrix(dotProductMatrix(x,y),z);
+}
