@@ -69,7 +69,7 @@ void printMatrix(Matrix matrix) {
         cout<<endl;    
     }
 }
-Matrix dotProductMatrix(Matrix m1, Matrix m2){
+Matrix dotProductMatrixMatrix(Matrix m1, Matrix m2){
     Matrix result;
     for (int i = 0; i < 4; i++)
     {
@@ -87,8 +87,19 @@ Matrix  rotationMatrix(float angleX, float angleY, float angleZ){
     Matrix x = getIdentityMatrix(); x.arr[1][1] = cos(toRadians(angleX)); x.arr[1][2] = -sin(toRadians(angleX)); x.arr[2][1] = sin(toRadians(angleX)); x.arr[2][2] = cos(toRadians(angleX));
     Matrix y = getIdentityMatrix(); y.arr[0][0] = cos(toRadians(angleY)); y.arr[0][2] = sin(toRadians(angleY)); y.arr[2][0] = -sin(toRadians(angleY)); y.arr[2][2] = cos(toRadians(angleY));
     Matrix z = getIdentityMatrix(); z.arr[0][0] = cos(toRadians(angleZ)); z.arr[0][1] = -sin(toRadians(angleZ)); z.arr[1][0] = sin(toRadians(angleZ)); z.arr[1][1] = cos(toRadians(angleZ)); 
-    return dotProductMatrix(dotProductMatrix(x,y),z);
+    return dotProductMatrixMatrix(dotProductMatrixMatrix(x,y),z);
+}
+vector<float> dotProductMatrixVector(Matrix matrix, vector<float> vector){
+    std::vector<float> newV ={(matrix.arr[0][0]*vector[0]+matrix.arr[0][1]*vector[1]+matrix.arr[0][2]*vector[2]+matrix.arr[0][3]*1),(matrix.arr[1][0]*vector[0]+matrix.arr[1][1]*vector[1]+matrix.arr[1][2]*vector[2]+matrix.arr[1][3]*1),(matrix.arr[2][0]*vector[0]+matrix.arr[2][1]*vector[1]+matrix.arr[2][2]*vector[2]+matrix.arr[2][3]*1),(matrix.arr[3][0]*vector[0]+matrix.arr[3][1]*vector[1]+matrix.arr[3][2]*vector[2]+matrix.arr[3][3]*1)};
+    return newV;
 }
 Matrix finalObjectMatrix(Matrix traslation, Matrix rotation, Matrix scale){
-    return dotProductMatrix(dotProductMatrix(traslation, rotation), scale);
+    return dotProductMatrixMatrix(dotProductMatrixMatrix(traslation, rotation), scale);
+}
+void printVector(vector<float> vector){
+    for (int i = 0; i < vector.size(); i++)
+    {
+        cout<<vector[i]<<" ";
+    }
+    cout<<endl;    
 }
