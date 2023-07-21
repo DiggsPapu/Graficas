@@ -34,6 +34,7 @@ struct BmpHeader {
 struct dataImg {
     int width,height;
     Pixel* imageData;
+    Pixel backgroundColor;
 };
 struct Triangle{
     vector<float> v1;
@@ -52,9 +53,9 @@ void clearAllImage(dataImg image){
         for (int x = 0; x < image.width; x++)
         {
             int pixelIndex = getPixelIndex(x,y,image);
-            image.imageData[pixelIndex].blue = 255;
-            image.imageData[pixelIndex].red = 250;
-            image.imageData[pixelIndex].green = 90;
+            image.imageData[pixelIndex].blue = image.backgroundColor.blue;
+            image.imageData[pixelIndex].red = image.backgroundColor.red;
+            image.imageData[pixelIndex].green = image.backgroundColor.green;
         }
     }
 }
@@ -407,12 +408,64 @@ void makeLineFillingDownTheLine(std::vector<float>& pos1,std::vector<float>& pos
     pos1 = pos11;
     pos2 = pos22;
 }
-// void fillPolygon(std::vector<vector<float>> vertices)
-// {
-//     for(1000)
-    
-    
-// }
+std::vector<vector<float>> getX1X2(int x1, int x2,int y,dataImg image)
+{
+    int index = getPixelIndex(x1,y,image);
+    int i = 0;
+    cout<<" "<<getPixelIndex(i,y,image)<<" "<<image.backgroundColor.blue;
+    cout<<" "<<image.imageData[getPixelIndex(i,y,image)].red<<" "<<image.backgroundColor.red;
+    cout<<" "<<image.imageData[getPixelIndex(i,y,image)].green<<" "<<image.backgroundColor.green;
+        
+    while (image.imageData[getPixelIndex(i,y,image)].blue == image.backgroundColor.blue && image.imageData[getPixelIndex(i,y,image)].green == image.backgroundColor.green && image.imageData[getPixelIndex(i,y,image)].red == image.backgroundColor.red)
+    {
+        cout<<" "<<image.imageData[getPixelIndex(i,y,image)].blue<<" "<<image.backgroundColor.blue;
+        cout<<" "<<image.imageData[getPixelIndex(i,y,image)].red<<" "<<image.backgroundColor.red;
+        cout<<" "<<image.imageData[getPixelIndex(i,y,image)].green<<" "<<image.backgroundColor.green;
+        i++;
+    }
+    x1=i;i=image.width;
+    while (image.imageData[getPixelIndex(i,y,image)].blue == image.backgroundColor.blue && image.imageData[getPixelIndex(i,y,image)].green == image.backgroundColor.green && image.imageData[getPixelIndex(i,y,image)].red == image.backgroundColor.red)
+    {
+        i--;
+    }
+    x2=i;
+    std::vector<float> pos1{(float)x1,(float)y};
+    std::vector<float> pos2{(float)x2,(float)y};
+    std::vector<vector<float>> returning = {pos1,pos2};
+    return returning;
+}
+void fillPolygon(std::vector<vector<float>> vertices,dataImg image)
+{
+    float yHighest = vertices[0][1];
+    float yMin = vertices[0][1];
+    float xHighest = vertices[0][0];
+    float xMin = vertices[0][0];
+    for (int i = 0; i < vertices.size(); i++)
+    {
+        if (yHighest<vertices[i][1])
+        {
+            yHighest = vertices[i][1];
+        }
+        if (yMin>vertices[i][1])
+        {
+            yMin = vertices[i][1];
+        }
+        if (xHighest<vertices[i][0])
+        {
+            xHighest = vertices[i][1];
+        }
+        if (xMin>vertices[i][0])
+        {
+            xMin = vertices[i][0];
+        }
+    }
+    for (int i = yMin; i < yHighest; i++)
+    {
+        std::vector<vector<float>> xs = getX1X2(xMin,xHighest,i,image);
+        cout<<xs[0][0]<<" "<<xs[1][0]<<endl;
+        makeLine(xs[0],xs[1],20,image);
+    }    
+}
 void makeTriangle(std::vector<float>& pos1,std::vector<float>& pos2,std::vector<float>& pos3, dataImg image){
     currentC.green = 150;
     currentC.blue = 0;
@@ -490,14 +543,7 @@ for(int i = 1; i < 9; i+=2)
 }
 makeLine(array[array.size()-2],array[array.size()-1],20,image);
 makeLine(array[0],array[array.size()-1],20,image);
-}
-void fillPolygon(vector<vector<float>> vertices, dataImg image)
-{
-    for (int i = 0; i < vertices.size(); i++)
-    {
-        /* code */
-    }
-    
+fillPolygon(array,image);
 }
 int main (){
     const std::string filename = "image.bmp";
@@ -506,6 +552,7 @@ int main (){
     // cout<<"Enter the width: ";cin>>image.width;cout<<"Enter the height: ";cin>>image.height;image.imageData = new Pixel[image.width*image.height];
     // Estatico
     image.width = 1000;image.height = 512;image.imageData = new Pixel[1000*512];
+    image.backgroundColor.blue=255;image.backgroundColor.red=250;image.backgroundColor.green=90;
     clearAllImage(image);
     vector<float> vect{0,500,0};
     vector<float> vect1{100,250,0};
