@@ -18,6 +18,23 @@ using namespace std;
 struct Matrix {
     float arr[4][4];
 };
+std::vector<float> getIntersect(std::vector<float>& p1,std::vector<float>& p2)
+{
+    while(p1!=p2)
+    {
+        p2[0]--;
+        if(p1[1]>p2[1])
+        {
+            p1[1]--;
+        }
+        else
+        {
+            p1[1]++;
+        }
+    }
+    std::vector<float> intersect = {p2[0],p1[1]};
+    return intersect;
+}
 std::vector <float> getLinearEcuationX(std::vector<float>& pos1,std::vector<float>& pos2)
 {
     float m = ((float)pos2[1]-(float)pos1[1])/((float)pos2[0]-(float)pos1[0]);
