@@ -89,7 +89,7 @@ void makeLine(std::vector<float>& pos1,std::vector<float>& pos2, int thickness, 
     std::vector<float> pos22 = pos2;
     if (pos1[0]>pos2[0])
     {
-        printf("Entro al intercambio\n");
+        // printf("Entro al intercambio\n");
         int temp = pos1[0];
         pos1[0] = pos2[0];
         pos2[0] = temp;
@@ -105,7 +105,7 @@ void makeLine(std::vector<float>& pos1,std::vector<float>& pos2, int thickness, 
     {   
         if (pos1[1]>pos2[1])
         {
-            printf("Entro al intercambio vertical");
+            // printf("Entro al intercambio vertical");
             int temp = pos1[0];
             pos1[0] = pos2[0];
             pos2[0] = temp;
@@ -129,27 +129,27 @@ void makeLine(std::vector<float>& pos1,std::vector<float>& pos2, int thickness, 
         // cout<<"Horizontal"<<endl;
         for (int i = 0; i < dx; i++)
         {
+            index = getPixelIndex(pos1[0]+i, pos1[1], image);
             image.imageData[index].blue = currentC.blue;
             image.imageData[index].red = currentC.red;
             image.imageData[index].green = currentC.green;
-            index = getPixelIndex(pos1[0]+i, pos1[1], image);
         }
     }
     else if ((float)dy/(float)dx>0)
     {
         if (dx>dy)
         {
-            cout<<"dx>dy"<<endl;
+            // cout<<"dx>dy"<<endl;
             std::vector<float> linearEcuation = getLinearEcuationX(pos1, pos2);
-            printf("%f %f\n",linearEcuation[0],linearEcuation[1]);
+            // printf("%f %f\n",linearEcuation[0],linearEcuation[1]);
             int y = pos1[1];
-            printf("%f,%f,%f\n",pos1[0], pos1[1],(float)dx);
+            // printf("%f,%f,%f\n",pos1[0], pos1[1],(float)dx);
             for(int x = pos1[0] ; x <= pos2[0] ; x++)
             {
+                index = getPixelIndex(x,y,image);
                 image.imageData[index].blue = currentC.blue;
                 image.imageData[index].red = currentC.red;
                 image.imageData[index].green = currentC.green;
-                index = getPixelIndex(x,y,image);
                 float newy = (float)x*linearEcuation[0]+linearEcuation[1];
                 // printf("newy:%f y:%f x:%d\n",newy,(float)y, x);
                 if(newy-(float)y>=0.5){y++;}
@@ -158,31 +158,30 @@ void makeLine(std::vector<float>& pos1,std::vector<float>& pos2, int thickness, 
         // y=4x+2
         else if (dy>dx)
         {
-            cout<<"dy>dx"<<endl;
+            // cout<<"dy>dx"<<endl;
             std::vector<float> linearEcuation = getLinearEcuationY(pos1, pos2);
             int x = pos1[0];
             for (int y = pos1[1] ; y <= pos2[1]; y++ )
             {
+                index = getPixelIndex(x,y,image);
                 image.imageData[index].blue = currentC.blue;
                 image.imageData[index].red = currentC.red;
                 image.imageData[index].green = currentC.green;
-                index = getPixelIndex(x,y,image);
                 float newx = (float)y*linearEcuation[0]-linearEcuation[1];
-                printf("newx:%f x:%f y:%f\n",newx, (float)x, (float)y);
+                // printf("newx:%f x:%f y:%f\n",newx, (float)x, (float)y);
                 if(newx-(float)x>=0.5){x++;}
             } 
         }   
         else
         {
-            cout<<"dx=dy"<<endl;
+            // cout<<"dx=dy"<<endl;
             int y = pos1[1];
             for (int x = pos1[0]; x <= pos2[0]; x++)
             {
-                
+                index = getPixelIndex(x,y,image);
                 image.imageData[index].blue = currentC.blue;
                 image.imageData[index].red = currentC.red;
                 image.imageData[index].green = currentC.green;
-                index = getPixelIndex(x,y,image);
                 // printf("y:%f x:%d\n",(float)y, x);
                 y++;
             }
@@ -192,16 +191,16 @@ void makeLine(std::vector<float>& pos1,std::vector<float>& pos2, int thickness, 
     {
         if (abs(dx)>abs(dy))
         {
-            cout<<"(neg)dx>dy"<<endl;
+            // cout<<"(neg)dx>dy"<<endl;
             std::vector<float> linearEcuation = getLinearEcuationX(pos1, pos2);
-            printf("%f  %f\n",linearEcuation[0],linearEcuation[1]);
+            // printf("%f  %f\n",linearEcuation[0],linearEcuation[1]);
             int y = pos1[1];
             for(int x = pos1[0] ; x <= pos2[0] ; x++)
             {
+                index = getPixelIndex(x,y,image);
                 image.imageData[index].blue = currentC.blue;
                 image.imageData[index].red = currentC.red;
                 image.imageData[index].green = currentC.green;
-                index = getPixelIndex(x,y,image);
                 float newy = (float)x*linearEcuation[0]+linearEcuation[1];
                 // printf("newy:%f y:%f x:%d\n",newy,(float)y, x);
                 if(newy-(float)y<=-0.1){y--;}
@@ -209,19 +208,19 @@ void makeLine(std::vector<float>& pos1,std::vector<float>& pos2, int thickness, 
         }
         else if (abs(dy)>abs(dx))
         {
-            cout<<"(neg)dy>dx"<<endl;
+            // cout<<"(neg)dy>dx"<<endl;
             std::vector<float> linearEcuation1 = getLinearEcuationX(pos1, pos2);
-            printf("%f  %f\n",linearEcuation1[0],linearEcuation1[1]);
+            // printf("%f  %f\n",linearEcuation1[0],linearEcuation1[1]);
             std::vector<float> linearEcuation = getLinearEcuationY(pos1, pos2);
 
-            printf("%f  %f\n",linearEcuation[0],linearEcuation[1]);
+            // printf("%f  %f\n",linearEcuation[0],linearEcuation[1]);
             int x = pos1[0];
             for (int y = pos1[1] ; y >= pos2[1]; y-- )
             {
+                index = getPixelIndex(x,y,image);
                 image.imageData[index].blue = currentC.blue;
                 image.imageData[index].red = currentC.red;
                 image.imageData[index].green = currentC.green;
-                index = getPixelIndex(x,y,image);
                 float newx = (float)y*linearEcuation[0]-linearEcuation[1];
                 // printf("newx:%f x:%f y:%d\n",newx, (float)x, y);
                 if(newx-(float)x>=0.5){x++;}
@@ -229,177 +228,14 @@ void makeLine(std::vector<float>& pos1,std::vector<float>& pos2, int thickness, 
         }  
         else
         {
-            cout<<"(neg)dx=dy"<<endl;
+            // cout<<"(neg)dx=dy"<<endl;
             int y = pos1[1];
             for (int x = pos1[0]; x <= pos2[0]; x++)
             {
+                index = getPixelIndex(x,y,image);
                 image.imageData[index].blue = currentC.blue;
                 image.imageData[index].red = currentC.red;
                 image.imageData[index].green = currentC.green;
-                index = getPixelIndex(x,y,image);
-                // printf("x:%d y:%d\n", x, y);
-                y--;
-            }
-        }    
-    }
-    pos1 = pos11;
-    pos2 = pos22;
-}
-void makeLineFillingDownTheLine(std::vector<float>& pos1,std::vector<float>& pos2, int thickness, dataImg image,vector<vector<float>> vectors){
-    std::vector<float> pos11 = pos1;
-    std::vector<float> pos22 = pos2;
-    if (pos1[0]>pos2[0])
-    {
-        printf("Entro al intercambio\n");
-        int temp = pos1[0];
-        pos1[0] = pos2[0];
-        pos2[0] = temp;
-        temp = pos1[1];
-        pos1[1] = pos2[1];
-        pos2[1] = temp;
-    }
-    // printf("\ninicio: x:%f y:%f   fin: x:%f y:%f\n",pos1[0],pos1[1],pos2[0],pos2[1]);
-    int dx = -pos1[0]+pos2[0];int dy = -pos1[1]+pos2[1];
-    int index = getPixelIndex(pos1[0], pos1[1], image);
-    //Vertical
-    if (dx == 0)
-    {   
-        if (pos1[1]>pos2[1])
-        {
-            printf("Entro al intercambio vertical");
-            int temp = pos1[0];
-            pos1[0] = pos2[0];
-            pos2[0] = temp;
-            temp = pos1[1];
-            pos1[1] = pos2[1];
-            pos2[1] = temp;
-            index = getPixelIndex(pos1[0], pos1[1], image);
-        }
-        // cout<<"Vertical"<<endl;
-        for (int y = pos1[1]; y <= pos2[1]; y++)
-        {
-            image.imageData[index].blue = currentC.blue;
-            image.imageData[index].red = currentC.red;
-            image.imageData[index].green = currentC.green;
-            index += image.width;
-        }
-    }
-    // Horizontal
-    else if (dy == 0)
-    {   
-        // cout<<"Horizontal"<<endl;
-        for (int i = 0; i < dx; i++)
-        {
-            image.imageData[index].blue = currentC.blue;
-            image.imageData[index].red = currentC.red;
-            image.imageData[index].green = currentC.green;
-            index = getPixelIndex(pos1[0]+i, pos1[1], image);
-        }
-    }
-    else if ((float)dy/(float)dx>0)
-    {
-        if (dx>dy)
-        {
-            cout<<"dx>dy"<<endl;
-            std::vector<float> linearEcuation = getLinearEcuationX(pos1, pos2);
-            printf("%f %f\n",linearEcuation[0],linearEcuation[1]);
-            int y = pos1[1];
-            printf("%f,%f,%f\n",pos1[0], pos1[1],(float)dx);
-            for(int x = pos1[0] ; x <= pos2[0] ; x++)
-            {
-                image.imageData[index].blue = currentC.blue;
-                image.imageData[index].red = currentC.red;
-                image.imageData[index].green = currentC.green;
-                index = getPixelIndex(x,y,image);
-                float newy = (float)x*linearEcuation[0]+linearEcuation[1];
-                // printf("newy:%f y:%f x:%d\n",newy,(float)y, x);
-                if(newy-(float)y>=0.5){y++;}
-                vector<float> p1= pos1;vector<float> p2= pos2;
-                
-            }            
-        }
-        // y=4x+2
-        else if (dy>dx)
-        {
-            cout<<"dy>dx"<<endl;
-            std::vector<float> linearEcuation = getLinearEcuationY(pos1, pos2);
-            int x = pos1[0];
-            for (int y = pos1[1] ; y <= pos2[1]; y++ )
-            {
-                image.imageData[index].blue = currentC.blue;
-                image.imageData[index].red = currentC.red;
-                image.imageData[index].green = currentC.green;
-                index = getPixelIndex(x,y,image);
-                float newx = (float)y*linearEcuation[0]-linearEcuation[1];
-                printf("newx:%f x:%f y:%f\n",newx, (float)x, (float)y);
-                if(newx-(float)x>=0.5){x++;}
-            } 
-        }   
-        else
-        {
-            cout<<"dx=dy"<<endl;
-            int y = pos1[1];
-            for (int x = pos1[0]; x <= pos2[0]; x++)
-            {
-                
-                image.imageData[index].blue = currentC.blue;
-                image.imageData[index].red = currentC.red;
-                image.imageData[index].green = currentC.green;
-                index = getPixelIndex(x,y,image);
-                // printf("y:%f x:%d\n",(float)y, x);
-                y++;
-            }
-        }    
-    }
-    else
-    {
-        if (abs(dx)>abs(dy))
-        {
-            cout<<"(neg)dx>dy"<<endl;
-            std::vector<float> linearEcuation = getLinearEcuationX(pos1, pos2);
-            printf("%f  %f\n",linearEcuation[0],linearEcuation[1]);
-            int y = pos1[1];
-            for(int x = pos1[0] ; x <= pos2[0] ; x++)
-            {
-                image.imageData[index].blue = currentC.blue;
-                image.imageData[index].red = currentC.red;
-                image.imageData[index].green = currentC.green;
-                index = getPixelIndex(x,y,image);
-                float newy = (float)x*linearEcuation[0]+linearEcuation[1];
-                // printf("newy:%f y:%f x:%d\n",newy,(float)y, x);
-                if(newy-(float)y<=-0.1){y--;}
-            }            
-        }
-        else if (abs(dy)>abs(dx))
-        {
-            cout<<"(neg)dy>dx"<<endl;
-            std::vector<float> linearEcuation1 = getLinearEcuationX(pos1, pos2);
-            printf("%f  %f\n",linearEcuation1[0],linearEcuation1[1]);
-            std::vector<float> linearEcuation = getLinearEcuationY(pos1, pos2);
-
-            printf("%f  %f\n",linearEcuation[0],linearEcuation[1]);
-            int x = pos1[0];
-            for (int y = pos1[1] ; y >= pos2[1]; y-- )
-            {
-                image.imageData[index].blue = currentC.blue;
-                image.imageData[index].red = currentC.red;
-                image.imageData[index].green = currentC.green;
-                index = getPixelIndex(x,y,image);
-                float newx = (float)y*linearEcuation[0]-linearEcuation[1];
-                // printf("newx:%f x:%f y:%d\n",newx, (float)x, y);
-                if(newx-(float)x>=0.5){x++;}
-            } 
-        }  
-        else
-        {
-            cout<<"(neg)dx=dy"<<endl;
-            int y = pos1[1];
-            for (int x = pos1[0]; x <= pos2[0]; x++)
-            {
-                image.imageData[index].blue = currentC.blue;
-                image.imageData[index].red = currentC.red;
-                image.imageData[index].green = currentC.green;
-                index = getPixelIndex(x,y,image);
                 // printf("x:%d y:%d\n", x, y);
                 y--;
             }
@@ -411,33 +247,13 @@ void makeLineFillingDownTheLine(std::vector<float>& pos1,std::vector<float>& pos
 std::vector<vector<float>> getX1X2(int x1, int x2,int y,dataImg image)
 {
     int index = getPixelIndex(x1,y,image);
-    int i = 0;
-    // cout<<" "<<getPixelIndex(i,y,image)<<" "<<image.backgroundColor.blue;
-    // cout<<" "<<image.imageData[getPixelIndex(i,y,image)].red<<" "<<image.backgroundColor.red;
-    // cout<<" "<<image.imageData[getPixelIndex(i,y,image)].green<<" "<<image.backgroundColor.green;
-        
-    while (image.imageData[getPixelIndex(i,y,image)].blue == image.backgroundColor.blue && image.imageData[getPixelIndex(i,y,image)].green == image.backgroundColor.green && image.imageData[getPixelIndex(i,y,image)].red == image.backgroundColor.red)
-    {
-        // cout<<" "<<image.imageData[getPixelIndex(i,y,image)].blue<<" "<<image.backgroundColor.blue;
-        // cout<<" "<<image.imageData[getPixelIndex(i,y,image)].red<<" "<<image.backgroundColor.red;
-        // cout<<" "<<image.imageData[getPixelIndex(i,y,image)].green<<" "<<image.backgroundColor.green;
-        i++;
-    }
-    x1=i;i=image.width;
-    while (image.imageData[getPixelIndex(i,y,image)].blue == image.backgroundColor.blue && image.imageData[getPixelIndex(i,y,image)].green == image.backgroundColor.green && image.imageData[getPixelIndex(i,y,image)].red == image.backgroundColor.red)
-    {
-        i--;
-    }
     int dentro = 0;
     Pixel currentcolor = image.backgroundColor;
     std::vector<vector<float>> returning ;
-    for(int i = x1-1; i < x2; i++)
+    for(int i = 1; i <=image.width; i++)
     {
         bool switchColor = i!=0&&(image.imageData[getPixelIndex(i,y,image)].blue != image.backgroundColor.blue | image.imageData[getPixelIndex(i,y,image)].green != image.backgroundColor.green | image.imageData[getPixelIndex(i,y,image)].red != image.backgroundColor.red);
         bool lastOne = i!=0&&image.imageData[getPixelIndex(i-1,y,image)].blue == image.backgroundColor.blue && image.imageData[getPixelIndex(i-1,y,image)].green == image.backgroundColor.green && image.imageData[getPixelIndex(i-1,y,image)].red == image.backgroundColor.red;
-        bool sameColor = image.imageData[getPixelIndex(i,y,image)].blue == image.imageData[getPixelIndex(i-1,y,image)].blue && image.imageData[getPixelIndex(i,y,image)].green == image.imageData[getPixelIndex(i-1,y,image)].green && image.imageData[getPixelIndex(i,y,image)].red == image.imageData[getPixelIndex(i-1,y,image)].red;
-        bool fondoIgual = (image.imageData[getPixelIndex(i,y,image)].blue == image.backgroundColor.blue && image.imageData[getPixelIndex(i,y,image)].green == image.backgroundColor.green && image.imageData[getPixelIndex(i,y,image)].red == image.backgroundColor.red);
-        bool anteriorIgual = (image.imageData[getPixelIndex(i-1,y,image)].blue != image.backgroundColor.blue | image.imageData[getPixelIndex(i-1,y,image)].green != image.backgroundColor.green | image.imageData[getPixelIndex(i-1,y,image)].red != image.backgroundColor.red)&&i!=0;
         if (switchColor && lastOne)
         {
             currentcolor = image.imageData[getPixelIndex(i,y,image)];
@@ -446,9 +262,6 @@ std::vector<vector<float>> getX1X2(int x1, int x2,int y,dataImg image)
             returning.push_back(pos);
         }
     }cout<<endl;
-    x2=i;
-    // std::vector<float> pos1{(float)x1,(float)y};
-    // std::vector<float> pos2{(float)x2,(float)y};
     return returning;
 }
 void fillPolygon(std::vector<vector<float>> vertices,dataImg image)
@@ -457,47 +270,26 @@ void fillPolygon(std::vector<vector<float>> vertices,dataImg image)
     float yMin = vertices[0][1];
     float xHighest = vertices[0][0];
     float xMin = vertices[0][0];
-    for (int i = 0; i < vertices.size(); i++)
-    {
-        if (yHighest<vertices[i][1])
-        {
-            yHighest = vertices[i][1];
-        }
-        if (yMin>vertices[i][1])
-        {
-            yMin = vertices[i][1];
-        }
-        if (xHighest<vertices[i][0])
-        {
-            xHighest = vertices[i][1];
-        }
-        if (xMin>vertices[i][0])
-        {
-            xMin = vertices[i][0];
-        }
-    }
+    for (int i = 0; i < vertices.size(); i++){if (yHighest<vertices[i][1]){yHighest = vertices[i][1];}if (yMin>vertices[i][1]){yMin = vertices[i][1];}if (xHighest<vertices[i][0]){xHighest = vertices[i][1];}if (xMin>vertices[i][0]){xMin = vertices[i][0];}}
     for (int i = yMin; i < yHighest; i++)
     {
-        int enter = 0;
-        std::vector<vector<float>> xs = getX1X2(xMin,xHighest,i,image);
-        for (int value = 0; value < xs.size()-1; value+=2)
+        if (i!=yMin && i!= yHighest)
         {
-            makeLine(xs[value],xs[value+1],20,image);
+            int enter = 0;
+            std::vector<vector<float>> xs = getX1X2(xMin,xHighest,i,image);
+            if(xs.size()>0)
+            {
+                for (int value = 0; value < xs.size()-1; value+=2)
+                {
+                    makeLine(xs[value],xs[value+1],20,image);
+                }
+            }
         }
     }    
 }
 void makeTriangle(std::vector<float>& pos1,std::vector<float>& pos2,std::vector<float>& pos3, dataImg image){
-    currentC.green = 150;
-    currentC.blue = 0;
-    currentC.red = 0;
     makeLine(pos1,pos2,20,image);
-    currentC.green = 0;
-    currentC.blue = 150;
-    currentC.red = 0;
     makeLine(pos2,pos3,20,image);
-    currentC.green = 0;
-    currentC.blue = 0;
-    currentC.red = 150;
     makeLine(pos1,pos3,20,image);
 }
 vector<Triangle> primitiveAssemblyTriangle(std::vector<std::vector<float>> & listOfVectors, dataImg image)
@@ -557,13 +349,132 @@ for (int i = 0; i < 10; i+=2)
 {
     makeLine(array[i],array[i+1],20,image);
 }
-for(int i = 1; i < 9; i+=2)
+for(int i = 1; i < 8; i+=2)
 {
     makeLine(array[i],array[i+1],20,image);
 }
-makeLine(array[array.size()-2],array[array.size()-1],20,image);
+makeLine(array[0],array[1],20,image);
+makeLine(array[1],array[2],20,image);
 makeLine(array[0],array[array.size()-1],20,image);
 fillPolygon(array,image);
+}
+void polygon2(dataImg image)
+{
+    dataImg image1;
+    image1.width = 1000;image1.height = 512;image1.imageData = new Pixel[1000*512];
+    image1.backgroundColor.blue=255;image1.backgroundColor.red=250;image1.backgroundColor.green=90;
+    clearAllImage(image);
+    vector<float> vect1={321, 335};
+    vector<float> vect2={288, 286}; 
+    vector<float>vect3={339, 251}; 
+    vector<float> vect4={374, 302};
+    vector<vector<float>> array;
+    array.push_back(vect1);
+    array.push_back(vect2);
+    array.push_back(vect3);
+    array.push_back(vect4);
+    makeLine(array[0],array[1],20,image);
+    makeLine(array[1],array[2],20,image);
+    makeLine(array[2],array[3],20,image);
+    makeLine(array[0],array[3],20,image);
+    makeLine(array[0],array[1],20,image1);
+    makeLine(array[1],array[2],20,image1);
+    makeLine(array[2],array[3],20,image1);
+    makeLine(array[0],array[3],20,image1);
+    fillPolygon(array,image);
+}
+void polygon3(dataImg image)
+{
+    vector<float> vect1{377, 249};
+    vector<float> vect2{411, 197};
+    vector<float> vect3{436, 249};
+    makeTriangle(vect1,vect2,vect3,image);
+
+    vector<vector<float>> array;
+    array.push_back(vect1);
+    array.push_back(vect2);
+    array.push_back(vect3);
+    fillPolygon(array, image);
+}
+void polygon4(dataImg image)
+{
+    vector<float> vect1{413, 177}; 
+    vector<float> vect2{448, 159}; 
+    vector<float> vect3{502, 88}; 
+    vector<float> vect4{553, 53}; 
+    vector<float> vect5{535, 36}; 
+    vector<float> vect6{676, 37};
+    vector<float> vect7{660, 52};
+    vector<float> vect8{750, 145};
+    vector<float> vect9{761, 179}; 
+    vector<float> vect10{672, 192};
+    vector<float> vect11{659, 214};
+    vector<float> vect12{615, 214};
+    vector<float> vect13{632, 230};
+    vector<float> vect14{580, 230};
+    vector<float> vect15{597, 215};
+    vector<float> vect16{552, 214};
+    vector<float> vect17{517, 144};
+    vector<float> vect18{466, 180};
+    vector<vector<float>> array;
+    array.push_back(vect1);
+    array.push_back(vect2);
+    array.push_back(vect3);
+    array.push_back(vect4);
+    array.push_back(vect5);
+    array.push_back(vect6);
+    array.push_back(vect7);
+    array.push_back(vect8);
+    array.push_back(vect9);
+    array.push_back(vect10);
+    array.push_back(vect11);
+    array.push_back(vect12);
+    array.push_back(vect13);
+    array.push_back(vect14);
+    array.push_back(vect15);
+    array.push_back(vect16);
+    array.push_back(vect17);
+    array.push_back(vect18);
+    makeLine(array[0],array[1],20,image);
+    makeLine(array[1],array[2],20,image);
+    makeLine(array[2],array[3],20,image);
+    makeLine(array[3],array[4],20,image);
+    makeLine(array[4],array[5],20,image);
+    makeLine(array[5],array[6],20,image);
+    makeLine(array[6],array[7],20,image);
+    makeLine(array[7],array[8],20,image);
+    makeLine(array[8],array[9],20,image);
+    makeLine(array[9],array[10],20,image);
+    makeLine(array[10],array[11],20,image);
+    makeLine(array[11],array[12],20,image);
+    makeLine(array[12],array[13],20,image);
+    makeLine(array[13],array[14],20,image);
+    makeLine(array[14],array[15],20,image);
+    makeLine(array[15],array[16],20,image);
+    makeLine(array[16],array[17],20,image);
+    makeLine(array[0],array[17],20,image);
+    fillPolygon(array, image);
+}
+void polygon5(dataImg image)
+{
+    currentC.blue = 31;
+    currentC.red = 31;
+    currentC.green = 31;
+    
+    vector<float> vect1{682, 175}; 
+    vector<float> vect2{708, 120}; 
+    vector<float> vect3{735, 148};
+    vector<float> vect4{739, 170};
+    vector<vector<float>> array;
+    array.push_back(vect1);
+    array.push_back(vect2);
+    array.push_back(vect3);
+    array.push_back(vect4);
+    makeLine(array[0],array[1],20,image);
+    makeLine(array[1],array[2],20,image);
+    makeLine(array[2],array[3],20,image);
+    makeLine(array[0],array[3],20,image);
+    fillPolygon(array, image);
 }
 int main (){
     const std::string filename = "image.bmp";
@@ -574,49 +485,49 @@ int main (){
     image.width = 1000;image.height = 512;image.imageData = new Pixel[1000*512];
     image.backgroundColor.blue=255;image.backgroundColor.red=250;image.backgroundColor.green=90;
     clearAllImage(image);
-    vector<float> vect{0,500,0};
-    vector<float> vect1{100,250,0};
+    // vector<float> vect{0,500,0};
+    // vector<float> vect1{100,250,0};
     // makeLine(vect,vect1,20,image);
-    vector<float> vect2{100,0,0};
-    vector<float> vect3{900,500,0};
+    // vector<float> vect2{100,0,0};
+    // vector<float> vect3{900,500,0};
     // makeLine(vect2,vect3,20,image);
-    vector<float> vect4={900,0,350};
-    vector<float> vect5={800,100,200};
+    // vector<float> vect4={900,0,350};
+    // vector<float> vect5={800,100,200};
     // makeLine(vect4,vect5,20,image);
-    vector<float> vect6={200,300,220};
-    vector<float> vect7={250,500,470};
+    // vector<float> vect6={200,300,220};
+    // vector<float> vect7={250,500,470};
     // makeLine(vect6,vect7,20,image);
-    vector<float> vect8={300,500,0};
-    vector<float> vect9={350,0,0};
+    // vector<float> vect8={300,500,0};
+    // vector<float> vect9={350,0,0};
     // makeLine(vect8,vect9,20,image);
-    vector<float> vect10={400,500,0};
-    vector<float> vect11={320,450,0};
+    // vector<float> vect10={400,500,0};
+    // vector<float> vect11={320,450,0};
     // makeLine(vect10,vect11,20,image);
 
-    vector<float> vect12={0,0,0};
-    vector<float> vect13={50,0,0};
-    vector<float> vect14={25,40,0};
+    // vector<float> vect12={0,0,0};
+    // vector<float> vect13={50,0,0};
+    // vector<float> vect14={25,40,0};
     // makeTriangle(vect12,vect13,vect14,image);
     // makeTriangle(vect3,vect7,vect2,image);
     // makeTriangle(vect10,vect13,vect14,image);
     // makeTriangle(vect1,vect14,vect7,image);
-    std::vector<std::vector<float>> vertices;
-    vertices.push_back(vect);
-    vertices.push_back(vect1);
-    vertices.push_back(vect2);
-    vertices.push_back(vect3);
-    vertices.push_back(vect4);
-    vertices.push_back(vect5);
-    vertices.push_back(vect6);
-    vertices.push_back(vect7);
-    vertices.push_back(vect8);
-    vertices.push_back(vect9);
-    vertices.push_back(vect10);
-    vertices.push_back(vect11);
-    vertices.push_back(vect12);
-    vertices.push_back(vect13);
-    vertices.push_back(vect14);
-    printMatrix(getTranslationMatrix(4,3,2));
+    // std::vector<std::vector<float>> vertices;
+    // vertices.push_back(vect);
+    // vertices.push_back(vect1);
+    // vertices.push_back(vect2);
+    // vertices.push_back(vect3);
+    // vertices.push_back(vect4);
+    // vertices.push_back(vect5);
+    // vertices.push_back(vect6);
+    // vertices.push_back(vect7);
+    // vertices.push_back(vect8);
+    // vertices.push_back(vect9);
+    // vertices.push_back(vect10);
+    // vertices.push_back(vect11);
+    // vertices.push_back(vect12);
+    // vertices.push_back(vect13);
+    // vertices.push_back(vect14);
+    // // printMatrix(getTranslationMatrix(4,3,2));
     // Matrix glMatrix = finalObjectMatrix(getTranslationMatrix(1000/2,512/2,0),rotationMatrix(180,0,0),getScaleMatrix(1,1,1));
     // std::vector<std::vector<float>> vertexShaderVertices;
     
@@ -634,11 +545,13 @@ int main (){
     // printMatrix(getScaleMatrix(3,2,5));
     // printMatrix(dotProductMatrixMatrix(getTranslationMatrix(4,3,2), getScaleMatrix(3,2,5)));
     // printMatrix(rotationMatrix(80,60,20));
-    // makeLine(vect15,vect16,20,image);
     // vector<float> vect17 = {200,200};
     // vector<float> vect18 = {400,0};
-    // makeLine(vect17,vect18,20,image);
-    polygon1(image);
+    // polygon1(image);
+    // polygon2(image);
+    // polygon3(image);
+    polygon4(image);
+    polygon5(image);
     writeBmp(filename, image);
     vector<float> vect15={3,7,5,1};
     // printVector(dotProductMatrixVector(getTranslationMatrix(4,3,2),vect15));
