@@ -412,15 +412,15 @@ std::vector<vector<float>> getX1X2(int x1, int x2,int y,dataImg image)
 {
     int index = getPixelIndex(x1,y,image);
     int i = 0;
-    cout<<" "<<getPixelIndex(i,y,image)<<" "<<image.backgroundColor.blue;
-    cout<<" "<<image.imageData[getPixelIndex(i,y,image)].red<<" "<<image.backgroundColor.red;
-    cout<<" "<<image.imageData[getPixelIndex(i,y,image)].green<<" "<<image.backgroundColor.green;
+    // cout<<" "<<getPixelIndex(i,y,image)<<" "<<image.backgroundColor.blue;
+    // cout<<" "<<image.imageData[getPixelIndex(i,y,image)].red<<" "<<image.backgroundColor.red;
+    // cout<<" "<<image.imageData[getPixelIndex(i,y,image)].green<<" "<<image.backgroundColor.green;
         
     while (image.imageData[getPixelIndex(i,y,image)].blue == image.backgroundColor.blue && image.imageData[getPixelIndex(i,y,image)].green == image.backgroundColor.green && image.imageData[getPixelIndex(i,y,image)].red == image.backgroundColor.red)
     {
-        cout<<" "<<image.imageData[getPixelIndex(i,y,image)].blue<<" "<<image.backgroundColor.blue;
-        cout<<" "<<image.imageData[getPixelIndex(i,y,image)].red<<" "<<image.backgroundColor.red;
-        cout<<" "<<image.imageData[getPixelIndex(i,y,image)].green<<" "<<image.backgroundColor.green;
+        // cout<<" "<<image.imageData[getPixelIndex(i,y,image)].blue<<" "<<image.backgroundColor.blue;
+        // cout<<" "<<image.imageData[getPixelIndex(i,y,image)].red<<" "<<image.backgroundColor.red;
+        // cout<<" "<<image.imageData[getPixelIndex(i,y,image)].green<<" "<<image.backgroundColor.green;
         i++;
     }
     x1=i;i=image.width;
@@ -428,10 +428,27 @@ std::vector<vector<float>> getX1X2(int x1, int x2,int y,dataImg image)
     {
         i--;
     }
+    int dentro = 0;
+    Pixel currentcolor = image.backgroundColor;
+    std::vector<vector<float>> returning ;
+    for(int i = x1-1; i < x2; i++)
+    {
+        bool switchColor = i!=0&&(image.imageData[getPixelIndex(i,y,image)].blue != image.backgroundColor.blue | image.imageData[getPixelIndex(i,y,image)].green != image.backgroundColor.green | image.imageData[getPixelIndex(i,y,image)].red != image.backgroundColor.red);
+        bool lastOne = i!=0&&image.imageData[getPixelIndex(i-1,y,image)].blue == image.backgroundColor.blue && image.imageData[getPixelIndex(i-1,y,image)].green == image.backgroundColor.green && image.imageData[getPixelIndex(i-1,y,image)].red == image.backgroundColor.red;
+        bool sameColor = image.imageData[getPixelIndex(i,y,image)].blue == image.imageData[getPixelIndex(i-1,y,image)].blue && image.imageData[getPixelIndex(i,y,image)].green == image.imageData[getPixelIndex(i-1,y,image)].green && image.imageData[getPixelIndex(i,y,image)].red == image.imageData[getPixelIndex(i-1,y,image)].red;
+        bool fondoIgual = (image.imageData[getPixelIndex(i,y,image)].blue == image.backgroundColor.blue && image.imageData[getPixelIndex(i,y,image)].green == image.backgroundColor.green && image.imageData[getPixelIndex(i,y,image)].red == image.backgroundColor.red);
+        bool anteriorIgual = (image.imageData[getPixelIndex(i-1,y,image)].blue != image.backgroundColor.blue | image.imageData[getPixelIndex(i-1,y,image)].green != image.backgroundColor.green | image.imageData[getPixelIndex(i-1,y,image)].red != image.backgroundColor.red)&&i!=0;
+        if (switchColor && lastOne)
+        {
+            currentcolor = image.imageData[getPixelIndex(i,y,image)];
+            printf("pos x:%f y:%f    ",(float)i, (float)y);
+            std::vector<float>pos{(float)i,(float)y};
+            returning.push_back(pos);
+        }
+    }cout<<endl;
     x2=i;
-    std::vector<float> pos1{(float)x1,(float)y};
-    std::vector<float> pos2{(float)x2,(float)y};
-    std::vector<vector<float>> returning = {pos1,pos2};
+    // std::vector<float> pos1{(float)x1,(float)y};
+    // std::vector<float> pos2{(float)x2,(float)y};
     return returning;
 }
 void fillPolygon(std::vector<vector<float>> vertices,dataImg image)
@@ -461,9 +478,12 @@ void fillPolygon(std::vector<vector<float>> vertices,dataImg image)
     }
     for (int i = yMin; i < yHighest; i++)
     {
+        int enter = 0;
         std::vector<vector<float>> xs = getX1X2(xMin,xHighest,i,image);
-        cout<<xs[0][0]<<" "<<xs[1][0]<<endl;
-        makeLine(xs[0],xs[1],20,image);
+        for (int value = 0; value < xs.size()-1; value+=2)
+        {
+            makeLine(xs[value],xs[value+1],20,image);
+        }
     }    
 }
 void makeTriangle(std::vector<float>& pos1,std::vector<float>& pos2,std::vector<float>& pos3, dataImg image){
@@ -596,8 +616,8 @@ int main (){
     vertices.push_back(vect12);
     vertices.push_back(vect13);
     vertices.push_back(vect14);
-    // printMatrix(getTranslationMatrix(4,3,2));
-    // Matrix glMatrix = finalObjectMatrix(getTranslationMatrix(1000/2,512/2,0),rotationMatrix(0,0,0),getScaleMatrix(1,1,1));
+    printMatrix(getTranslationMatrix(4,3,2));
+    // Matrix glMatrix = finalObjectMatrix(getTranslationMatrix(1000/2,512/2,0),rotationMatrix(180,0,0),getScaleMatrix(1,1,1));
     // std::vector<std::vector<float>> vertexShaderVertices;
     
     // vertexShaderVertices.push_back(vertexShader(vect14,glMatrix));
