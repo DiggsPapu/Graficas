@@ -139,7 +139,7 @@ void makeLine(std::vector<float>& pos1,std::vector<float>& pos2, int thickness, 
     {
         if (dx>dy)
         {
-            // cout<<"dx>dy"<<endl;
+            cout<<"dx>dy"<<endl;
             std::vector<float> linearEcuation = getLinearEcuationX(pos1, pos2);
             // printf("%f %f\n",linearEcuation[0],linearEcuation[1]);
             int y = pos1[1];
@@ -151,14 +151,21 @@ void makeLine(std::vector<float>& pos1,std::vector<float>& pos2, int thickness, 
                 image.imageData[index].red = currentC.red;
                 image.imageData[index].green = currentC.green;
                 float newy = (float)x*linearEcuation[0]+linearEcuation[1];
-                // printf("newy:%f y:%f x:%d\n",newy,(float)y, x);
-                if(newy-(float)y>=0.5){y++;}
+                printf("newy:%f x:%d y:%f\n",newy,(float)y, x);
+                if(newy-(float)y>=0.05)
+                {
+                    y++;
+                    index = getPixelIndex(x,y,image);
+                    image.imageData[index].blue = currentC.blue;
+                    image.imageData[index].red = currentC.red;
+                    image.imageData[index].green = currentC.green;
+                }
             }            
         }
         // y=4x+2
         else if (dy>dx)
         {
-            // cout<<"dy>dx"<<endl;
+            cout<<"dy>dx"<<endl;
             std::vector<float> linearEcuation = getLinearEcuationY(pos1, pos2);
             int x = pos1[0];
             for (int y = pos1[1] ; y <= pos2[1]; y++ )
@@ -168,8 +175,15 @@ void makeLine(std::vector<float>& pos1,std::vector<float>& pos2, int thickness, 
                 image.imageData[index].red = currentC.red;
                 image.imageData[index].green = currentC.green;
                 float newx = (float)y*linearEcuation[0]-linearEcuation[1];
-                // printf("newx:%f x:%f y:%f\n",newx, (float)x, (float)y);
-                if(newx-(float)x>=0.5){x++;}
+                printf("newx:%f x:%f y:%f\n",newx, (float)x, (float)y);
+                if(newx-(float)x>=0.5)
+                {
+                    x++;
+                    index = getPixelIndex(x,y,image);
+                    image.imageData[index].blue = currentC.blue;
+                    image.imageData[index].red = currentC.red;
+                    image.imageData[index].green = currentC.green;
+                }
             } 
         }   
         else
@@ -191,7 +205,7 @@ void makeLine(std::vector<float>& pos1,std::vector<float>& pos2, int thickness, 
     {
         if (abs(dx)>abs(dy))
         {
-            // cout<<"(neg)dx>dy"<<endl;
+            cout<<"(neg)dx>dy"<<endl;
             std::vector<float> linearEcuation = getLinearEcuationX(pos1, pos2);
             // printf("%f  %f\n",linearEcuation[0],linearEcuation[1]);
             int y = pos1[1];
@@ -202,8 +216,15 @@ void makeLine(std::vector<float>& pos1,std::vector<float>& pos2, int thickness, 
                 image.imageData[index].red = currentC.red;
                 image.imageData[index].green = currentC.green;
                 float newy = (float)x*linearEcuation[0]+linearEcuation[1];
-                // printf("newy:%f y:%f x:%d\n",newy,(float)y, x);
-                if(newy-(float)y<=-0.1){y--;}
+                printf("newy:%f x:%d y:%f\n",newy,x,(float)y);
+                if(newy-(float)y<=-0.05)
+                {
+                    y--;
+                    index = getPixelIndex(x,y,image);
+                    image.imageData[index].blue = currentC.blue;
+                    image.imageData[index].red = currentC.red;
+                    image.imageData[index].green = currentC.green;
+                }
             }            
         }
         else if (abs(dy)>abs(dx))
@@ -223,7 +244,14 @@ void makeLine(std::vector<float>& pos1,std::vector<float>& pos2, int thickness, 
                 image.imageData[index].green = currentC.green;
                 float newx = (float)y*linearEcuation[0]-linearEcuation[1];
                 // printf("newx:%f x:%f y:%d\n",newx, (float)x, y);
-                if(newx-(float)x>=0.5){x++;}
+                if(newx-(float)x>=0.05)
+                {
+                    x++;
+                    index = getPixelIndex(x,y,image);
+                    image.imageData[index].blue = currentC.blue;
+                    image.imageData[index].red = currentC.red;
+                    image.imageData[index].green = currentC.green;
+                }
             } 
         }  
         else
@@ -250,19 +278,24 @@ std::vector<vector<float>> getX1X2(int x1, int x2,int y,dataImg image)
     int dentro = 0;
     Pixel currentcolor = image.backgroundColor;
     std::vector<vector<float>> returning ;
-    for(int i = 1; i <=image.width; i++)
+    for(int i = x1-1; i <=x2; i++)
     {
         bool switchColor = i!=0&&(image.imageData[getPixelIndex(i,y,image)].blue != image.backgroundColor.blue | image.imageData[getPixelIndex(i,y,image)].green != image.backgroundColor.green | image.imageData[getPixelIndex(i,y,image)].red != image.backgroundColor.red);
         bool lastOne = i!=0&&image.imageData[getPixelIndex(i-1,y,image)].blue == image.backgroundColor.blue && image.imageData[getPixelIndex(i-1,y,image)].green == image.backgroundColor.green && image.imageData[getPixelIndex(i-1,y,image)].red == image.backgroundColor.red;
         if (switchColor && lastOne)
         {
             currentcolor = image.imageData[getPixelIndex(i,y,image)];
-            printf("pos x:%f y:%f    ",(float)i, (float)y);
+            printf("pos %f,%f    ",(float)i, (float)y);
             std::vector<float>pos{(float)i,(float)y};
             returning.push_back(pos);
         }
     }cout<<endl;
     return returning;
+}
+void fillDraw(std::vector<vector<float>> vertices)
+{
+    float yHighest = vertices[0][1];float yMin = vertices[0][1];float xHighest = vertices[0][0];float xMin = vertices[0][0];
+    for (size_t i = 0; i < vertices.size(); i++){if (yHighest<vertices[i][1]){yHighest = vertices[i][1];}if (yMin>vertices[i][1]){yMin = vertices[i][1];}if (xHighest<vertices[i][0]){xHighest = vertices[i][1];}if (xMin>vertices[i][0]){xMin = vertices[i][0];}}
 }
 void fillPolygon(std::vector<vector<float>> vertices,dataImg image)
 {
@@ -270,16 +303,27 @@ void fillPolygon(std::vector<vector<float>> vertices,dataImg image)
     float yMin = vertices[0][1];
     float xHighest = vertices[0][0];
     float xMin = vertices[0][0];
-    for (int i = 0; i < vertices.size(); i++){if (yHighest<vertices[i][1]){yHighest = vertices[i][1];}if (yMin>vertices[i][1]){yMin = vertices[i][1];}if (xHighest<vertices[i][0]){xHighest = vertices[i][1];}if (xMin>vertices[i][0]){xMin = vertices[i][0];}}
-    for (int i = yMin; i < yHighest; i++)
+    for (int i = 0; i < vertices.size(); i++){if (yHighest<vertices[i][1]){yHighest = vertices[i][1];}if (yMin>vertices[i][1]){yMin = vertices[i][1];}if (xHighest<vertices[i][0]){xHighest = vertices[i][0];}if (xMin>vertices[i][0]){xMin = vertices[i][0];}}
+    for (int i = yMin+2; i < yHighest; i++)
     {
         if (i!=yMin && i!= yHighest)
         {
             int enter = 0;
             std::vector<vector<float>> xs = getX1X2(xMin,xHighest,i,image);
-            if(xs.size()>0)
+            if(xs.size()>0&&xs.size()%2==0)
             {
                 for (int value = 0; value < xs.size()-1; value+=2)
+                {
+                    makeLine(xs[value],xs[value+1],20,image);
+                }
+            }
+            else if(xs.size()>0 && xs.size()==3)
+            {
+                makeLine(xs[0],xs[xs.size()-1],20,image);
+            }
+            else if (xs.size()>0 && xs.size()%2!=0)
+            {
+                for (int value = 1; value < xs.size()-1; value++)
                 {
                     makeLine(xs[value],xs[value+1],20,image);
                 }
@@ -324,6 +368,7 @@ void makePrimitiveTriangle(vector<Triangle> triangles, dataImg image) {
     }   
 }
 vector<vector<float>> polygon1(dataImg image,vector<vector<float>> array){
+    currentC.blue = 10;currentC.red = 10;currentC.green = 10;
     vector<float> vect1{165, 380}; 
     vector<float> vect2{185, 360};
     vector<float> vect3{180, 330};
@@ -354,12 +399,15 @@ vector<vector<float>> polygon1(dataImg image,vector<vector<float>> array){
     }
     makeLine(array[0],array[1],20,image);
     makeLine(array[1],array[2],20,image);
+    makeLine(array[2],array[3],20,image);
     makeLine(array[0],array[array.size()-1],20,image);
-    // fillPolygon(array,image);
+    fillPolygon(array,image);
+    currentC.blue = 255;currentC.red = 255;currentC.green = 255;
     return array;
 }
 vector<vector<float>> polygon2(dataImg image,vector<vector<float>> array)
 {
+    currentC.blue = 0;currentC.red = 0;currentC.green = 0;
     int size = array.size();
     dataImg image1;
     image1.width = 1000;image1.height = 512;image1.imageData = new Pixel[1000*512];
@@ -367,21 +415,28 @@ vector<vector<float>> polygon2(dataImg image,vector<vector<float>> array)
     // clearAllImage(image);
     vector<float> vect1={321, 335};
     vector<float> vect2={288, 286}; 
-    vector<float>vect3={339, 251}; 
+    vector<float> vect3={339, 251}; 
     vector<float> vect4={374, 302};
     array.push_back(vect1);
     array.push_back(vect2);
     array.push_back(vect3);
     array.push_back(vect4);
-    makeLine(array[size+0],array[size+1],20,image);
-    makeLine(array[size+1],array[size+2],20,image);
-    makeLine(array[size+2],array[size+3],20,image);
-    makeLine(array[size+0],array[size+3],20,image);
-    // makeLine(array[0],array[1],20,image1);
-    // makeLine(array[1],array[2],20,image1);
-    // makeLine(array[2],array[3],20,image1);
-    // makeLine(array[0],array[3],20,image1);
-    // fillPolygon(array,image);
+    // makeLine(array[size+0],array[size+1],20,image);
+    // makeLine(array[size+1],array[size+2],20,image);
+    // makeLine(array[size+2],array[size+3],20,image);
+    // makeLine(array[size+0],array[size+3],20,image);
+    vector<vector<float>> array1;
+    array1.push_back(vect1);
+    array1.push_back(vect2);
+    array1.push_back(vect3);
+    array1.push_back(vect4);
+
+    makeLine(array1[0],array1[1],20,image);
+    makeLine(array1[1],array1[2],20,image);
+    makeLine(array1[2],array1[3],20,image);
+    makeLine(array1[0],array1[3],20,image);
+    fillPolygon(array1,image);
+    currentC.blue = 255;currentC.red = 255;currentC.green = 255;
     return array;
 }
 vector<vector<float>> polygon3(dataImg image,vector<vector<float>> array)
@@ -390,15 +445,39 @@ vector<vector<float>> polygon3(dataImg image,vector<vector<float>> array)
     vector<float> vect2{411, 197};
     vector<float> vect3{436, 249};
     makeTriangle(vect1,vect2,vect3,image);
+    vector<vector<float>> array1;
+    array1.push_back(vect1);
+    array1.push_back(vect2);
+    array1.push_back(vect3);
     array.push_back(vect1);
     array.push_back(vect2);
     array.push_back(vect3);
+    fillPolygon(array1, image);
+    currentC.blue = 255;currentC.red = 255;currentC.green = 255;
+    return array;
+}
+vector<vector<float>> polygon5(dataImg image,vector<vector<float>> array)
+{
+    int size = array.size();
+    vector<float> vect1{682, 175}; 
+    vector<float> vect2{708, 120}; 
+    vector<float> vect3{735, 148};
+    vector<float> vect4{739, 170};
+    array.push_back(vect1);
+    array.push_back(vect2);
+    array.push_back(vect3);
+    array.push_back(vect4);
+    makeLine(array[size+0],array[size+1],20,image);
+    makeLine(array[size+1],array[size+2],20,image);
+    makeLine(array[size+2],array[size+3],20,image);
+    makeLine(array[size+0],array[size+3],20,image);
     // fillPolygon(array, image);
     return array;
 }
 vector<vector<float>> polygon4(dataImg image,vector<vector<float>> array)
 {
     int size = array.size();
+    vector<vector<float>> array1;
     vector<float> vect1{413, 177}; 
     vector<float> vect2{448, 159}; 
     vector<float> vect3{502, 88}; 
@@ -435,43 +514,62 @@ vector<vector<float>> polygon4(dataImg image,vector<vector<float>> array)
     array.push_back(vect16);
     array.push_back(vect17);
     array.push_back(vect18);
-    makeLine(array[size+0],array[size+1],20,image);
-    makeLine(array[size+1],array[size+2],20,image);
-    makeLine(array[size+2],array[size+3],20,image);
-    makeLine(array[size+3],array[size+4],20,image);
-    makeLine(array[size+4],array[size+5],20,image);
-    makeLine(array[size+5],array[size+6],20,image);
-    makeLine(array[size+6],array[size+7],20,image);
-    makeLine(array[size+7],array[size+8],20,image);
-    makeLine(array[size+8],array[size+9],20,image);
-    makeLine(array[size+9],array[size+10],20,image);
-    makeLine(array[size+10],array[size+11],20,image);
-    makeLine(array[size+11],array[size+12],20,image);
-    makeLine(array[size+12],array[size+13],20,image);
-    makeLine(array[size+13],array[size+14],20,image);
-    makeLine(array[size+14],array[size+15],20,image);
-    makeLine(array[size+15],array[size+16],20,image);
-    makeLine(array[size+16],array[size+17],20,image);
-    makeLine(array[size+0],array[size+17],20,image);
-    // fillPolygon(array, image);
-    return array;
-}
-vector<vector<float>> polygon5(dataImg image,vector<vector<float>> array)
-{
-    int size = array.size();
-    vector<float> vect1{682, 175}; 
-    vector<float> vect2{708, 120}; 
-    vector<float> vect3{735, 148};
-    vector<float> vect4{739, 170};
-    array.push_back(vect1);
-    array.push_back(vect2);
-    array.push_back(vect3);
-    array.push_back(vect4);
-    makeLine(array[size+0],array[size+1],20,image);
-    makeLine(array[size+1],array[size+2],20,image);
-    makeLine(array[size+2],array[size+3],20,image);
-    makeLine(array[size+0],array[size+3],20,image);
-    // fillPolygon(array, image);
+    array1.push_back(vect1);
+    array1.push_back(vect2);
+    array1.push_back(vect3);
+    array1.push_back(vect4);
+    array1.push_back(vect5);
+    array1.push_back(vect6);
+    array1.push_back(vect7);
+    array1.push_back(vect8);
+    array1.push_back(vect9);
+    array1.push_back(vect10);
+    array1.push_back(vect11);
+    array1.push_back(vect12);
+    array1.push_back(vect13);
+    array1.push_back(vect14);
+    array1.push_back(vect15);
+    array1.push_back(vect16);
+    array1.push_back(vect17);
+    array1.push_back(vect18);
+    // makeLine(array[size+0],array[size+1],20,image);
+    // makeLine(array[size+1],array[size+2],20,image);
+    // makeLine(array[size+2],array[size+3],20,image);
+    // makeLine(array[size+3],array[size+4],20,image);
+    // makeLine(array[size+4],array[size+5],20,image);
+    // makeLine(array[size+5],array[size+6],20,image);
+    // makeLine(array[size+6],array[size+7],20,image);
+    // makeLine(array[size+7],array[size+8],20,image);
+    // makeLine(array[size+8],array[size+9],20,image);
+    // makeLine(array[size+9],array[size+10],20,image);
+    // makeLine(array[size+10],array[size+11],20,image);
+    // makeLine(array[size+11],array[size+12],20,image);
+    // makeLine(array[size+12],array[size+13],20,image);
+    // makeLine(array[size+13],array[size+14],20,image);
+    // makeLine(array[size+14],array[size+15],20,image);
+    // makeLine(array[size+15],array[size+16],20,image);
+    // makeLine(array[size+16],array[size+17],20,image);
+    // makeLine(array[size+0],array[size+17],20,image);
+    makeLine(array1[0],array1[1],20,image);
+    makeLine(array1[1],array1[2],20,image);
+    makeLine(array1[2],array1[3],20,image);
+    makeLine(array1[3],array1[4],20,image);
+    makeLine(array1[4],array1[5],20,image);
+    makeLine(array1[5],array1[6],20,image);
+    makeLine(array1[6],array1[7],20,image);
+    makeLine(array1[7],array1[8],20,image);
+    makeLine(array1[8],array1[9],20,image);
+    makeLine(array1[9],array1[10],20,image);
+    makeLine(array1[10],array1[11],20,image);
+    makeLine(array1[11],array1[12],20,image);
+    makeLine(array1[12],array1[13],20,image);
+    makeLine(array1[13],array1[14],20,image);
+    makeLine(array1[14],array1[15],20,image);
+    makeLine(array1[15],array1[16],20,image);
+    makeLine(array1[16],array1[17],20,image);
+    makeLine(array1[0],array1[17],20,image);
+    array1 = polygon5(image,array1);
+    fillPolygon(array1, image);
     return array;
 }
 int main (){
@@ -483,52 +581,52 @@ int main (){
     image.width = 1000;image.height = 512;image.imageData = new Pixel[1000*512];
     image.backgroundColor.blue=255;image.backgroundColor.red=250;image.backgroundColor.green=90;
     clearAllImage(image);
-    // vector<float> vect{0,500,0};
-    // vector<float> vect1{100,250,0};
+    vector<float> vect{0,500,0};
+    vector<float> vect1{100,250,0};
+    vector<float> vect2{100,0,0};
+    vector<float> vect3{900,500,0};
+    vector<float> vect4={900,0,350};
+    vector<float> vect5={800,100,200};
+    vector<float> vect6={200,300,220};
+    vector<float> vect7={250,500,470};
+    vector<float> vect8={300,500,0};
+    vector<float> vect9={350,0,0};
+    vector<float> vect10={400,500,0};
+    vector<float> vect11={320,450,0};
+    vector<float> vect12={0,0,0};
+    vector<float> vect13={50,0,0};
+    vector<float> vect14={25,40,0};
     // makeLine(vect,vect1,20,image);
-    // vector<float> vect2{100,0,0};
-    // vector<float> vect3{900,500,0};
     // makeLine(vect2,vect3,20,image);
-    // vector<float> vect4={900,0,350};
-    // vector<float> vect5={800,100,200};
     // makeLine(vect4,vect5,20,image);
-    // vector<float> vect6={200,300,220};
-    // vector<float> vect7={250,500,470};
     // makeLine(vect6,vect7,20,image);
-    // vector<float> vect8={300,500,0};
-    // vector<float> vect9={350,0,0};
     // makeLine(vect8,vect9,20,image);
-    // vector<float> vect10={400,500,0};
-    // vector<float> vect11={320,450,0};
     // makeLine(vect10,vect11,20,image);
 
-    // vector<float> vect12={0,0,0};
-    // vector<float> vect13={50,0,0};
-    // vector<float> vect14={25,40,0};
     // makeTriangle(vect12,vect13,vect14,image);
     // makeTriangle(vect3,vect7,vect2,image);
     // makeTriangle(vect10,vect13,vect14,image);
     // makeTriangle(vect1,vect14,vect7,image);
-    // std::vector<std::vector<float>> vertices;
-    // vertices.push_back(vect);
-    // vertices.push_back(vect1);
-    // vertices.push_back(vect2);
-    // vertices.push_back(vect3);
-    // vertices.push_back(vect4);
-    // vertices.push_back(vect5);
-    // vertices.push_back(vect6);
-    // vertices.push_back(vect7);
-    // vertices.push_back(vect8);
-    // vertices.push_back(vect9);
-    // vertices.push_back(vect10);
-    // vertices.push_back(vect11);
-    // vertices.push_back(vect12);
-    // vertices.push_back(vect13);
-    // vertices.push_back(vect14);
+    std::vector<std::vector<float>> vertices;
+    vertices.push_back(vect);
+    vertices.push_back(vect1);
+    vertices.push_back(vect2);
+    vertices.push_back(vect3);
+    vertices.push_back(vect4);
+    vertices.push_back(vect5);
+    vertices.push_back(vect6);
+    vertices.push_back(vect7);
+    vertices.push_back(vect8);
+    vertices.push_back(vect9);
+    vertices.push_back(vect10);
+    vertices.push_back(vect11);
+    vertices.push_back(vect12);
+    vertices.push_back(vect13);
+    vertices.push_back(vect14);
     // // printMatrix(getTranslationMatrix(4,3,2));
+
     // Matrix glMatrix = finalObjectMatrix(getTranslationMatrix(1000/2,512/2,0),rotationMatrix(180,0,0),getScaleMatrix(1,1,1));
     // std::vector<std::vector<float>> vertexShaderVertices;
-    
     // vertexShaderVertices.push_back(vertexShader(vect14,glMatrix));
     // vertexShaderVertices.push_back(vertexShader(vect12,glMatrix));
     // vertexShaderVertices.push_back(vertexShader(vect13,glMatrix));
@@ -550,8 +648,7 @@ int main (){
     array = polygon2(image,array);
     array = polygon3(image,array);
     array = polygon4(image,array);
-    array = polygon5(image,array);
-    fillPolygon(array, image);
+    // fillPolygon(array, image);
     writeBmp(filename, image);
     vector<float> vect15={3,7,5,1};
     // printVector(dotProductMatrixVector(getTranslationMatrix(4,3,2),vect15));
