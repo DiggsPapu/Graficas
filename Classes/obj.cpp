@@ -8,7 +8,6 @@
 #include <vector>
 #include <threads.h>
 #include <list>
-#include "mathLibrary.h"
 using namespace std;
 
 

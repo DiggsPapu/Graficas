@@ -151,7 +151,7 @@ void makeLine(std::vector<float>& pos1,std::vector<float>& pos2, int thickness, 
                 image.imageData[index].red = currentC.red;
                 image.imageData[index].green = currentC.green;
                 float newy = (float)x*linearEcuation[0]+linearEcuation[1];
-                printf("newy:%f x:%d y:%f\n",newy,(float)y, x);
+                // printf("newy:%f x:%d y:%f\n",newy,(float)y, x);
                 if(newy-(float)y>=0.05)
                 {
                     y++;
@@ -274,13 +274,11 @@ void makeLine(std::vector<float>& pos1,std::vector<float>& pos2, int thickness, 
 }
 std::vector<vector<float>> getX1X2(int x1, int x2,int y,dataImg image)
 {
-    int index = getPixelIndex(x1,y,image);
-    int dentro = 0;
     Pixel currentcolor = image.backgroundColor;
     std::vector<vector<float>> returning ;
     for(int i = x1-1; i <=x2; i++)
     {
-        bool switchColor = i!=0&&(image.imageData[getPixelIndex(i,y,image)].blue != image.backgroundColor.blue | image.imageData[getPixelIndex(i,y,image)].green != image.backgroundColor.green | image.imageData[getPixelIndex(i,y,image)].red != image.backgroundColor.red);
+        bool switchColor = i!=0&&( (image.imageData[getPixelIndex(i,y,image)].blue != image.backgroundColor.blue) | (image.imageData[getPixelIndex(i,y,image)].green != image.backgroundColor.green) | (image.imageData[getPixelIndex(i,y,image)].red != image.backgroundColor.red));
         bool lastOne = i!=0&&image.imageData[getPixelIndex(i-1,y,image)].blue == image.backgroundColor.blue && image.imageData[getPixelIndex(i-1,y,image)].green == image.backgroundColor.green && image.imageData[getPixelIndex(i-1,y,image)].red == image.backgroundColor.red;
         if (switchColor && lastOne)
         {
@@ -303,16 +301,15 @@ void fillPolygon(std::vector<vector<float>> vertices,dataImg image)
     float yMin = vertices[0][1];
     float xHighest = vertices[0][0];
     float xMin = vertices[0][0];
-    for (int i = 0; i < vertices.size(); i++){if (yHighest<vertices[i][1]){yHighest = vertices[i][1];}if (yMin>vertices[i][1]){yMin = vertices[i][1];}if (xHighest<vertices[i][0]){xHighest = vertices[i][0];}if (xMin>vertices[i][0]){xMin = vertices[i][0];}}
+    for (size_t i = 0; i < vertices.size(); i++){if (yHighest<vertices[i][1]){yHighest = vertices[i][1];}if (yMin>vertices[i][1]){yMin = vertices[i][1];}if (xHighest<vertices[i][0]){xHighest = vertices[i][0];}if (xMin>vertices[i][0]){xMin = vertices[i][0];}}
     for (int i = yMin+2; i < yHighest; i++)
     {
         if (i!=yMin && i!= yHighest)
         {
-            int enter = 0;
             std::vector<vector<float>> xs = getX1X2(xMin,xHighest,i,image);
             if(xs.size()>0&&xs.size()%2==0)
             {
-                for (int value = 0; value < xs.size()-1; value+=2)
+                for (size_t value = 0; value < xs.size()-1; value+=2)
                 {
                     makeLine(xs[value],xs[value+1],20,image);
                 }
@@ -323,7 +320,7 @@ void fillPolygon(std::vector<vector<float>> vertices,dataImg image)
             }
             else if (xs.size()>0 && xs.size()%2!=0)
             {
-                for (int value = 1; value < xs.size()-1; value++)
+                for (size_t value = 1; value < xs.size()-1; value++)
                 {
                     makeLine(xs[value],xs[value+1],20,image);
                 }
@@ -340,7 +337,7 @@ vector<Triangle> primitiveAssemblyTriangle(std::vector<std::vector<float>> & lis
 {
     Triangle triangle;
     vector<Triangle> triangles{};
-    for (int i = 0; i < listOfVectors.size()-3; i+=3)
+    for (size_t i = 0; i < listOfVectors.size()-3; i+=3)
     {
         triangle.v1 = listOfVectors[i];
         triangle.v2 = listOfVectors[i+1];
@@ -362,7 +359,7 @@ vector<float> vertexShader(std::vector<float> vertice, Matrix modelMatrix){
     return vertice;
 }
 void makePrimitiveTriangle(vector<Triangle> triangles, dataImg image) {
-    for (int i = 0; i < triangles.size(); i++)
+    for (size_t i = 0; i < triangles.size(); i++)
     {
         makeTriangle(triangles[i].v1,triangles[i].v2,triangles[i].v3, image);
     }   
@@ -408,10 +405,10 @@ vector<vector<float>> polygon1(dataImg image,vector<vector<float>> array){
 vector<vector<float>> polygon2(dataImg image,vector<vector<float>> array)
 {
     currentC.blue = 0;currentC.red = 0;currentC.green = 0;
-    int size = array.size();
-    dataImg image1;
-    image1.width = 1000;image1.height = 512;image1.imageData = new Pixel[1000*512];
-    image1.backgroundColor.blue=255;image1.backgroundColor.red=250;image1.backgroundColor.green=90;
+    // int size = array.size();
+    // dataImg image1;
+    // image1.width = 1000;image1.height = 512;image1.imageData = new Pixel[1000*512];
+    // image1.backgroundColor.blue=255;image1.backgroundColor.red=250;image1.backgroundColor.green=90;
     // clearAllImage(image);
     vector<float> vect1={321, 335};
     vector<float> vect2={288, 286}; 
@@ -476,7 +473,7 @@ vector<vector<float>> polygon5(dataImg image,vector<vector<float>> array)
 }
 vector<vector<float>> polygon4(dataImg image,vector<vector<float>> array)
 {
-    int size = array.size();
+    // int size = array.size();
     vector<vector<float>> array1;
     vector<float> vect1{413, 177}; 
     vector<float> vect2{448, 159}; 

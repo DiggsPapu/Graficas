@@ -3,7 +3,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
-#include "obj.cpp"
+#include "Classes/obj.cpp"
 int main() {
     std::string filename = "/home/dieggspapu/UVG/Graficas/10680_Dog_v2.obj";
     Obj obj(filename);
