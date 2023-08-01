@@ -12,7 +12,7 @@
 using namespace std;
 int main (){
     const std::string filename = "image2.bmp";
-    Render render(1000,512,filename);
+    Render render(3840,2160,filename);
     render.clearAllImage();
     // Vertex pos1;Vertex pos2;Vertex pos3;
     // pos1.x = 30;pos2.x = 100; pos3.x = 100;
@@ -26,7 +26,7 @@ int main (){
     // vectors.push_back(pos1);vectors.push_back(pos3);vectors.push_back(pos2);
     // render.makeTriangle(triangle,pixel);
     // render.fillPolygon(vectors,pixel);
-    Model model(500,100,100,-50,50,0,5,5,5,"/home/dieggspapu/UVG/Graficas/10680_Dog_v2.obj");
+    Model model(3840/2,2160/2,100,-50,50,0,50,50,50,"/home/dieggspapu/UVG/Graficas/Obj/10680_Dog_v2.obj");
     render.renderModel(model);
     render.writeBmp();
     return 0;

@@ -298,13 +298,20 @@ class Render {
         }
     void renderModel(Model model){
         std::vector<Face> faces = model.getFaces();std::vector<Vertex> verts = model.getVertices();std::vector<TextureCoord> cords = model.getCords();
-        std::vector<Vertex> shaderVertices;
+        Vertex vert0;Vertex vert1;Vertex vert2;Vertex vert3;Pixel pixel{90,0,200};Triangle triangle;
         for (size_t i = 0; i < faces.size(); i++)
         {
-            for (size_t j = 0; j <  faces[i].vertices.size(); j++){shaderVertices.push_back(vertexShader(verts[faces[i].vertices[j].vertexIndex-1],model.dimensMatrix));}
+            vert0 = vertexShader(verts[faces[i].vertices[0].vertexIndex-1],model.dimensMatrix);
+            vert1 = vertexShader(verts[faces[i].vertices[1].vertexIndex-1],model.dimensMatrix);
+            vert2 = vertexShader(verts[faces[i].vertices[2].vertexIndex-1],model.dimensMatrix);
+            triangle.v1 = vert0;triangle.v2 = vert1;triangle.v3 = vert2;makeTriangle(triangle,pixel);
+            if(faces[i].vertices.size()>3)
+            {
+                vert3 = vertexShader(verts[faces[i].vertices[3].vertexIndex-1],model.dimensMatrix);
+                triangle.v2 = vert3;makeTriangle(triangle,pixel);
+            }
+
         }
-        Pixel pixel{90,0,200};
-        makePrimitiveTriangle(primitiveAssemblyTriangle(shaderVertices),pixel);
     }
     Vertex vertexShader(Vertex vertice, Matrix modelMatrix){Vertex transformedV = dotProductMatrixVertex(modelMatrix,vertice);vertice.x = transformedV.x/transformedV.w;vertice.y = transformedV.y/transformedV.w;vertice.z = transformedV.z/transformedV.w;return vertice;}
     vector<Triangle> primitiveAssemblyTriangle(std::vector<Vertex> & listOfVectors)
