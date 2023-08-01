@@ -24,9 +24,6 @@ struct dataImg {
     Pixel* imageData;
     Pixel backgroundColor;
 };
-struct Vertex {
-    float x, y, z, w;
-};
 
 struct TextureCoord {
     float u, v, w;

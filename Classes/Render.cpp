@@ -22,7 +22,7 @@ class Render {
         std::string filename;
         vector<Triangle> primitiveTriangles;
         Render(int width,int height,const std::string file)
-        {filename = file;image.width = width;image.height = height;image.imageData = new Pixel[width*height];image.backgroundColor.blue=255;image.backgroundColor.red=250;image.backgroundColor.green=90;}
+        {filename = file;image.width = width;image.height = height;image.imageData = new Pixel[width*height];image.backgroundColor.blue=0;image.backgroundColor.red=0;image.backgroundColor.green=0;}
         int getPixelIndex (int x, int y){return y*image.width + x;}
         void clearAllImage(){
             for (int y = 0; y < image.height; y++)
@@ -114,7 +114,7 @@ class Render {
             {
                 if (dx>dy)
                 {
-                    cout<<"dx>dy"<<endl;
+                    // cout<<"dx>dy"<<endl;
                     std::vector<float> linearEcuation = getLinearEcuationX(pos1, pos2);
                     // printf("%f %f\n",linearEcuation[0],linearEcuation[1]);
                     int y = pos1.y;
@@ -140,7 +140,7 @@ class Render {
                 // y=4x+2
                 else if (dy>dx)
                 {
-                    cout<<"dy>dx"<<endl;
+                    // cout<<"dy>dx"<<endl;
                     std::vector<float> linearEcuation = getLinearEcuationY(pos1, pos2);
                     int x = pos1.x;
                     for (int y = pos1.y ; y <= pos2.y; y++ )
@@ -150,7 +150,7 @@ class Render {
                         image.imageData[index].red = currentC.red;
                         image.imageData[index].green = currentC.green;
                         float newx = (float)y*linearEcuation[0]-linearEcuation[1];
-                        printf("newx:%f x:%f y:%f\n",newx, (float)x, (float)y);
+                        // printf("newx:%f x:%f y:%f\n",newx, (float)x, (float)y);
                         if(newx-(float)x>=0.5)
                         {
                             x++;
@@ -180,7 +180,7 @@ class Render {
             {
                 if (abs(dx)>abs(dy))
                 {
-                    cout<<"(neg)dx>dy"<<endl;
+                    // cout<<"(neg)dx>dy"<<endl;
                     std::vector<float> linearEcuation = getLinearEcuationX(pos1, pos2);
                     // printf("%f  %f\n",linearEcuation[0],linearEcuation[1]);
                     int y = pos1.y;
@@ -191,7 +191,7 @@ class Render {
                         image.imageData[index].red = currentC.red;
                         image.imageData[index].green = currentC.green;
                         float newy = (float)x*linearEcuation[0]+linearEcuation[1];
-                        printf("newy:%f x:%d y:%f\n",newy,x,(float)y);
+                        // printf("newy:%f x:%d y:%f\n",newy,x,(float)y);
                         if(newy-(float)y<=-0.05)
                         {
                             y--;
@@ -296,6 +296,37 @@ class Render {
                 }
             }    
         }
-
-
+    void renderModel(Model model){
+        std::vector<Face> faces = model.getFaces();std::vector<Vertex> verts = model.getVertices();std::vector<TextureCoord> cords = model.getCords();
+        std::vector<Vertex> shaderVertices;
+        for (size_t i = 0; i < faces.size(); i++)
+        {
+            for (size_t j = 0; j <  faces[i].vertices.size(); j++){shaderVertices.push_back(vertexShader(verts[faces[i].vertices[j].vertexIndex-1],model.dimensMatrix));}
+        }
+        Pixel pixel{90,0,200};
+        makePrimitiveTriangle(primitiveAssemblyTriangle(shaderVertices),pixel);
+    }
+    Vertex vertexShader(Vertex vertice, Matrix modelMatrix){Vertex transformedV = dotProductMatrixVertex(modelMatrix,vertice);vertice.x = transformedV.x/transformedV.w;vertice.y = transformedV.y/transformedV.w;vertice.z = transformedV.z/transformedV.w;return vertice;}
+    vector<Triangle> primitiveAssemblyTriangle(std::vector<Vertex> & listOfVectors)
+    {
+        Triangle triangle;vector<Triangle> triangles{};
+        for (size_t i = 0; i < listOfVectors.size()-3; i+=3)
+        {
+        triangle.v1 = listOfVectors[i];
+        triangle.v2 = listOfVectors[i+1];
+        triangle.v3 = listOfVectors[i+2];
+        triangles.push_back(triangle);
+        }
+        triangle.v1 = listOfVectors[listOfVectors.size()-3];
+        triangle.v2 = listOfVectors[listOfVectors.size()-2];
+        triangle.v3 = listOfVectors[listOfVectors.size()-1];
+        triangles.push_back(triangle);
+        return triangles;
+    }
+    void makePrimitiveTriangle(vector<Triangle> triangles, Pixel color) {
+    for (size_t i = 0; i < triangles.size(); i++)
+    {
+        makeTriangle(triangles[i],color);
+    }   
+}
 };

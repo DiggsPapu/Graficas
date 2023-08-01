@@ -3,10 +3,10 @@
 #include <sstream>
 #include <string>
 #include <vector>
-#include "./Classes/obj.cpp"
+#include "./Classes/Model.cpp"
 int main() {
     std::string filename = "/home/dieggspapu/UVG/Graficas/10680_Dog_v2.obj";
-    Obj obj(filename);
+    Model obj(20,30,40,50,60,70,80,90,0,filename);
 
     // Print out the extracted data for testing purposes
     for (const auto& vertex : obj.getVertices()) {

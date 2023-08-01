@@ -18,6 +18,9 @@ using namespace std;
 struct Matrix {
     float arr[4][4];
 };
+struct Vertex {
+    float x, y, z, w;
+};
 std::vector<float> getIntersect(std::vector<float>& p1,std::vector<float>& p2)
 {
     while(p1!=p2)
@@ -126,6 +129,7 @@ vector<float> dotProductMatrixVector(Matrix matrix, vector<float> vector){
     std::vector<float> newV ={(matrix.arr[0][0]*vector[0]+matrix.arr[0][1]*vector[1]+matrix.arr[0][2]*vector[2]+matrix.arr[0][3]*1),(matrix.arr[1][0]*vector[0]+matrix.arr[1][1]*vector[1]+matrix.arr[1][2]*vector[2]+matrix.arr[1][3]*1),(matrix.arr[2][0]*vector[0]+matrix.arr[2][1]*vector[1]+matrix.arr[2][2]*vector[2]+matrix.arr[2][3]*1),(matrix.arr[3][0]*vector[0]+matrix.arr[3][1]*vector[1]+matrix.arr[3][2]*vector[2]+matrix.arr[3][3]*1)};
     return newV;
 }
+Vertex dotProductMatrixVertex(Matrix matrix, Vertex vector){Vertex newV;newV.x = (matrix.arr[0][0]*vector.x+matrix.arr[0][1]*vector.y+matrix.arr[0][2]*vector.z+matrix.arr[0][3]*vector.w);newV.y = (matrix.arr[1][0]*vector.x+matrix.arr[1][1]*vector.y+matrix.arr[1][2]*vector.z+matrix.arr[1][3]*vector.w);newV.z = (matrix.arr[2][0]*vector.x+matrix.arr[2][1]*vector.y+matrix.arr[2][2]*vector.z+matrix.arr[2][3]*vector.w);newV.w = (matrix.arr[3][0]*vector.x+matrix.arr[3][1]*vector.y+matrix.arr[3][2]*vector.z+matrix.arr[3][3]*vector.w);return newV;}
 Matrix finalObjectMatrix(Matrix traslation, Matrix rotation, Matrix scale){
     return dotProductMatrixMatrix(dotProductMatrixMatrix(traslation, rotation), scale);
 }
