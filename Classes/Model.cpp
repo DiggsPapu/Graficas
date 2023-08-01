@@ -13,11 +13,13 @@
 using namespace std;
 
 class Model {
-    private:
+    public:
         Obj object;
         Matrix dimensMatrix;
-    public:
         Model(float tX, float tY, float tZ, float rX, float rY, float rZ, float sX, float sY, float sZ, std::string filename)
         :object(filename)
         {dimensMatrix = finalObjectMatrix(getTranslationMatrix(tX,tY,tZ),rotationMatrix(rX, rY, rZ),getScaleMatrix(sX, sY, sZ));}
+        std::vector<Vertex> getVertices(){return object.getVertices();}
+        std::vector<TextureCoord> getCoords(){return object.getTextureCoords();}
+        std::vector<Face> getFaces(){return object.getFaces();}
 };

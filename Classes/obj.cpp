@@ -12,22 +12,28 @@ using namespace std;
 
 
 struct Vertex {
-    float x, y, z;
+    float x, y, z, w;
 };
 
 struct TextureCoord {
-    float u, v;
+    float u, v, w;
+};
+
+struct FaceVertex {
+    int vertexIndex;
+    int textureIndex;
+    int normalIndex;
 };
 
 struct Face {
-    int vertexIndex[3];
-    int textureIndex[3];
+    std::vector<FaceVertex> vertices;
 };
 class Obj {
     private:
         std::vector<Vertex> vertices;
         std::vector<TextureCoord> textureCoords;
         std::vector<Face> faces;
+        std::vector<Vertex> normals;
     public:
         Obj(const std::string& filename){
             std::ifstream file(filename);
@@ -41,33 +47,75 @@ class Obj {
                 std::istringstream iss(line);
                 std::string type;
                 iss >> type;
+
                 if (type == "v") {
                     Vertex vertex;
+                    vertex.w = (float)1;
                     iss >> vertex.x >> vertex.y >> vertex.z;
+                    std::string temp;
+                    iss >>temp;
+                    if(temp!="")
+                    {
+                        vertex.w = std::stof(temp);
+                    }
                     vertices.push_back(vertex);
                 } else if (type == "vt") {
                     TextureCoord texCoord;
-                    iss >> texCoord.u >> texCoord.v;
+                    texCoord.v = 0;texCoord.w = 0;
+                    iss >> texCoord.u;
+                    std::string temp;
+                    iss >>temp;
+                    if(temp!="")
+                    {
+                        texCoord.v = std::stof(temp);
+                    }
+                    iss >> temp;
+                    if(temp!="")
+                    {
+                        texCoord.w = std::stof(temp);
+                    }                    
                     textureCoords.push_back(texCoord);
+                } else if (type == "vn") {
+                    Vertex normal;
+                    iss >> normal.x >> normal.y >> normal.z;
+                    normals.push_back(normal);
                 } else if (type == "f") {
                     Face face;
-                    for (int i = 0; i < 3; ++i) {
+                    while (iss) {
                         std::string vertexInfo;
                         iss >> vertexInfo;
+                        if (vertexInfo.empty()) {
+                            break;
+                        }
+
                         std::istringstream viss(vertexInfo);
-                        viss >> face.vertexIndex[i];
+                        FaceVertex faceVertex;
+
+                        viss >> faceVertex.vertexIndex;
                         if (viss.peek() == '/') {
                             viss.ignore();
                             if (viss.peek() != '/') {
-                                viss >> face.textureIndex[i];
+                                viss >> faceVertex.textureIndex;
+                            }
+                            if (viss.peek() == '/') {
+                                viss.ignore();
+                                viss >> faceVertex.normalIndex;
                             }
                         }
+
+                        face.vertices.push_back(faceVertex);
                     }
                     faces.push_back(face);
                 }
             }
-
             file.close();
+        }
+        std::vector<Vertex> getNormals(){
+            return this->normals;
+        }
+        void setNormals(std::vector<Vertex> normals)
+        {
+            this->normals = normals;
         }
         std::vector<Vertex> getVertices(){
             return this->vertices;
@@ -111,19 +159,35 @@ class Obj {
                     TextureCoord texCoord;
                     iss >> texCoord.u >> texCoord.v;
                     textureCoords.push_back(texCoord);
+                } else if (type == "vn") {
+                    Vertex normal;
+                    iss >> normal.x >> normal.y >> normal.z;
+                    normals.push_back(normal);
                 } else if (type == "f") {
                     Face face;
-                    for (int i = 0; i < 3; ++i) {
+                    while (iss) {
                         std::string vertexInfo;
                         iss >> vertexInfo;
+                        if (vertexInfo.empty()) {
+                            break;
+                        }
+
                         std::istringstream viss(vertexInfo);
-                        viss >> face.vertexIndex[i];
+                        FaceVertex faceVertex;
+
+                        viss >> faceVertex.vertexIndex;
                         if (viss.peek() == '/') {
                             viss.ignore();
                             if (viss.peek() != '/') {
-                                viss >> face.textureIndex[i];
+                                viss >> faceVertex.textureIndex;
+                            }
+                            if (viss.peek() == '/') {
+                                viss.ignore();
+                                viss >> faceVertex.normalIndex;
                             }
                         }
+
+                        face.vertices.push_back(faceVertex);
                     }
                     faces.push_back(face);
                 }

@@ -16,7 +16,7 @@
 #include <vector>
 #include <threads.h>
 #include <list>
-#include "mathLibrary.h"
+#include "Classes/Model.cpp"
 using namespace std;
 struct Pixel {
     unsigned char red, green, blue;
@@ -568,6 +568,27 @@ vector<vector<float>> polygon4(dataImg image,vector<vector<float>> array)
     array1 = polygon5(image,array1);
     fillPolygon(array1, image);
     return array;
+}
+void renderModel(Model model){
+    std::vector<Face> faces = model.getFaces();
+    std::vector<Vertex> verts = model.getVertices();
+    std::vector<TextureCoord> cords = model.getCoords();
+    for (size_t i = 0; i < faces.size(); i++)
+    {
+        int vect;
+        for (size_t j = 0; j <  faces[i].vertices.size(); j++)
+        {
+            verts[faces[i].vertices[j].vertexIndex-1];
+        }
+        
+        int vector = faces[i].vertices[0].vertexIndex-1;
+        int vector2 = faces[i].vertices[1].vertexIndex-1;
+        int vector3 = faces[i].vertices[3].vertexIndex-1;
+        
+        
+
+    }
+    
 }
 int main (){
     const std::string filename = "image.bmp";

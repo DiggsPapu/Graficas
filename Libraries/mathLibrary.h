@@ -42,10 +42,25 @@ std::vector <float> getLinearEcuationX(std::vector<float>& pos1,std::vector<floa
     vector<float> ecuation{m,b};
     return ecuation;
 }
+std::vector<float> getLinearEcuationX(Vertex& pos1,Vertex& pos2)
+{
+    float m = ((float)pos2.y-(float)pos1.y)/((float)pos2.x-(float)pos1.x);
+    float b = (float)pos1.y-m*(float)pos1.x;
+    vector<float> ecuation{m,b};
+    return ecuation;
+}
 std::vector <float> getLinearEcuationY(std::vector<float>& pos1,std::vector<float>& pos2)
 {
     float m = ((float)pos2[1]-(float)pos1[1])/((float)pos2[0]-(float)pos1[0]);
     float b = (float)pos1[1]-m*(float)pos1[0];
+    vector<float> ecuation{1/m,b/m};
+    return ecuation;
+}
+
+std::vector <float> getLinearEcuationY(Vertex& pos1,Vertex& pos2)
+{
+    float m = ((float)pos2.y-(float)pos1.y)/((float)pos2.x-(float)pos1.x);
+    float b = (float)pos1.y-m*(float)pos1.x;
     vector<float> ecuation{1/m,b/m};
     return ecuation;
 }
