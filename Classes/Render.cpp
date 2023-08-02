@@ -13,7 +13,6 @@ struct Pixel {unsigned char red, green, blue;};
 struct BmpHeader {uint16_t signature;uint32_t filesize,reserved,dataoffset,size;int32_t width,height;uint16_t planes,bitsPerPixel;uint32_t compression,imageSize,ColorsUsed,ImportantColors;int32_t XpixelsPerM,YpixelsPerM;};
 #pragma pack(pop)
 struct dataImg {int width,height;Pixel* imageData;Pixel backgroundColor;};
-struct Triangle{Vertex v1;Vertex v2;Vertex v3;};
 // Class
 class Render {
     public:
@@ -304,36 +303,41 @@ class Render {
             vert0 = vertexShader(verts[faces[i].vertices[0].vertexIndex-1],model.dimensMatrix);
             vert1 = vertexShader(verts[faces[i].vertices[1].vertexIndex-1],model.dimensMatrix);
             vert2 = vertexShader(verts[faces[i].vertices[2].vertexIndex-1],model.dimensMatrix);
-            triangle.v1 = vert0;triangle.v2 = vert1;triangle.v3 = vert2;makeTriangle(triangle,pixel);
+            triangle.v1 = vert0;
+            triangle.v2 = vert1;triangle.v3 = vert2;makeTriangle(triangle,pixel);
             if(faces[i].vertices.size()>3)
             {
                 vert3 = vertexShader(verts[faces[i].vertices[3].vertexIndex-1],model.dimensMatrix);
-                triangle.v2 = vert3;makeTriangle(triangle,pixel);
+                triangle.v2 = vert3;
             }
-
+            renderBarycentricTriangle(triangle);
+            // makeTriangle(triangle,pixel);
         }
     }
     Vertex vertexShader(Vertex vertice, Matrix modelMatrix){Vertex transformedV = dotProductMatrixVertex(modelMatrix,vertice);vertice.x = transformedV.x/transformedV.w;vertice.y = transformedV.y/transformedV.w;vertice.z = transformedV.z/transformedV.w;return vertice;}
-    vector<Triangle> primitiveAssemblyTriangle(std::vector<Vertex> & listOfVectors)
+    void paintPoint(int x, int y, Pixel color){if (x<=image.width && y<=image.height){image.imageData[getPixelIndex(x,y)].red =color.red;image.imageData[getPixelIndex(x,y)].blue =color.blue;image.imageData[getPixelIndex(x,y)].green =color.green;}}
+    void renderBarycentricTriangle(Triangle triangle)
     {
-        Triangle triangle;vector<Triangle> triangles{};
-        for (size_t i = 0; i < listOfVectors.size()-3; i+=3)
+        Pixel col{100,0,150};
+        vector<Vertex> verts;
+        Vertex done;
+        verts.push_back(triangle.v1);verts.push_back(triangle.v2);verts.push_back(triangle.v3);
+        done = minMaxXY(verts);
+        makeTriangle(triangle,col);
+        for (int i = done.x; i < done.y; i++)
         {
-        triangle.v1 = listOfVectors[i];
-        triangle.v2 = listOfVectors[i+1];
-        triangle.v3 = listOfVectors[i+2];
-        triangles.push_back(triangle);
+            for (int j = done.z; j < done.w; j++)
+            {
+                Vertex P{(float)i,(float)j,0,0}; Vertex done1;
+                done1 = barycentriCoords(triangle,P);
+                if (0<=done1.x && 0<=done1.y && 0<=done1.z)
+                {
+                    col.red = 255*done1.x;col.blue = 255*done1.y;col.green = 255*done1.z;
+                    paintPoint((int)i,(int)j,col);
+                }
+            }
+            
         }
-        triangle.v1 = listOfVectors[listOfVectors.size()-3];
-        triangle.v2 = listOfVectors[listOfVectors.size()-2];
-        triangle.v3 = listOfVectors[listOfVectors.size()-1];
-        triangles.push_back(triangle);
-        return triangles;
+        
     }
-    void makePrimitiveTriangle(vector<Triangle> triangles, Pixel color) {
-    for (size_t i = 0; i < triangles.size(); i++)
-    {
-        makeTriangle(triangles[i],color);
-    }   
-}
 };

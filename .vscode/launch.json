@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": false,
-      "cwd": "/home/dieggspapu/UVG/Graficas",
-      "program": "/home/dieggspapu/UVG/Graficas/build/Debug/outDebug",
+      "cwd": "/home/dieggspapu/UVG/Graficas/Libraries",
+      "program": "/home/dieggspapu/UVG/Graficas/Libraries/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [

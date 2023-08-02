@@ -15,12 +15,9 @@
 #include <vector>
 #include <threads.h>
 using namespace std;
-struct Matrix {
-    float arr[4][4];
-};
-struct Vertex {
-    float x, y, z, w;
-};
+struct Matrix {float arr[4][4];};
+struct Vertex {float x, y, z, w;};
+struct Triangle{Vertex v1;Vertex v2;Vertex v3;};
 std::vector<float> getIntersect(std::vector<float>& p1,std::vector<float>& p2)
 {
     while(p1!=p2)
@@ -139,4 +136,63 @@ void printVector(vector<float> vector){
         cout<<vector[i]<<" ";
     }
     cout<<endl;    
+}
+// Function to calculate the cross product of two vectors
+float crossProduct(Vertex v1, Vertex v2) {return (v1.x * v2.y) - (v1.y * v2.x);}
+// Function to check if three vertices form a counterclockwise order
+bool isCounterClockWise(Vertex A, Vertex B, Vertex C) {
+    Vertex AB = {B.x - A.x, B.y - A.y,1,1};
+    Vertex BC = {C.x - B.x, C.y - B.y,1,1};
+    float cross_product = crossProduct(AB, BC);
+    return cross_product > 0.0f;
+}
+int orderCounterClockWise(Vertex A, Vertex B, Vertex C)
+{
+    if(isCounterClockWise(A,B,C)){return 0;}
+    if(isCounterClockWise(A,C,B)){return 1;}
+    if(isCounterClockWise(B,A,C)){return 2;}
+    if(isCounterClockWise(B,C,A)){return 3;}
+    if(isCounterClockWise(C,A,B)){return 4;}
+    return 5;
+}
+Vertex barycentriCoords(Triangle triangle, Vertex P){
+    // Ordering vertex;
+    Vertex v1 =triangle.v1; Vertex v2 = triangle.v2; Vertex v3 = triangle.v3;Vertex v4;
+    float PCB = abs((v2.y-v3.y)*(P.x-v3.x)+(v3.x-v2.x)*(P.y-v3.y));
+    float ACP = abs((v3.y-v1.y)*(P.x-v3.x)+(v1.x-v3.x)*(P.y-v3.y));
+    float ABC = abs((v2.y-v3.y)*(v1.x-v3.x)+(v3.x-v2.x)*(v1.y-v3.y));
+    v4.x = PCB/ABC;v4.y = ACP/ABC; v4.z = 1-v4.x-v4.y;
+    return v4;
+    // switch (orderCounterClockWise(triangle.v1,triangle.v2,triangle.v3))
+    // {
+    // case 0:
+        
+    //     break;
+    // case 1:
+    //     break;
+    
+    // case 2:
+    //     break;
+    
+    // case 3:
+    //     break;
+    // case 4:
+    //     break;
+    // default:
+    //     break;
+    // }
+}
+Vertex minMaxXY(vector<Vertex> verts)
+{
+    float minX = verts[0].x;float maxX = verts[0].x;
+    float minY = verts[0].y;float maxY = verts[0].y;
+    for(auto& vec :verts )
+    {
+        if(minX>vec.x){minX = vec.x;}
+        if(maxX<vec.x){maxX=vec.x;}
+        if(minY>vec.y){minY = vec.y;}
+        if(maxY<vec.y){maxY=vec.y;}
+    }
+    Vertex done{minX,maxX,minY,maxY};
+    return done;
 }
