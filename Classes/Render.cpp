@@ -304,26 +304,30 @@ class Render {
             vert1 = vertexShader(verts[faces[i].vertices[1].vertexIndex-1],model.dimensMatrix);
             vert2 = vertexShader(verts[faces[i].vertices[2].vertexIndex-1],model.dimensMatrix);
             triangle.v1 = vert0;
-            triangle.v2 = vert1;triangle.v3 = vert2;makeTriangle(triangle,pixel);
+            triangle.v2 = vert1;triangle.v3 = vert2;
             if(faces[i].vertices.size()>3)
             {
                 vert3 = vertexShader(verts[faces[i].vertices[3].vertexIndex-1],model.dimensMatrix);
                 triangle.v2 = vert3;
             }
             renderBarycentricTriangle(triangle);
-            // makeTriangle(triangle,pixel);
         }
     }
-    Vertex vertexShader(Vertex vertice, Matrix modelMatrix){Vertex transformedV = dotProductMatrixVertex(modelMatrix,vertice);vertice.x = transformedV.x/transformedV.w;vertice.y = transformedV.y/transformedV.w;vertice.z = transformedV.z/transformedV.w;return vertice;}
+    Vertex vertexShader(Vertex vertice, Matrix modelMatrix){
+        Vertex transformedV = dotProductMatrixVertex(modelMatrix,vertice);
+        vertice.x = transformedV.x/transformedV.w;
+        vertice.y = transformedV.y/transformedV.w;
+        vertice.z = transformedV.z/transformedV.w;
+        return vertice;
+    }
     void paintPoint(int x, int y, Pixel color){if (x<=image.width && y<=image.height){image.imageData[getPixelIndex(x,y)].red =color.red;image.imageData[getPixelIndex(x,y)].blue =color.blue;image.imageData[getPixelIndex(x,y)].green =color.green;}}
     void renderBarycentricTriangle(Triangle triangle)
     {
-        Pixel col{100,0,150};
+        Pixel col{0,0,0};
         vector<Vertex> verts;
         Vertex done;
         verts.push_back(triangle.v1);verts.push_back(triangle.v2);verts.push_back(triangle.v3);
         done = minMaxXY(verts);
-        makeTriangle(triangle,col);
         for (int i = done.x; i < done.y; i++)
         {
             for (int j = done.z; j < done.w; j++)
@@ -336,7 +340,6 @@ class Render {
                     paintPoint((int)i,(int)j,col);
                 }
             }
-            
         }
         
     }
