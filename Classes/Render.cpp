@@ -12,7 +12,7 @@ struct Pixel {unsigned char red, green, blue;};
 #pragma pack(push, 1)
 struct BmpHeader {uint16_t signature;uint32_t filesize,reserved,dataoffset,size;int32_t width,height;uint16_t planes,bitsPerPixel;uint32_t compression,imageSize,ColorsUsed,ImportantColors;int32_t XpixelsPerM,YpixelsPerM;};
 #pragma pack(pop)
-struct dataImg {int width,height;Pixel* imageData;Pixel backgroundColor;};
+struct dataImg {int width,height;Pixel* imageData;Pixel backgroundColor;float* zbuffer;};
 // Class
 class Render {
     public:
@@ -21,7 +21,7 @@ class Render {
         std::string filename;
         vector<Triangle> primitiveTriangles;
         Render(int width,int height,const std::string file)
-        {filename = file;image.width = width;image.height = height;image.imageData = new Pixel[width*height];image.backgroundColor.blue=0;image.backgroundColor.red=0;image.backgroundColor.green=0;}
+        {filename = file;image.width = width;image.height = height;image.imageData = new Pixel[width*height];image.zbuffer = new float[width*height];image.backgroundColor.blue=0;image.backgroundColor.red=0;image.backgroundColor.green=0;}
         int getPixelIndex (int x, int y){return y*image.width + x;}
         void clearAllImage(){
             for (int y = 0; y < image.height; y++)
@@ -32,6 +32,7 @@ class Render {
                     image.imageData[pixelIndex].blue = image.backgroundColor.blue;
                     image.imageData[pixelIndex].red = image.backgroundColor.red;
                     image.imageData[pixelIndex].green = image.backgroundColor.green;
+                    image.zbuffer[pixelIndex] = INFINITY;
                 }
             }
         }
@@ -334,10 +335,15 @@ class Render {
             {
                 Vertex P{(float)i,(float)j,0,0}; Vertex done1;
                 done1 = barycentriCoords(triangle,P);
-                if (0<=done1.x && 0<=done1.y && 0<=done1.z)
+                if (0<=done1.x && done1.x<=1 && 0<=done1.y && done1.y<=1 && 0<=done1.z && done1.z<=1)
                 {
-                    col.red = 255*done1.x;col.blue = 255*done1.y;col.green = 255*done1.z;
-                    paintPoint((int)i,(int)j,col);
+                    float z = done1.x*triangle.v1.z+done1.y*triangle.v2.z+done1.z*triangle.v3.z;
+                    if (z<image.zbuffer[getPixelIndex(i,j)])
+                    {
+                        image.zbuffer[getPixelIndex(i,j)] = z;
+                        col.red = 255*done1.x;col.blue = 255*done1.y;col.green = 255*done1.z;
+                        paintPoint((int)i,(int)j,col);
+                    }
                 }
             }
         }
