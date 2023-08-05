@@ -349,10 +349,16 @@ class Render {
                     if (z<image.zbuffer[getPixelIndex(i,j)])
                     {
                         image.zbuffer[getPixelIndex(i,j)] = z;
-                        // col.red = 255*done1.x;col.blue = 255*done1.y;col.green = 255*done1.z;
-                        float u = done1.x*textureCoords[0].u+done1.y*textureCoords[1].u+done1.z*textureCoords[2].u;
-                        float v = done1.x*textureCoords[0].v+done1.y*textureCoords[1].v+done1.z*textureCoords[2].v;
-                        col = activeTexture.getColor(u,v);
+                        if (multicolor)
+                        {
+                            col.red = 255*done1.x;col.blue = 255*done1.y;col.green = 255*done1.z;
+                        }
+                        else
+                        {
+                            float u = done1.x*textureCoords[0].u+done1.y*textureCoords[1].u+done1.z*textureCoords[2].u;
+                            float v = done1.x*textureCoords[0].v+done1.y*textureCoords[1].v+done1.z*textureCoords[2].v;
+                            col = activeTexture.getColor(u,v);
+                        }
                         paintPoint((int)i,(int)j,col);
                     }
                 }
