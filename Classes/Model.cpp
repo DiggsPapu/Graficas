@@ -31,6 +31,7 @@ class Model {
         std::vector<TextureCoord> textureCoords;
         std::vector<Face> faces;
         std::vector<Vertex> normals;
+        Texture texture;
         Model(float tX, float tY, float tZ, float rX, float rY, float rZ, float sX, float sY, float sZ, const std::string& filename)
         {
             dimensMatrix = finalObjectMatrix(getTranslationMatrix(tX,tY,tZ),rotationMatrix(rX, rY, rZ),getScaleMatrix(sX, sY, sZ));
@@ -139,6 +140,10 @@ class Model {
         void setFaces(std::vector<Face>Faces)
         {
             this->faces = Faces;
+        }
+        void loadTexture(Texture texture)
+        {
+            this->texture = texture;
         }
         void parseOBJ(const std::string& filename) {
             std::ifstream file(filename);
