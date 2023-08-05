@@ -14,8 +14,8 @@ private:
     int height;
     Pixel* colors;
     std::vector<std::vector<std::vector<float>>> pixels;
-
 public:
+    Texture(){}
     Texture(const std::string& filename) {
         std::ifstream image(filename, std::ios::binary);
         if (!image) {
@@ -41,9 +41,7 @@ public:
                 image.read(reinterpret_cast<char*>(&b), 1);
                 image.read(reinterpret_cast<char*>(&g), 1);
                 image.read(reinterpret_cast<char*>(&r), 1);
-                colors[getPixelIndex(x,y)].red = static_cast<float>(r) / 255.0f;
-                colors[getPixelIndex(x,y)].green = static_cast<float>(g) / 255.0f;
-                colors[getPixelIndex(x,y)].blue = static_cast<float>(b) / 255.0f;
+                colors[getPixelIndex(x,y)]= Pixel{(unsigned char)((float)r*255),(unsigned char)((float)g*255),(unsigned char)((float)b*255)};
             }
         }
     }

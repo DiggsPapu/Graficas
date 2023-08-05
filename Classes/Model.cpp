@@ -9,6 +9,7 @@
 #include <threads.h>
 #include <list>
 #include "../Libraries/mathLibrary.h"
+#include "Texture.cpp"
 using namespace std;
 struct TextureCoord {
     float u, v, w;
@@ -25,14 +26,15 @@ struct Face {
 };
 
 class Model {
+    private:
+    Texture texture;
     public:
         Matrix dimensMatrix;
         std::vector<Vertex> vertices;
         std::vector<TextureCoord> textureCoords;
         std::vector<Face> faces;
         std::vector<Vertex> normals;
-        Texture texture;
-        Model(float tX, float tY, float tZ, float rX, float rY, float rZ, float sX, float sY, float sZ, const std::string& filename)
+        Model(float tX, float tY, float tZ, float rX, float rY, float rZ, float sX, float sY, float sZ, const std::string& filename,Texture texture1)
         {
             dimensMatrix = finalObjectMatrix(getTranslationMatrix(tX,tY,tZ),rotationMatrix(rX, rY, rZ),getScaleMatrix(sX, sY, sZ));
             std::ifstream file(filename);
@@ -109,6 +111,7 @@ class Model {
             }
             file.close();
         }
+        Texture getTexture(){return this->texture;}
         std::vector<TextureCoord> getCords(){return this->textureCoords;}
         void setCords(std::vector<TextureCoord> cords){
             this->textureCoords = cords;

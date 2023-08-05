@@ -7,7 +7,7 @@
 #include <threads.h>
 #include <list>
 #include "Model.cpp"
-#include "Texture.cpp"
+// #include "Shader.h"
 // Structs
 
 struct BmpHeader {uint16_t signature;uint32_t filesize,reserved,dataoffset,size;int32_t width,height;uint16_t planes,bitsPerPixel;uint32_t compression,imageSize,ColorsUsed,ImportantColors;int32_t XpixelsPerM,YpixelsPerM;};
@@ -20,6 +20,7 @@ class Render {
         BmpHeader header;
         std::string filename;
         vector<Triangle> primitiveTriangles;
+        Texture activeTexture;
         Render(int width,int height,const std::string file)
         {filename = file;image.width = width;image.height = height;image.imageData = new Pixel[width*height];image.zbuffer = new float[width*height];image.backgroundColor.blue=0;image.backgroundColor.red=0;image.backgroundColor.green=0;}
         int getPixelIndex (int x, int y){return y*image.width + x;}
@@ -296,22 +297,29 @@ class Render {
                 }
             }    
         }
-    void renderModel(Model model){
+    void renderModel(Model model, bool multicolor){
         std::vector<Face> faces = model.getFaces();std::vector<Vertex> verts = model.getVertices();std::vector<TextureCoord> cords = model.getCords();
         Vertex vert0;Vertex vert1;Vertex vert2;Vertex vert3;Pixel pixel{90,0,200};Triangle triangle;
+        TextureCoord vt0;TextureCoord vt1;TextureCoord vt2;TextureCoord vt3;
+        activeTexture = model.getTexture();
         for (size_t i = 0; i < faces.size(); i++)
         {
             vert0 = vertexShader(verts[faces[i].vertices[0].vertexIndex-1],model.dimensMatrix);
             vert1 = vertexShader(verts[faces[i].vertices[1].vertexIndex-1],model.dimensMatrix);
             vert2 = vertexShader(verts[faces[i].vertices[2].vertexIndex-1],model.dimensMatrix);
-            triangle.v1 = vert0;
-            triangle.v2 = vert1;triangle.v3 = vert2;
+            triangle.v1 = vert0;triangle.v2 = vert1;triangle.v3 = vert2;
+            vt0 = model.getCords()[faces[i].vertices[0].textureIndex-1];
+            vt1 = model.getCords()[faces[i].vertices[1].textureIndex-1];
+            vt2 = model.getCords()[faces[i].vertices[2].textureIndex-1];
+            vector<TextureCoord> textureCoords{vt0,vt1,vt2};
             if(faces[i].vertices.size()>3)
             {
                 vert3 = vertexShader(verts[faces[i].vertices[3].vertexIndex-1],model.dimensMatrix);
+                vt3 = model.getCords()[faces[i].vertices[3].textureIndex-1];
+                textureCoords.push_back(vt3);
                 triangle.v2 = vert3;
             }
-            renderBarycentricTriangle(triangle);
+            renderBarycentricTriangle(triangle,textureCoords, multicolor);
         }
     }
     Vertex vertexShader(Vertex vertice, Matrix modelMatrix){
@@ -322,7 +330,7 @@ class Render {
         return vertice;
     }
     void paintPoint(int x, int y, Pixel color){if (x<=image.width && y<=image.height){image.imageData[getPixelIndex(x,y)].red =color.red;image.imageData[getPixelIndex(x,y)].blue =color.blue;image.imageData[getPixelIndex(x,y)].green =color.green;}}
-    void renderBarycentricTriangle(Triangle triangle)
+    void renderBarycentricTriangle(Triangle triangle, vector<TextureCoord> textureCoords, bool multicolor)
     {
         Pixel col{0,0,0};
         vector<Vertex> verts;
@@ -341,7 +349,10 @@ class Render {
                     if (z<image.zbuffer[getPixelIndex(i,j)])
                     {
                         image.zbuffer[getPixelIndex(i,j)] = z;
-                        col.red = 255*done1.x;col.blue = 255*done1.y;col.green = 255*done1.z;
+                        // col.red = 255*done1.x;col.blue = 255*done1.y;col.green = 255*done1.z;
+                        float u = done1.x*textureCoords[0].u+done1.y*textureCoords[1].u+done1.z*textureCoords[2].u;
+                        float v = done1.x*textureCoords[0].v+done1.y*textureCoords[1].v+done1.z*textureCoords[2].v;
+                        col = activeTexture.getColor(u,v);
                         paintPoint((int)i,(int)j,col);
                     }
                 }
