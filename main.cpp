@@ -11,7 +11,7 @@
 
 using namespace std;
 int main (){
-    const std::string filename = "./Image/image4.bmp";
+    const std::string filename = "./Image/image3.bmp";
     Render render(3840,2160,filename);
     render.clearAllImage();
     Vertex pos1;Vertex pos2;Vertex pos3;
@@ -27,10 +27,10 @@ int main (){
     // vectors.push_back(pos1);vectors.push_back(pos3);vectors.push_back(pos2);
     // render.makeTriangle(triangle,pixel);
     // render.fillPolygon(vectors,pixel);
-    Texture texture1("/home/dieggspapu/UVG/Graficas/Textures/PIEDRA_MURO_PUNTA-SAL_1.bmp");
+    // Texture texture1("/home/dieggspapu/UVG/Graficas/Textures/PIEDRA_MURO_PUNTA-SAL_1.bmp");
     // Texture texture1("/home/dieggspapu/UVG/Graficas/Textures/dog.bmp");
-    // Texture texture1("/home/dieggspapu/UVG/Graficas/Textures/Brick2.bmp");
-    Model model(3840/2,700,100,90,90,90,50,50,50,"/home/dieggspapu/UVG/Graficas/Obj/10680_Dog_v2.obj",texture1);
+    Texture texture1("/home/dieggspapu/UVG/Graficas/Textures/Brick2.bmp");
+    Model model(3840/2,700,100,-50,90,90,50,50,50,"/home/dieggspapu/UVG/Graficas/Obj/10680_Dog_v2.obj",texture1);
     model.loadTexture(texture1);
     render.renderModel(model, false);
     render.writeBmp();
