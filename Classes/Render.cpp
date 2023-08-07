@@ -346,20 +346,24 @@ class Render {
                 if (0<=done1.x && done1.x<=1 && 0<=done1.y && done1.y<=1 && 0<=done1.z && done1.z<=1)
                 {
                     float z = done1.x*triangle.v1.z+done1.y*triangle.v2.z+done1.z*triangle.v3.z;
-                    if (z<image.zbuffer[getPixelIndex(i,j)])
+                    // printf("i:%d j:%d\n",i,j);
+                    if (i>=0 && j>=0)
                     {
-                        image.zbuffer[getPixelIndex(i,j)] = z;
-                        if (multicolor)
+                        if (z<image.zbuffer[getPixelIndex(i,j)])
                         {
-                            col.red = 255*done1.x;col.blue = 255*done1.y;col.green = 255*done1.z;
+                            image.zbuffer[getPixelIndex(i,j)] = z;
+                            if (multicolor)
+                            {
+                                col.red = 255*done1.x;col.blue = 255*done1.y;col.green = 255*done1.z;
+                            }
+                            else
+                            {
+                                float u = done1.x*textureCoords[0].u+done1.y*textureCoords[1].u+done1.z*textureCoords[2].u;
+                                float v = done1.x*textureCoords[0].v+done1.y*textureCoords[1].v+done1.z*textureCoords[2].v;
+                                col = activeTexture.getColor(u,v);
+                            }
+                            paintPoint((int)i,(int)j,col);
                         }
-                        else
-                        {
-                            float u = done1.x*textureCoords[0].u+done1.y*textureCoords[1].u+done1.z*textureCoords[2].u;
-                            float v = done1.x*textureCoords[0].v+done1.y*textureCoords[1].v+done1.z*textureCoords[2].v;
-                            col = activeTexture.getColor(u,v);
-                        }
-                        paintPoint((int)i,(int)j,col);
                     }
                 }
             }

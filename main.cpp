@@ -28,7 +28,9 @@ int main (){
     // render.makeTriangle(triangle,pixel);
     // render.fillPolygon(vectors,pixel);
     Texture texture1("/home/dieggspapu/UVG/Graficas/Textures/PIEDRA_MURO_PUNTA-SAL_1.bmp");
-    Model model(3840/2,700,100,0,-50,180,30,50,50,"/home/dieggspapu/UVG/Graficas/Obj/10680_Dog_v2.obj",texture1);
+    // Texture texture1("/home/dieggspapu/UVG/Graficas/Textures/dog.bmp");
+    // Texture texture1("/home/dieggspapu/UVG/Graficas/Textures/Brick2.bmp");
+    Model model(3840/2,700,100,90,90,90,50,50,50,"/home/dieggspapu/UVG/Graficas/Obj/10680_Dog_v2.obj",texture1);
     model.loadTexture(texture1);
     render.renderModel(model, false);
     render.writeBmp();

@@ -8,8 +8,8 @@
 #include <vector>
 #include <threads.h>
 #include <list>
-#include "../Libraries/mathLibrary.h"
 #include "Texture.cpp"
+#include "ViewPort.cpp"
 using namespace std;
 struct TextureCoord {
     float u, v, w;
@@ -29,20 +29,24 @@ class Model {
     private:
     Texture texture;
     public:
-        Matrix dimensMatrix;
+        Matrix dimensMatrix, translationMatrix, rotMatrix, scaleMatrix, camMatrix, viewMatrix;
         std::vector<Vertex> vertices;
         std::vector<TextureCoord> textureCoords;
         std::vector<Face> faces;
         std::vector<Vertex> normals;
         Model(float tX, float tY, float tZ, float rX, float rY, float rZ, float sX, float sY, float sZ, const std::string& filename,Texture texture1)
         {
-            dimensMatrix = finalObjectMatrix(getTranslationMatrix(tX,tY,tZ),rotationMatrix(rX, rY, rZ),getScaleMatrix(sX, sY, sZ));
+            translationMatrix = getTranslationMatrix(tX,tY,tZ);rotMatrix = rotationMatrix(rX, rY, rZ);scaleMatrix = getScaleMatrix(sX, sY, sZ);
+            camMatrix = dotProductMatrixMatrix(translationMatrix, rotMatrix);viewMatrix = getIdentityMatrix();
+            vector<vector<float>> tempCamM = matrixToVector(camMatrix);
+            vector<vector<float>> tempViewM = matrixToVector(viewMatrix);
+            inverseGaussJordan(tempCamM, tempViewM);
+            dimensMatrix = finalObjectMatrix(translationMatrix,rotMatrix,scaleMatrix);
             std::ifstream file(filename);
             if (!file) {
                 std::cerr << "Error opening file: " << filename << std::endl;
                 return;
             }
-
             std::string line;
             while (std::getline(file, line)) {
                 std::istringstream iss(line);

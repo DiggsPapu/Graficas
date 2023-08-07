@@ -38,23 +38,33 @@ public:
         for (int y = 0; y < height; ++y) {
             for (int x = 0; x < width; ++x) {
                 unsigned char r, g, b;
-                image.read(reinterpret_cast<char*>(&b), 1);
-                image.read(reinterpret_cast<char*>(&g), 1);
                 image.read(reinterpret_cast<char*>(&r), 1);
-                colors[getPixelIndex(x,y)]= Pixel{(unsigned char)((float)r*255),(unsigned char)((float)g*255),(unsigned char)((float)b*255)};
+                image.read(reinterpret_cast<char*>(&g), 1);
+                image.read(reinterpret_cast<char*>(&b), 1);
+                
+                // Normalize the color values to the range [0, 1] and store in the colors array
+                colors[getPixelIndex(x, y)] = Pixel{
+                    static_cast<unsigned char>((float)r),
+                    static_cast<unsigned char>((float)g),
+                    static_cast<unsigned char>((float)b)
+                };
             }
         }
     }
     int getPixelIndex (int x, int y){return y*width + x;}
-    Pixel getColor(float u,float v)
-    {
+    Pixel getColor(float u, float v) {
         if (0 <= u && u < 1 && 0 <= v && v < 1) {
             int x = static_cast<int>(u * width);
             int y = static_cast<int>(v * height);
-            return colors[getPixelIndex(x,y)];
-        }
-        else {
-            return Pixel {0,0,0};
+            Pixel pixel{
+                static_cast<unsigned char>(colors[getPixelIndex(x, y)].red ),
+                static_cast<unsigned char>(colors[getPixelIndex(x, y)].green),
+                static_cast<unsigned char>(colors[getPixelIndex(x, y)].blue)
+            };
+            // Convert the normalized colors back to [0, 255]
+            return pixel;
+        } else {
+            return Pixel{0, 0, 0};
         }
     }
 };

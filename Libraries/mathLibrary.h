@@ -163,24 +163,6 @@ Vertex barycentriCoords(Triangle triangle, Vertex P){
     float ABC = abs((v2.y-v3.y)*(v1.x-v3.x)+(v3.x-v2.x)*(v1.y-v3.y));
     v4.x = PCB/ABC;v4.y = ACP/ABC; v4.z = 1-v4.x-v4.y;
     return v4;
-    // switch (orderCounterClockWise(triangle.v1,triangle.v2,triangle.v3))
-    // {
-    // case 0:
-        
-    //     break;
-    // case 1:
-    //     break;
-    
-    // case 2:
-    //     break;
-    
-    // case 3:
-    //     break;
-    // case 4:
-    //     break;
-    // default:
-    //     break;
-    // }
 }
 Vertex minMaxXY(vector<Vertex> verts)
 {
@@ -195,4 +177,113 @@ Vertex minMaxXY(vector<Vertex> verts)
     }
     Vertex done{minX,maxX,minY,maxY};
     return done;
+}
+double determinant(const std::vector<std::vector<double>>& matrix) {
+    int n = matrix.size();
+    
+    // Base case: for a 1x1 matrix, the determinant is the only element
+    if (n == 1) {
+        return matrix[0][0];
+    }
+    
+    double det = 0;
+    int sign = 1;
+    
+    for (int i = 0; i < n; ++i) {
+        // Create a submatrix excluding the current row and column
+        std::vector<std::vector<double>> subMatrix(n - 1, std::vector<double>(n - 1));
+        
+        for (int row = 1; row < n; ++row) {
+            int colIndex = 0;
+            for (int col = 0; col < n; ++col) {
+                if (col != i) {
+                    subMatrix[row - 1][colIndex] = matrix[row][col];
+                    colIndex++;
+                }
+            }
+        }
+        
+        // Recursive call to calculate the determinant of the submatrix
+        det += sign * matrix[0][i] * determinant(subMatrix);
+        
+        // Alternate sign for each term
+        sign = -sign;
+    }
+    
+    return det;
+}
+bool inverseGaussJordan(std::vector<std::vector<float>>& matrix, std::vector<std::vector<float>>& inverse) {
+    int n = matrix.size();
+    
+    // Create an augmented matrix [matrix | identity]
+    std::vector<std::vector<float>> augmented(n, std::vector<float>(2 * n));
+    
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < n; ++j) {
+            augmented[i][j] = matrix[i][j];
+        }
+        augmented[i][i + n] = 1;
+    }
+    
+    // Perform row operations to transform the left side of the augmented matrix into the identity matrix
+    for (int i = 0; i < n; ++i) {
+        if (augmented[i][i] == 0) {
+            // If the diagonal element is zero, the matrix is singular, and its inverse does not exist
+            return false;
+        }
+        
+        // Make the diagonal element 1
+        float divisor = augmented[i][i];
+        for (int j = 0; j < 2 * n; ++j) {
+            augmented[i][j] /= divisor;
+        }
+        
+        // Make all other elements in the current column zero
+        for (int k = 0; k < n; ++k) {
+            if (k != i) {
+                double factor = augmented[k][i];
+                for (int j = 0; j < 2 * n; ++j) {
+                    augmented[k][j] -= factor * augmented[i][j];
+                }
+            }
+        }
+    }
+    
+    // Copy the right half of the augmented matrix (inverse of the input matrix) to the 'inverse' matrix
+    inverse.resize(n, std::vector<float>(n));
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < n; ++j) {
+            inverse[i][j] = augmented[i][j + n];
+        }
+    }
+    return true;
+}
+vector<vector<float>> matrixToVector(const Matrix& matrix){
+    vector<vector<float>> newMatrix;
+    for (size_t i = 0; i < 4; i++)
+    {
+        vector<float> row;
+        for (size_t j = 0; j < 4; j++)
+        {
+            row.push_back(matrix.arr[i][j]);
+        }
+        newMatrix.push_back(row);
+    }
+    return newMatrix;
+}
+Matrix vectorToMatrix(const vector<vector<float>> vector){
+    Matrix matrix;
+    if (vector.size()!=4||vector[0].size()!=4)
+    {
+        return matrix;
+    }
+    for (size_t i = 0; i < vector.size(); i++)
+    {
+        for (size_t j = 0; j < vector[i].size(); j++)
+        {
+            matrix.arr[i][j] = vector[i][j];
+        }
+    }
+    return matrix;
+    
 }
