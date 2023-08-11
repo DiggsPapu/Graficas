@@ -177,28 +177,6 @@ void printVertex(Vertex vector)
 {
     cout<<vector.x<<" "<<vector.y<<" "<<vector.z<<" "<<vector.w<<endl;    
 }
-// Function to calculate the cross product of two vectors
-float crossProduct(Vertex v1, Vertex v2)
-{
-    return (v1.x * v2.y) - (v1.y * v2.x);
-}
-// Function to check if three vertices form a counterclockwise order
-bool isCounterClockWise(Vertex A, Vertex B, Vertex C) 
-{
-    Vertex AB = {B.x - A.x, B.y - A.y,1,1};
-    Vertex BC = {C.x - B.x, C.y - B.y,1,1};
-    float cross_product = crossProduct(AB, BC);
-    return cross_product > 0.0f;
-}
-int orderCounterClockWise(Vertex A, Vertex B, Vertex C)
-{
-    if(isCounterClockWise(A,B,C)){return 0;}
-    if(isCounterClockWise(A,C,B)){return 1;}
-    if(isCounterClockWise(B,A,C)){return 2;}
-    if(isCounterClockWise(B,C,A)){return 3;}
-    if(isCounterClockWise(C,A,B)){return 4;}
-    return 5;
-}
 Matrix matrixMatrixMultiplication(const Matrix& m1, const Matrix& m2) 
 {
     Matrix result;
@@ -349,4 +327,23 @@ Matrix vectorToMatrix(const vector<vector<float>> vector)
     }
     return matrix;
     
+}
+void normalizeVertex(Vertex& v) {
+    // Compute the length of the vector
+    float length = std::sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
+    
+    // Normalize the vertex components
+    v.x /= length;
+    v.y /= length;
+    v.z /= length;
+}
+Vertex crossProduct(const Vertex& u, const Vertex& v) {
+    Vertex result;
+    
+    result.x = u.y * v.z - u.z * v.y;
+    result.y = u.z * v.x - u.x * v.z;
+    result.z = u.x * v.y - u.y * v.x;
+    result.w = 0.0f; // Assuming w component is not used for the cross product
+    
+    return result;
 }

@@ -1,11 +1,4 @@
-#include <iostream>
-#include <cstdlib>
-#include <fstream>
-#include <cmath>
-#include <algorithm>
 #include <vector>
-#include <threads.h>
-#include <list>
 #include "Model.cpp"
 #include "../Libraries/mathLibrary.h"
 #include "../Libraries/structs.h"
@@ -390,8 +383,12 @@ class Render {
             }
         }
     }
-    void loadCamera(float width,float height, float x, float y )
+    void loadCamera(float tx,float ty, float tz, float rx, float ry, float rz )
     {
-        camera = Camera(width, height, x, y );
+        camera = Camera(tx, ty, tz, rx, ry, rz);
+    }
+    void lookAt(float campX, float campY, float campZ, float eyeX, float eyeY, float eyeZ)
+    {
+        camera.lookAt(campX, campY, campZ, eyeX, eyeY, eyeZ);
     }
 };
