@@ -369,7 +369,6 @@ class Render {
                     if (0<=i&& i<image.width && 0<=j&& j<image.height )
                     {
                         float value = image.zbuffer[index];
-                        // cout<<index<<" "<<value<<endl;
                         
                         if (z<image.zbuffer[getPixelIndex((int)i,(int)j)])
                         {
@@ -390,5 +389,9 @@ class Render {
                 }
             }
         }
+    }
+    void loadCamera(float width,float height, float x, float y )
+    {
+        camera = Camera(width, height, x, y );
     }
 };
