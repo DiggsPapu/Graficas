@@ -9,6 +9,7 @@
 #include "Model.cpp"
 #include "../Libraries/mathLibrary.h"
 #include "../Libraries/structs.h"
+#include "Camera.cpp"
 // #include "Shader.h"
 // Structs
 
@@ -37,6 +38,7 @@ class Render {
         std::string filename;
         vector<Triangle> primitiveTriangles;
         Texture activeTexture;
+        Camera camera = Camera();
         Render(int width,int height,const std::string file)
         {filename = file;image.width = width;image.height = height;image.imageData = new Pixel[width*height];image.zbuffer = new float[width*height];image.backgroundColor.blue=255;image.backgroundColor.red=255;image.backgroundColor.green=255;}
         int getPixelIndex (int x, int y){return y*image.width + x;}
@@ -76,6 +78,7 @@ class Render {
             const unsigned char* rawData = reinterpret_cast<const unsigned char*>(image.imageData);
             file.write(reinterpret_cast<const char*>(rawData), image.width * image.height * 3);
             file.close();
+            delete rawData;
         }
         void makeLine(Vertex pos1, Vertex pos2, Pixel currentC){
             Vertex pos11 = pos1;Vertex pos22 = pos2;
@@ -318,28 +321,6 @@ class Render {
         Vertex vert0;Vertex vert1;Vertex vert2;Vertex vert3;Pixel pixel{90,0,200};Triangle triangle;
         TextureCoord vt0;TextureCoord vt1;TextureCoord vt2;TextureCoord vt3;
         activeTexture = model->getTexture();
-        // cout<<"VP"<<endl;
-        // printMatrix(model->viewport.viewPortMatrix);
-        // cout<<"P"<<endl;
-        // printMatrix(model->viewport.projectionMatrix);
-        // cout<<"VP*P"<<endl;
-        // printMatrix(matrixMatrixMultiplication(model->viewport.viewPortMatrix, model->viewport.projectionMatrix));
-        cout<<"Translation M"<<endl;
-        printMatrix(model->translationMatrix);
-        cout<<"Rotation M"<<endl;
-        printMatrix(model->rotMatrix);
-        cout<<"Scale M"<<endl;
-        printMatrix(model->scaleMatrix);
-        // cout<<"C"<<endl;
-        // printMatrix(model->camMatrix);
-        // cout<<"VM"<<endl;
-        // printMatrix(model->viewMatrix);
-        // cout<<"VP*P*VM"<<endl;
-        // printMatrix(matrixMatrixMultiplication(matrixMatrixMultiplication(model->viewport.viewPortMatrix, model->viewport.projectionMatrix),model->viewMatrix));
-        cout<<"M"<<endl;
-        printMatrix(model->glMatrix);
-        // cout<<"VP*P*VM*M"<<endl;
-        // printMatrix(matrixMatrixMultiplication(matrixMatrixMultiplication(matrixMatrixMultiplication(model->viewport.viewPortMatrix,model->viewport.projectionMatrix),model->viewMatrix),model->glMatrix));
         for (size_t i = 0; i < faces.size(); i++)
         {
             vert0 = vertexShader(verts[faces[i].vertices[0].vertexIndex-1],model);
@@ -361,16 +342,7 @@ class Render {
         }
     }
     Vertex vertexShader(Vertex vertice, Model *model){
-        // printVertex(dotProductMatrixVertex(matrixMatrixMultiplication(matrixMatrixMultiplication(matrixMatrixMultiplication(model->viewport.viewPortMatrix,model->viewport.projectionMatrix),model->viewMatrix),model->glMatrix),vertice));
-        // Vertex transformedV = dotProductMatrixVertex(matrixMatrixMultiplication(matrixMatrixMultiplication(matrixMatrixMultiplication(model->viewport.viewPortMatrix,model->viewport.projectionMatrix),model->viewMatrix),model->glMatrix),vertice);
-        // Vertex transformedV = dotProductMatrixVertex(matrixMatrixMultiplication(matrixMatrixMultiplication(model->viewport.projectionMatrix,model->viewMatrix),model->glMatrix), vertice);
-        // Vertex transformedV = dotProductMatrixVertex(matrixMatrixMultiplication(model->viewMatrix,model->glMatrix), vertice);
-        Matrix temp = matrixMatrixMultiplication(model->viewport.viewPortMatrix, model->viewport.projectionMatrix);
-        temp = matrixMatrixMultiplication(temp, model->viewMatrix);
-        temp = matrixMatrixMultiplication(temp, model->glMatrix);
-        Vertex transformedV = dotProductMatrixVertex(model->glMatrix,vertice);
-        // Vertex transformedV = dotProductMatrixVertex(matrixMatrixMultiplication(matrixMatrixMultiplication(model->viewport.projectionMatrix,model->viewMatrix),model->glMatrix), vertice);
-        // transformedV = dotProductMatrixVertex(model->glMatrix, vertice);
+        Vertex transformedV = dotProductMatrixVertex(dotProductMatrixMatrix(camera.finalM,model->glMatrix),vertice);
         vertice.x = transformedV.x/transformedV.w;
         vertice.y = transformedV.y/transformedV.w;
         vertice.z = transformedV.z/transformedV.w;

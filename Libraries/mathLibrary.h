@@ -81,15 +81,23 @@ Matrix getIdentityMatrix()
     return identityM;    
 }
 Matrix getTranslationMatrix(float x, float y, float z){
-    Matrix identityM = getIdentityMatrix();
-    identityM.arr[0][3] = x;identityM.arr[1][3] = y;identityM.arr[2][3] = z;
-    return identityM;
+    Matrix translationM = {{
+        {1,0,0,x},
+        {0,1,0,y},
+        {0,0,1,z},
+        {0,0,0,1}
+    }};
+    return translationM;
 }
 Matrix getScaleMatrix(float x, float y, float z)
 {
-    Matrix identityM = getIdentityMatrix();
-    identityM.arr[0][0] = x;identityM.arr[1][1] = y;identityM.arr[2][2] = z;
-    return identityM;
+    Matrix scaleM = {{
+        {x,0,0,0},
+        {0,y,0,0},
+        {0,0,z,0},
+        {0,0,0,1}
+    }};
+    return scaleM;
 }
 void printMatrix(Matrix matrix) 
 {
@@ -119,7 +127,7 @@ float toRadians(float angle)
 {
     return angle*M_PI/180.0f;
 }
-Matrix  rotationMatrix(float angleX, float angleY, float angleZ)
+Matrix  getRotationMatrix(float angleX, float angleY, float angleZ)
 {
     Matrix x = {{
         {1,0,0,0},
