@@ -10,38 +10,31 @@
 #include <list>
 #include "Texture.cpp"
 #include "ViewPort.cpp"
+#include "../Libraries/structs.h"
+#include "../Libraries/mathLibrary.h"
 using namespace std;
-struct TextureCoord {
-    float u, v, w;
-};
-
-struct FaceVertex {
-    int vertexIndex;
-    int textureIndex;
-    int normalIndex;
-};
-
-struct Face {
-    std::vector<FaceVertex> vertices;
-};
-
 class Model {
     private:
     Texture texture;
     public:
-        Matrix dimensMatrix, translationMatrix, rotMatrix, scaleMatrix, camMatrix, viewMatrix;
+        Matrix glMatrix, translationMatrix, rotMatrix, scaleMatrix, camMatrix, viewMatrix;
         std::vector<Vertex> vertices;
         std::vector<TextureCoord> textureCoords;
         std::vector<Face> faces;
         std::vector<Vertex> normals;
+        ViewPort viewport;
         Model(float tX, float tY, float tZ, float rX, float rY, float rZ, float sX, float sY, float sZ, const std::string& filename,Texture texture1)
         {
-            translationMatrix = getTranslationMatrix(tX,tY,tZ);rotMatrix = rotationMatrix(rX, rY, rZ);scaleMatrix = getScaleMatrix(sX, sY, sZ);
-            camMatrix = dotProductMatrixMatrix(translationMatrix, rotMatrix);viewMatrix = getIdentityMatrix();
+            viewport = ViewPort();
+            translationMatrix = getTranslationMatrix(tX,tY,tZ);
+            rotMatrix = rotationMatrix(rX, rY, rZ);
+            scaleMatrix = getScaleMatrix(sX, sY, sZ);
+            camMatrix = matrixMatrixMultiplication(translationMatrix, rotMatrix);
+            viewMatrix = getIdentityMatrix();
             vector<vector<float>> tempCamM = matrixToVector(camMatrix);
             vector<vector<float>> tempViewM = matrixToVector(viewMatrix);
             inverseGaussJordan(tempCamM, tempViewM);
-            dimensMatrix = finalObjectMatrix(translationMatrix,rotMatrix,scaleMatrix);
+            glMatrix = finalObjectMatrix(translationMatrix,rotMatrix,scaleMatrix);
             std::ifstream file(filename);
             if (!file) {
                 std::cerr << "Error opening file: " << filename << std::endl;
@@ -207,5 +200,21 @@ class Model {
                 }
             }
             file.close();
+        }
+        void loadViewPort(int width, int height, int posX, int posY, float fov, float n, float f){
+            viewport = ViewPort(width, height, posX, posY, fov, n, f);
+            Matrix *viewPtr = &viewMatrix;
+            vector<vector<float>> temp = matrixToVector(*viewPtr);
+            vector<vector<float>> *tempPtr = &temp;
+            inverseGaussJordan(matrixToVector(camMatrix),*tempPtr);
+            viewMatrix=vectorToMatrix(*tempPtr);
+        }
+        void loadViewPort(){
+            this->viewport = ViewPort();
+            Matrix *viewPtr = &viewMatrix;
+            vector<vector<float>> temp = matrixToVector(*viewPtr);
+            vector<vector<float>> *tempPtr = &temp;
+            inverseGaussJordan(matrixToVector(camMatrix),*tempPtr);
+            viewMatrix=vectorToMatrix(*tempPtr);
         }
 };

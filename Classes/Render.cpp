@@ -7,12 +7,28 @@
 #include <threads.h>
 #include <list>
 #include "Model.cpp"
+#include "../Libraries/mathLibrary.h"
+#include "../Libraries/structs.h"
 // #include "Shader.h"
 // Structs
 
-struct BmpHeader {uint16_t signature;uint32_t filesize,reserved,dataoffset,size;int32_t width,height;uint16_t planes,bitsPerPixel;uint32_t compression,imageSize,ColorsUsed,ImportantColors;int32_t XpixelsPerM,YpixelsPerM;};
+struct BmpHeader 
+{
+    uint16_t signature;
+    uint32_t filesize,reserved,dataoffset,size;
+    int32_t width,height;
+    uint16_t planes,bitsPerPixel;
+    uint32_t compression,imageSize,ColorsUsed,ImportantColors;
+    int32_t XpixelsPerM,YpixelsPerM;
+};
 #pragma pack(pop)
-struct dataImg {int width,height;Pixel* imageData;Pixel backgroundColor;float* zbuffer;};
+struct dataImg 
+{
+    int width,height;
+    Pixel* imageData;
+    Pixel backgroundColor;
+    float* zbuffer;
+};
 // Class
 class Render {
     public:
@@ -22,7 +38,7 @@ class Render {
         vector<Triangle> primitiveTriangles;
         Texture activeTexture;
         Render(int width,int height,const std::string file)
-        {filename = file;image.width = width;image.height = height;image.imageData = new Pixel[width*height];image.zbuffer = new float[width*height];image.backgroundColor.blue=0;image.backgroundColor.red=0;image.backgroundColor.green=0;}
+        {filename = file;image.width = width;image.height = height;image.imageData = new Pixel[width*height];image.zbuffer = new float[width*height];image.backgroundColor.blue=255;image.backgroundColor.red=255;image.backgroundColor.green=255;}
         int getPixelIndex (int x, int y){return y*image.width + x;}
         void clearAllImage(){
             for (int y = 0; y < image.height; y++)
@@ -297,33 +313,64 @@ class Render {
                 }
             }    
         }
-    void renderModel(Model model, bool multicolor){
-        std::vector<Face> faces = model.getFaces();std::vector<Vertex> verts = model.getVertices();std::vector<TextureCoord> cords = model.getCords();
+    void renderModel(Model *model, bool multicolor){
+        std::vector<Face> faces = model->getFaces();std::vector<Vertex> verts = model->getVertices();std::vector<TextureCoord> cords = model->getCords();
         Vertex vert0;Vertex vert1;Vertex vert2;Vertex vert3;Pixel pixel{90,0,200};Triangle triangle;
         TextureCoord vt0;TextureCoord vt1;TextureCoord vt2;TextureCoord vt3;
-        activeTexture = model.getTexture();
+        activeTexture = model->getTexture();
+        // cout<<"VP"<<endl;
+        // printMatrix(model->viewport.viewPortMatrix);
+        // cout<<"P"<<endl;
+        // printMatrix(model->viewport.projectionMatrix);
+        // cout<<"VP*P"<<endl;
+        // printMatrix(matrixMatrixMultiplication(model->viewport.viewPortMatrix, model->viewport.projectionMatrix));
+        cout<<"Translation M"<<endl;
+        printMatrix(model->translationMatrix);
+        cout<<"Rotation M"<<endl;
+        printMatrix(model->rotMatrix);
+        cout<<"Scale M"<<endl;
+        printMatrix(model->scaleMatrix);
+        // cout<<"C"<<endl;
+        // printMatrix(model->camMatrix);
+        // cout<<"VM"<<endl;
+        // printMatrix(model->viewMatrix);
+        // cout<<"VP*P*VM"<<endl;
+        // printMatrix(matrixMatrixMultiplication(matrixMatrixMultiplication(model->viewport.viewPortMatrix, model->viewport.projectionMatrix),model->viewMatrix));
+        cout<<"M"<<endl;
+        printMatrix(model->glMatrix);
+        // cout<<"VP*P*VM*M"<<endl;
+        // printMatrix(matrixMatrixMultiplication(matrixMatrixMultiplication(matrixMatrixMultiplication(model->viewport.viewPortMatrix,model->viewport.projectionMatrix),model->viewMatrix),model->glMatrix));
         for (size_t i = 0; i < faces.size(); i++)
         {
-            vert0 = vertexShader(verts[faces[i].vertices[0].vertexIndex-1],model.dimensMatrix);
-            vert1 = vertexShader(verts[faces[i].vertices[1].vertexIndex-1],model.dimensMatrix);
-            vert2 = vertexShader(verts[faces[i].vertices[2].vertexIndex-1],model.dimensMatrix);
+            vert0 = vertexShader(verts[faces[i].vertices[0].vertexIndex-1],model);
+            vert1 = vertexShader(verts[faces[i].vertices[1].vertexIndex-1],model);
+            vert2 = vertexShader(verts[faces[i].vertices[2].vertexIndex-1],model);
             triangle.v1 = vert0;triangle.v2 = vert1;triangle.v3 = vert2;
-            vt0 = model.getCords()[faces[i].vertices[0].textureIndex-1];
-            vt1 = model.getCords()[faces[i].vertices[1].textureIndex-1];
-            vt2 = model.getCords()[faces[i].vertices[2].textureIndex-1];
+            vt0 = model->getCords()[faces[i].vertices[0].textureIndex-1];
+            vt1 = model->getCords()[faces[i].vertices[1].textureIndex-1];
+            vt2 = model->getCords()[faces[i].vertices[2].textureIndex-1];
             vector<TextureCoord> textureCoords{vt0,vt1,vt2};
             if(faces[i].vertices.size()>3)
             {
-                vert3 = vertexShader(verts[faces[i].vertices[3].vertexIndex-1],model.dimensMatrix);
-                vt3 = model.getCords()[faces[i].vertices[3].textureIndex-1];
+                vert3 = vertexShader(verts[faces[i].vertices[3].vertexIndex-1],model);
+                vt3 = model->getCords()[faces[i].vertices[3].textureIndex-1];
                 textureCoords.push_back(vt3);
                 triangle.v2 = vert3;
             }
             renderBarycentricTriangle(triangle,textureCoords, multicolor);
         }
     }
-    Vertex vertexShader(Vertex vertice, Matrix modelMatrix){
-        Vertex transformedV = dotProductMatrixVertex(modelMatrix,vertice);
+    Vertex vertexShader(Vertex vertice, Model *model){
+        // printVertex(dotProductMatrixVertex(matrixMatrixMultiplication(matrixMatrixMultiplication(matrixMatrixMultiplication(model->viewport.viewPortMatrix,model->viewport.projectionMatrix),model->viewMatrix),model->glMatrix),vertice));
+        // Vertex transformedV = dotProductMatrixVertex(matrixMatrixMultiplication(matrixMatrixMultiplication(matrixMatrixMultiplication(model->viewport.viewPortMatrix,model->viewport.projectionMatrix),model->viewMatrix),model->glMatrix),vertice);
+        // Vertex transformedV = dotProductMatrixVertex(matrixMatrixMultiplication(matrixMatrixMultiplication(model->viewport.projectionMatrix,model->viewMatrix),model->glMatrix), vertice);
+        // Vertex transformedV = dotProductMatrixVertex(matrixMatrixMultiplication(model->viewMatrix,model->glMatrix), vertice);
+        Matrix temp = matrixMatrixMultiplication(model->viewport.viewPortMatrix, model->viewport.projectionMatrix);
+        temp = matrixMatrixMultiplication(temp, model->viewMatrix);
+        temp = matrixMatrixMultiplication(temp, model->glMatrix);
+        Vertex transformedV = dotProductMatrixVertex(model->glMatrix,vertice);
+        // Vertex transformedV = dotProductMatrixVertex(matrixMatrixMultiplication(matrixMatrixMultiplication(model->viewport.projectionMatrix,model->viewMatrix),model->glMatrix), vertice);
+        // transformedV = dotProductMatrixVertex(model->glMatrix, vertice);
         vertice.x = transformedV.x/transformedV.w;
         vertice.y = transformedV.y/transformedV.w;
         vertice.z = transformedV.z/transformedV.w;
@@ -346,12 +393,15 @@ class Render {
                 if (0<=done1.x && done1.x<=1 && 0<=done1.y && done1.y<=1 && 0<=done1.z && done1.z<=1)
                 {
                     float z = done1.x*triangle.v1.z+done1.y*triangle.v2.z+done1.z*triangle.v3.z;
-                    // printf("i:%d j:%d\n",i,j);
-                    if (i>=0 && j>=0)
+                    int index = getPixelIndex(i,j);
+                    if (0<=i&& i<image.width && 0<=j&& j<image.height )
                     {
-                        if (z<image.zbuffer[getPixelIndex(i,j)])
+                        float value = image.zbuffer[index];
+                        // cout<<index<<" "<<value<<endl;
+                        
+                        if (z<image.zbuffer[getPixelIndex((int)i,(int)j)])
                         {
-                            image.zbuffer[getPixelIndex(i,j)] = z;
+                            image.zbuffer[getPixelIndex((int)i,(int)j)] = (float)z;
                             if (multicolor)
                             {
                                 col.red = 255*done1.x;col.blue = 255*done1.y;col.green = 255*done1.z;
@@ -368,6 +418,5 @@ class Render {
                 }
             }
         }
-        
     }
 };

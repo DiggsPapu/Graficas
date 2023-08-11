@@ -6,12 +6,13 @@
 #include <vector>
 #include <threads.h>
 #include <list>
-struct Pixel {unsigned char red, green, blue;};
+struct Pixel {
+    unsigned char red, green, blue;
+};
 #pragma pack(push, 1)
 class Texture {
 private:
-    int width;
-    int height;
+    int width, height;
     Pixel* colors;
     std::vector<std::vector<std::vector<float>>> pixels;
 public:

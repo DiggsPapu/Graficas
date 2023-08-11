@@ -8,16 +8,15 @@
  * @copyright Copyright (c) 2023
  * 
  */
+#pragma once
 #include <iostream>
 #include <fstream>
 #include <cmath>
 #include <algorithm>
 #include <vector>
 #include <threads.h>
+#include "structs.h"
 using namespace std;
-struct Matrix {float arr[4][4];};
-struct Vertex {float x, y, z, w;};
-struct Triangle{Vertex v1;Vertex v2;Vertex v3;};
 std::vector<float> getIntersect(std::vector<float>& p1,std::vector<float>& p2)
 {
     while(p1!=p2)
@@ -65,7 +64,8 @@ std::vector <float> getLinearEcuationY(Vertex& pos1,Vertex& pos2)
     return ecuation;
 }
 // Representa un objeto que no se ha rotado, trasladado o se le ha hecho alguna modificacion.
-Matrix getIdentityMatrix(){
+Matrix getIdentityMatrix()
+{
     Matrix identityM;
     for (int i = 0; i < 4; i++)
     {
@@ -85,12 +85,14 @@ Matrix getTranslationMatrix(float x, float y, float z){
     identityM.arr[0][3] = x;identityM.arr[1][3] = y;identityM.arr[2][3] = z;
     return identityM;
 }
-Matrix getScaleMatrix(float x, float y, float z){
+Matrix getScaleMatrix(float x, float y, float z)
+{
     Matrix identityM = getIdentityMatrix();
     identityM.arr[0][0] = x;identityM.arr[1][1] = y;identityM.arr[2][2] = z;
     return identityM;
 }
-void printMatrix(Matrix matrix) {
+void printMatrix(Matrix matrix) 
+{
     cout<<endl;
     for (int i = 0 ; i < 4 ; i ++)
     {
@@ -101,7 +103,8 @@ void printMatrix(Matrix matrix) {
         cout<<endl;    
     }
 }
-Matrix dotProductMatrixMatrix(Matrix m1, Matrix m2){
+Matrix dotProductMatrixMatrix(Matrix m1, Matrix m2)
+{
     Matrix result;
     for (int i = 0; i < 4; i++)
     {
@@ -112,35 +115,68 @@ Matrix dotProductMatrixMatrix(Matrix m1, Matrix m2){
     }    
     return result;    
 }
-float toRadians(float angle){
-    return angle*2*M_PI/360;
+float toRadians(float angle)
+{
+    return angle*M_PI/180.0f;
 }
-Matrix  rotationMatrix(float angleX, float angleY, float angleZ){
-    Matrix x = getIdentityMatrix(); x.arr[1][1] = cos(toRadians(angleX)); x.arr[1][2] = -sin(toRadians(angleX)); x.arr[2][1] = sin(toRadians(angleX)); x.arr[2][2] = cos(toRadians(angleX));
-    Matrix y = getIdentityMatrix(); y.arr[0][0] = cos(toRadians(angleY)); y.arr[0][2] = sin(toRadians(angleY)); y.arr[2][0] = -sin(toRadians(angleY)); y.arr[2][2] = cos(toRadians(angleY));
-    Matrix z = getIdentityMatrix(); z.arr[0][0] = cos(toRadians(angleZ)); z.arr[0][1] = -sin(toRadians(angleZ)); z.arr[1][0] = sin(toRadians(angleZ)); z.arr[1][1] = cos(toRadians(angleZ)); 
+Matrix  rotationMatrix(float angleX, float angleY, float angleZ)
+{
+    Matrix x = {{
+        {1,0,0,0},
+        {0,cos(toRadians(angleX)),-sin(toRadians(angleX)),0},
+        {0,sin(toRadians(angleX)),cos(toRadians(angleX)),0},
+        {0,0,0,1}
+    }};
+    Matrix y = {{
+        {cos(toRadians(angleY)),0,sin(toRadians(angleY)),0},
+        {0,1,0,0},
+        {-sin(toRadians(angleY)),0,cos(toRadians(angleY)),0},
+        {0,0,0,1}
+    }}; 
+    Matrix z = {{
+        {cos(toRadians(angleZ)),-sin(toRadians(angleZ)),0,0},
+        {sin(toRadians(angleZ)),cos(toRadians(angleZ)),0,0},
+        {0,0,1,0},
+        {0,0,0,1}
+    }};
     return dotProductMatrixMatrix(dotProductMatrixMatrix(x,y),z);
 }
-vector<float> dotProductMatrixVector(Matrix matrix, vector<float> vector){
+vector<float> dotProductMatrixVector(Matrix matrix, vector<float> vector)
+{
     float val1 = (matrix.arr[0][0]*vector[0]+matrix.arr[0][1]*vector[1]+matrix.arr[0][2]*vector[2]+matrix.arr[0][3]*1);
     std::vector<float> newV ={(matrix.arr[0][0]*vector[0]+matrix.arr[0][1]*vector[1]+matrix.arr[0][2]*vector[2]+matrix.arr[0][3]*1),(matrix.arr[1][0]*vector[0]+matrix.arr[1][1]*vector[1]+matrix.arr[1][2]*vector[2]+matrix.arr[1][3]*1),(matrix.arr[2][0]*vector[0]+matrix.arr[2][1]*vector[1]+matrix.arr[2][2]*vector[2]+matrix.arr[2][3]*1),(matrix.arr[3][0]*vector[0]+matrix.arr[3][1]*vector[1]+matrix.arr[3][2]*vector[2]+matrix.arr[3][3]*1)};
     return newV;
 }
-Vertex dotProductMatrixVertex(Matrix matrix, Vertex vector){Vertex newV;newV.x = (matrix.arr[0][0]*vector.x+matrix.arr[0][1]*vector.y+matrix.arr[0][2]*vector.z+matrix.arr[0][3]*vector.w);newV.y = (matrix.arr[1][0]*vector.x+matrix.arr[1][1]*vector.y+matrix.arr[1][2]*vector.z+matrix.arr[1][3]*vector.w);newV.z = (matrix.arr[2][0]*vector.x+matrix.arr[2][1]*vector.y+matrix.arr[2][2]*vector.z+matrix.arr[2][3]*vector.w);newV.w = (matrix.arr[3][0]*vector.x+matrix.arr[3][1]*vector.y+matrix.arr[3][2]*vector.z+matrix.arr[3][3]*vector.w);return newV;}
-Matrix finalObjectMatrix(Matrix traslation, Matrix rotation, Matrix scale){
+Vertex dotProductMatrixVertex(Matrix matrix, Vertex vector)
+{
+    Vertex newV;
+    newV.x = (matrix.arr[0][0]*vector.x+matrix.arr[0][1]*vector.y+matrix.arr[0][2]*vector.z+matrix.arr[0][3]*vector.w);
+    newV.y = (matrix.arr[1][0]*vector.x+matrix.arr[1][1]*vector.y+matrix.arr[1][2]*vector.z+matrix.arr[1][3]*vector.w);
+    newV.z = (matrix.arr[2][0]*vector.x+matrix.arr[2][1]*vector.y+matrix.arr[2][2]*vector.z+matrix.arr[2][3]*vector.w);newV.w = (matrix.arr[3][0]*vector.x+matrix.arr[3][1]*vector.y+matrix.arr[3][2]*vector.z+matrix.arr[3][3]*vector.w);return newV;}
+Matrix finalObjectMatrix(Matrix traslation, Matrix rotation, Matrix scale)
+{
     return dotProductMatrixMatrix(dotProductMatrixMatrix(traslation, rotation), scale);
 }
-void printVector(vector<float> vector){
+void printVector(vector<float> vector)
+{
     for (int i = 0; i < vector.size(); i++)
     {
         cout<<vector[i]<<" ";
     }
     cout<<endl;    
 }
+void printVertex(Vertex vector)
+{
+    cout<<vector.x<<" "<<vector.y<<" "<<vector.z<<" "<<vector.w<<endl;    
+}
 // Function to calculate the cross product of two vectors
-float crossProduct(Vertex v1, Vertex v2) {return (v1.x * v2.y) - (v1.y * v2.x);}
+float crossProduct(Vertex v1, Vertex v2)
+{
+    return (v1.x * v2.y) - (v1.y * v2.x);
+}
 // Function to check if three vertices form a counterclockwise order
-bool isCounterClockWise(Vertex A, Vertex B, Vertex C) {
+bool isCounterClockWise(Vertex A, Vertex B, Vertex C) 
+{
     Vertex AB = {B.x - A.x, B.y - A.y,1,1};
     Vertex BC = {C.x - B.x, C.y - B.y,1,1};
     float cross_product = crossProduct(AB, BC);
@@ -155,7 +191,23 @@ int orderCounterClockWise(Vertex A, Vertex B, Vertex C)
     if(isCounterClockWise(C,A,B)){return 4;}
     return 5;
 }
-Vertex barycentriCoords(Triangle triangle, Vertex P){
+Matrix matrixMatrixMultiplication(const Matrix& m1, const Matrix& m2) 
+{
+    Matrix result;
+
+    for (int i = 0; i < 4; ++i) {
+        for (int j = 0; j < 4; ++j) {
+            result.arr[i][j] = 0;
+            for (int k = 0; k < 4; ++k) {
+                result.arr[i][j] += m1.arr[i][k] * m2.arr[k][j];
+            }
+        }
+    }
+
+    return result;
+}
+Vertex barycentriCoords(Triangle triangle, Vertex P)
+{
     // Ordering vertex;
     Vertex v1 =triangle.v1; Vertex v2 = triangle.v2; Vertex v3 = triangle.v3;Vertex v4;
     float PCB = abs((v2.y-v3.y)*(P.x-v3.x)+(v3.x-v2.x)*(P.y-v3.y));
@@ -178,7 +230,8 @@ Vertex minMaxXY(vector<Vertex> verts)
     Vertex done{minX,maxX,minY,maxY};
     return done;
 }
-double determinant(const std::vector<std::vector<double>>& matrix) {
+double determinant(const std::vector<std::vector<double>>& matrix) 
+{
     int n = matrix.size();
     
     // Base case: for a 1x1 matrix, the determinant is the only element
@@ -212,7 +265,7 @@ double determinant(const std::vector<std::vector<double>>& matrix) {
     
     return det;
 }
-bool inverseGaussJordan(std::vector<std::vector<float>>& matrix, std::vector<std::vector<float>>& inverse) {
+bool inverseGaussJordan(std::vector<std::vector<float>> matrix, std::vector<std::vector<float>>& inverse) {
     int n = matrix.size();
     
     // Create an augmented matrix [matrix | identity]
@@ -258,7 +311,8 @@ bool inverseGaussJordan(std::vector<std::vector<float>>& matrix, std::vector<std
     }
     return true;
 }
-vector<vector<float>> matrixToVector(const Matrix& matrix){
+vector<vector<float>> matrixToVector(const Matrix& matrix)
+{
     vector<vector<float>> newMatrix;
     for (size_t i = 0; i < 4; i++)
     {
@@ -271,7 +325,8 @@ vector<vector<float>> matrixToVector(const Matrix& matrix){
     }
     return newMatrix;
 }
-Matrix vectorToMatrix(const vector<vector<float>> vector){
+Matrix vectorToMatrix(const vector<vector<float>> vector)
+{
     Matrix matrix;
     if (vector.size()!=4||vector[0].size()!=4)
     {
