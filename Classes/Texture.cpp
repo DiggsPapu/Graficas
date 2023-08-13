@@ -14,7 +14,6 @@ class Texture {
 private:
     int width, height;
     Pixel* colors;
-    std::vector<std::vector<std::vector<float>>> pixels;
 public:
     Texture(){}
     Texture(const std::string& filename) {
@@ -34,7 +33,6 @@ public:
 
         image.seekg(headerSize, std::ios::beg);
         colors = new Pixel[height*width];
-        pixels.resize(height, std::vector<std::vector<float>>(width, std::vector<float>(3)));
 
         for (int y = 0; y < height; ++y) {
             for (int x = 0; x < width; ++x) {

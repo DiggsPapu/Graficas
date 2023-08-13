@@ -347,3 +347,7 @@ Vertex crossProduct(const Vertex& u, const Vertex& v) {
     
     return result;
 }
+Vertex negativeVertex(const Vertex& vector)
+{
+    return Vertex{-1.0f*vector.x,-1.0f*vector.y,-1.0f*vector.z,-1.0f*vector.w};
+}

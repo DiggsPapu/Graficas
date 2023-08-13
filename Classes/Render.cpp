@@ -3,26 +3,7 @@
 #include "../Libraries/mathLibrary.h"
 #include "../Libraries/structs.h"
 #include "Camera.cpp"
-// #include "Shader.h"
-// Structs
-
-struct BmpHeader 
-{
-    uint16_t signature;
-    uint32_t filesize,reserved,dataoffset,size;
-    int32_t width,height;
-    uint16_t planes,bitsPerPixel;
-    uint32_t compression,imageSize,ColorsUsed,ImportantColors;
-    int32_t XpixelsPerM,YpixelsPerM;
-};
-#pragma pack(pop)
-struct dataImg 
-{
-    int width,height;
-    Pixel* imageData;
-    Pixel backgroundColor;
-    float* zbuffer;
-};
+#include "../Libraries/shaders.h"
 // Class
 class Render {
     public:
@@ -30,6 +11,7 @@ class Render {
         BmpHeader header;
         std::string filename;
         vector<Triangle> primitiveTriangles;
+        Vertex directionalLight = {1.0f,0.0f,0.0f,0.0f};
         Texture activeTexture;
         Camera camera = Camera();
         Render(int width,int height,const std::string file)
@@ -316,30 +298,40 @@ class Render {
         activeTexture = model->getTexture();
         for (size_t i = 0; i < faces.size(); i++)
         {
-            vert0 = vertexShader(verts[faces[i].vertices[0].vertexIndex-1],model);
-            vert1 = vertexShader(verts[faces[i].vertices[1].vertexIndex-1],model);
-            vert2 = vertexShader(verts[faces[i].vertices[2].vertexIndex-1],model);
-            triangle.v1 = vert0;triangle.v2 = vert1;triangle.v3 = vert2;
+            // VertexShader
+            vert0 = vertexShader(verts[faces[i].vertices[0].vertexIndex-1],camera.finalM,model->glMatrix);
+            vert1 = vertexShader(verts[faces[i].vertices[1].vertexIndex-1],camera.finalM,model->glMatrix);
+            vert2 = vertexShader(verts[faces[i].vertices[2].vertexIndex-1],camera.finalM,model->glMatrix);
+            triangle.v1 = vert0;
+            triangle.v2 = vert1;
+            triangle.v3 = vert2;
+            // Coords
             vt0 = model->getCords()[faces[i].vertices[0].textureIndex-1];
             vt1 = model->getCords()[faces[i].vertices[1].textureIndex-1];
             vt2 = model->getCords()[faces[i].vertices[2].textureIndex-1];
             vector<TextureCoord> textureCoords{vt0,vt1,vt2};
+            // Get the normal
+            Vertex subs1 = {triangle.v2.x-triangle.v1.x, triangle.v2.y-triangle.v1.y, triangle.v2.z-triangle.v1.z};
+            Vertex subs2 = {triangle.v3.x-triangle.v1.x, triangle.v3.y-triangle.v1.y, triangle.v3.z-triangle.v1.z};
+            Vertex normal = crossProduct(subs1,subs2);
+            normalizeVertex(normal);
             if(faces[i].vertices.size()>3)
             {
-                vert3 = vertexShader(verts[faces[i].vertices[3].vertexIndex-1],model);
+                // Transformation
+                vert3 = vertexShader(verts[faces[i].vertices[3].vertexIndex-1],camera.finalM,model->glMatrix);
+                // textures
                 vt3 = model->getCords()[faces[i].vertices[3].textureIndex-1];
                 textureCoords.push_back(vt3);
-                triangle.v2 = vert3;
+                // normals
+                Vertex subs1 = {triangle.v2.x-triangle.v1.x, triangle.v2.y-triangle.v1.y, triangle.v2.z-triangle.v1.z};
+                Vertex subs2 = {triangle.v3.x-triangle.v1.x, triangle.v3.y-triangle.v1.y, triangle.v3.z-triangle.v1.z};
+                Vertex normal = crossProduct(subs1,subs2);
+                vector<TextureCoord> textureCoords2 = {vt0,vt2,vt3};
+                Triangle triangle2 = {vert0,vert3,vert2};
+                renderBarycentricTriangle(triangle2,textureCoords2,multicolor);
             }
             renderBarycentricTriangle(triangle,textureCoords, multicolor);
         }
-    }
-    Vertex vertexShader(Vertex vertice, Model *model){
-        Vertex transformedV = dotProductMatrixVertex(dotProductMatrixMatrix(camera.finalM,model->glMatrix),vertice);
-        vertice.x = transformedV.x/transformedV.w;
-        vertice.y = transformedV.y/transformedV.w;
-        vertice.z = transformedV.z/transformedV.w;
-        return vertice;
     }
     void paintPoint(int x, int y, Pixel color){if (x<=image.width && y<=image.height){image.imageData[getPixelIndex(x,y)].red =color.red;image.imageData[getPixelIndex(x,y)].blue =color.blue;image.imageData[getPixelIndex(x,y)].green =color.green;}}
     void renderBarycentricTriangle(Triangle triangle, vector<TextureCoord> textureCoords, bool multicolor)
@@ -353,30 +345,34 @@ class Render {
         {
             for (int j = done.z; j < done.w; j++)
             {
-                Vertex P{(float)i,(float)j,0,0}; Vertex done1;
-                done1 = barycentriCoords(triangle,P);
-                if (0<=done1.x && done1.x<=1 && 0<=done1.y && done1.y<=1 && 0<=done1.z && done1.z<=1)
+                if (0<=i && i<image.width && 0<=j && j<image.height)
                 {
-                    float z = done1.x*triangle.v1.z+done1.y*triangle.v2.z+done1.z*triangle.v3.z;
-                    int index = getPixelIndex(i,j);
-                    if (0<=i&& i<image.width && 0<=j&& j<image.height )
+                    Vertex P{(float)i,(float)j,0,0}; Vertex done1;
+                    done1 = barycentriCoords(triangle,P);
+                    if (0<=done1.x && done1.x<=1 && 0<=done1.y && done1.y<=1 && 0<=done1.z && done1.z<=1)
                     {
-                        float value = image.zbuffer[index];
-                        
-                        if (z<image.zbuffer[getPixelIndex((int)i,(int)j)])
+                        float z = done1.x*triangle.v1.z+done1.y*triangle.v2.z+done1.z*triangle.v3.z;
+                        int index = getPixelIndex(i,j);
+                        if (0<=i&& i<image.width && 0<=j&& j<image.height )
                         {
-                            image.zbuffer[getPixelIndex((int)i,(int)j)] = (float)z;
-                            if (multicolor)
+                            float value = image.zbuffer[index];
+                            
+                            if (z<image.zbuffer[getPixelIndex((int)i,(int)j)])
                             {
-                                col.red = 255*done1.x;col.blue = 255*done1.y;col.green = 255*done1.z;
+                                image.zbuffer[getPixelIndex((int)i,(int)j)] = (float)z;
+                                if (multicolor)
+                                {
+                                    col.red = 255*done1.x;col.blue = 255*done1.y;col.green = 255*done1.z;
+                                }
+                                else
+                                {
+                                    // fragment shader
+                                    float u = done1.x*textureCoords[0].u+done1.y*textureCoords[1].u+done1.z*textureCoords[2].u;
+                                    float v = done1.x*textureCoords[0].v+done1.y*textureCoords[1].v+done1.z*textureCoords[2].v;
+                                    col = fragmentShader(activeTexture, u,v);
+                                }
+                                paintPoint((int)i,(int)j,col);
                             }
-                            else
-                            {
-                                float u = done1.x*textureCoords[0].u+done1.y*textureCoords[1].u+done1.z*textureCoords[2].u;
-                                float v = done1.x*textureCoords[0].v+done1.y*textureCoords[1].v+done1.z*textureCoords[2].v;
-                                col = activeTexture.getColor(u,v);
-                            }
-                            paintPoint((int)i,(int)j,col);
                         }
                     }
                 }
