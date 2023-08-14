@@ -316,9 +316,15 @@ class Render {
             normal2 = model->getNormals()[faces[i].vertices[2].normalIndex-1];
             vector<Vertex> normals{normal0, normal1, normal2};
             // VertexShader
-            vert0 = vertexShader(verts[faces[i].vertices[0].vertexIndex-1],camera.finalM,model->glMatrix);
-            vert1 = vertexShader(verts[faces[i].vertices[1].vertexIndex-1],camera.finalM,model->glMatrix);
-            vert2 = vertexShader(verts[faces[i].vertices[2].vertexIndex-1],camera.finalM,model->glMatrix);
+            // vert0 = vertexShader(verts[faces[i].vertices[0].vertexIndex-1],camera.finalM,model->glMatrix);
+            // vert1 = vertexShader(verts[faces[i].vertices[1].vertexIndex-1],camera.finalM,model->glMatrix);
+            // vert2 = vertexShader(verts[faces[i].vertices[2].vertexIndex-1],camera.finalM,model->glMatrix);
+            // SpikyShader
+            // triangle = spikyShader(triangle,camera.finalM,model->glMatrix);
+            // waveDeformationShader
+            vert0 = twistDeformationShader(verts[faces[i].vertices[0].vertexIndex-1],camera.finalM,model->glMatrix,100);
+            vert1 = twistDeformationShader(verts[faces[i].vertices[1].vertexIndex-1],camera.finalM,model->glMatrix,100);
+            vert2 = twistDeformationShader(verts[faces[i].vertices[2].vertexIndex-1],camera.finalM,model->glMatrix,100);
             triangle.v1 = vert0;
             triangle.v2 = vert1;
             triangle.v3 = vert2;
@@ -330,7 +336,9 @@ class Render {
                 // normals
                 normal3 = model->getNormals()[faces[i].vertices[3].normalIndex-1];
                 // Transformation
-                vert3 = vertexShader(verts[faces[i].vertices[3].vertexIndex-1],camera.finalM,model->glMatrix);
+                // vert3 = vertexShader(verts[faces[i].vertices[3].vertexIndex-1],camera.finalM,model->glMatrix);
+                vert3 = twistDeformationShader(verts[faces[i].vertices[3].vertexIndex-1],camera.finalM,model->glMatrix,100);
+                // vert3 = spikyVertexShader(verts[faces[i].vertices[3].vertexIndex-1],camera.finalM,model->glMatrix,1);
                 vector<Vertex> normals2{normal0,normal2,normal3};
                 vector<TextureCoord> textureCoords2 = {vt0,vt2,vt3};
                 Triangle triangle2 = {vert0,vert3,vert2};
@@ -376,9 +384,9 @@ class Render {
                                     float u = done1.x*textureCoords[0].u+done1.y*textureCoords[1].u+done1.z*textureCoords[2].u;
                                     float v = done1.x*textureCoords[0].v+done1.y*textureCoords[1].v+done1.z*textureCoords[2].v;
                                     // col = fragmentShader(activeTexture, u,v, normal, Vertex{1,0,0});
-                                    // col = flatShader(activeTexture, u, v, normals, Vertex{1,0,0});
+                                    col = flatShader(activeTexture, u, v, normals, Vertex{1,0,0});
                                     // col = inverseShader(activeTexture, u, v, normals, Vertex{1,0,0});
-                                    col = heatMapShader(activeTexture, u, v, normals, Vertex{1,0,0});
+                                    // col = heatMapShader(activeTexture, u, v, normals, Vertex{1,0,0});
                                 }
                                 paintPoint((int)i,(int)j,col);
                             }

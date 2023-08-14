@@ -8,38 +8,26 @@ Vertex vertexShader(Vertex vertice, Matrix finalM, Matrix glMatrix)
     vertice.z = transformedV.z/transformedV.w;
     return vertice;
 }
-// Pixel heatMapShader(Texture &activeTexture, float u, float v, vector<Vertex> normals, Vertex dLight)
-// {
-//     Vertex norm = { u * normals[0].x + v * normals[0].y, u * normals[1].x + v * normals[1].y, u * normals[2].x + v * normals[2].y};
-//     float intensity = dotProductVertex(norm, negativeVertex(dLight));
-//     Vertex text = activeTexture.getColorFloat(u,v);
-//     Pixel color;
-//     if (intensity<=0.25)
-//     {
-//         // 255,69,0
-//         color = {static_cast<unsigned char>(text.x*intensity*1.0f),static_cast<unsigned char>(text.y*intensity*1.0f),static_cast<unsigned char>(text.z*intensity*255.0f)};
-//     }
-//     else if (0.25<intensity && intensity<=0.5)
-//     {
-//         color = {static_cast<unsigned char>(text.x*intensity*255),static_cast<unsigned char>(text.y*intensity*1.0f),static_cast<unsigned char>(text.z*intensity*1.0f)};
-//     }
-//     else if (0.5<intensity && intensity<=0.75)
-//     {
-//         color = {static_cast<unsigned char>(text.x*intensity*255.0f),static_cast<unsigned char>(text.y*intensity*69.0f),static_cast<unsigned char>(text.z*intensity*1.0f)};
-//     }
-//     else
-//     {
-//         color = {static_cast<unsigned char>((text.x*intensity+255.0f)%255.0f),static_cast<unsigned char>(text.y*intensity*255.0f),static_cast<unsigned char>(text.z*intensity*1.0f)};
-//     }
-//     return color;  
-// }
+Vertex twistDeformationShader(Vertex vertex, Matrix finalM, Matrix glMatrix, float time)
+{
+    float twistAngle = 0.1f;
+    float centerX = 0.5f;
+    float centerY = 0.5f;
+    float dx = vertex.x - centerX;
+    float dy = vertex.y - centerY;
+    float radius = std::sqrt(dx * dx + dy * dy);
+    float angle = twistAngle * radius;
+    float newX = dx * std::cos(angle) - dy * std::sin(angle) + centerX;
+    float newY = dx * std::sin(angle) + dy * std::cos(angle) + centerY;
+    vertex.x = newX;
+    vertex.y = newY;
+    return vertexShader(vertex, finalM, glMatrix);
+}
 Pixel heatMapShader(Texture &activeTexture, float u, float v, vector<Vertex> normals, Vertex dLight) {
     Vertex norm = { u * normals[0].x + v * normals[0].y, u * normals[1].x + v * normals[1].y, u * normals[2].x + v * normals[2].y};
     float intensity = dotProductVertex(norm, negativeVertex(dLight));
     Vertex text = activeTexture.getColorFloat(u, v);
     Pixel color;
-
-    // Map intensity to a color range for the heat map
     int r, g, b;
     if (intensity >= 0 && intensity <= 0.33) {
         r = 0;
