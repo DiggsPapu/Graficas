@@ -2,7 +2,7 @@
 
 using namespace std;
 int main (){
-    const std::string filename = "./Image/image71.bmp";
+    const std::string filename = "./Image/dutchShot.bmp";
     Render render(2340 ,1720,filename);
     render.clearAllImage();
     // Texture texture1("/home/dieggspapu/UVG/Graficas/Textures/PIEDRA_MURO_PUNTA-SAL_1.bmp");
@@ -11,7 +11,7 @@ int main (){
     // Load another camera
     // render.loadCamera(0.01f,0.05f,0.0f,0.0f,0.0f,20.0f);
     // Look at 
-    // render.lookAt(0.0f,0.0f,0.0f,0.2f,0.0f,-30.0f);
+    render.lookAt(20.0f,-5.0f,-25.0f,0.25f,0.07f,-29.95f);//Medium shot 
     Model model(0.2f,0.0f,-30.0f,-90.0f,0.0f,60.0f,0.005f,0.005f,0.005f,"/home/dieggspapu/UVG/Graficas/Obj/10680_Dog_v2.obj",texture1);
     model.loadTexture(texture1);
     render.renderModel(&model, false);
