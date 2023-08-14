@@ -292,9 +292,14 @@ class Render {
             }    
         }
     void renderModel(Model *model, bool multicolor){
-        std::vector<Face> faces = model->getFaces();std::vector<Vertex> verts = model->getVertices();std::vector<TextureCoord> cords = model->getCords();
-        Vertex vert0;Vertex vert1;Vertex vert2;Vertex vert3;Pixel pixel{90,0,200};Triangle triangle;
-        TextureCoord vt0;TextureCoord vt1;TextureCoord vt2;TextureCoord vt3;
+        std::vector<Face> faces = model->getFaces();
+        std::vector<Vertex> verts = model->getVertices();
+        std::vector<TextureCoord> cords = model->getCords();
+        std::vector<Vertex> normals = model->getNormals();
+        Pixel pixel{90,0,200};Triangle triangle;
+        Vertex vert0, vert1, vert2, vert3;
+        TextureCoord vt0, vt1, vt2, vt3;
+        Vertex normal0, normal1, normal2, normal3;
         activeTexture = model->getTexture();
         for (size_t i = 0; i < faces.size(); i++)
         {
@@ -310,11 +315,11 @@ class Render {
             vt1 = model->getCords()[faces[i].vertices[1].textureIndex-1];
             vt2 = model->getCords()[faces[i].vertices[2].textureIndex-1];
             vector<TextureCoord> textureCoords{vt0,vt1,vt2};
-            // Get the normal
-            Vertex subs1 = {triangle.v2.x-triangle.v1.x, triangle.v2.y-triangle.v1.y, triangle.v2.z-triangle.v1.z};
-            Vertex subs2 = {triangle.v3.x-triangle.v1.x, triangle.v3.y-triangle.v1.y, triangle.v3.z-triangle.v1.z};
-            Vertex normal = crossProduct(subs1,subs2);
-            normalizeVertex(normal);
+            // Normals
+            normal0 = model->getNormals()[faces[i].vertices[0].normalIndex-1];
+            normal1 = model->getNormals()[faces[i].vertices[1].normalIndex-1];
+            normal2 = model->getNormals()[faces[i].vertices[2].normalIndex-1];
+            vector<Vertex> normals{normal0, normal1, normal2};
             if(faces[i].vertices.size()>3)
             {
                 // Transformation
@@ -323,18 +328,17 @@ class Render {
                 vt3 = model->getCords()[faces[i].vertices[3].textureIndex-1];
                 textureCoords.push_back(vt3);
                 // normals
-                Vertex subs1 = {triangle.v2.x-triangle.v1.x, triangle.v2.y-triangle.v1.y, triangle.v2.z-triangle.v1.z};
-                Vertex subs2 = {triangle.v3.x-triangle.v1.x, triangle.v3.y-triangle.v1.y, triangle.v3.z-triangle.v1.z};
-                Vertex normal = crossProduct(subs1,subs2);
+                normal3 = model->getNormals()[faces[i].vertices[3].normalIndex-1];
+                vector<Vertex> normals2{normal0,normal2,normal3};
                 vector<TextureCoord> textureCoords2 = {vt0,vt2,vt3};
                 Triangle triangle2 = {vert0,vert3,vert2};
-                renderBarycentricTriangle(triangle2,textureCoords2,multicolor);
+                renderBarycentricTriangle(triangle2,textureCoords2, normals2, multicolor);
             }
-            renderBarycentricTriangle(triangle,textureCoords, multicolor);
+            renderBarycentricTriangle(triangle,textureCoords, normals, multicolor);
         }
     }
     void paintPoint(int x, int y, Pixel color){if (x<=image.width && y<=image.height){image.imageData[getPixelIndex(x,y)].red =color.red;image.imageData[getPixelIndex(x,y)].blue =color.blue;image.imageData[getPixelIndex(x,y)].green =color.green;}}
-    void renderBarycentricTriangle(Triangle triangle, vector<TextureCoord> textureCoords, bool multicolor)
+    void renderBarycentricTriangle(Triangle triangle, vector<TextureCoord> textureCoords, vector<Vertex> normals,bool multicolor)
     {
         Pixel col{0,0,0};
         vector<Vertex> verts;
@@ -369,7 +373,8 @@ class Render {
                                     // fragment shader
                                     float u = done1.x*textureCoords[0].u+done1.y*textureCoords[1].u+done1.z*textureCoords[2].u;
                                     float v = done1.x*textureCoords[0].v+done1.y*textureCoords[1].v+done1.z*textureCoords[2].v;
-                                    col = fragmentShader(activeTexture, u,v);
+                                    // col = fragmentShader(activeTexture, u,v, normal, Vertex{1,0,0});
+                                    col = flatShader(activeTexture, u, v, normals, Vertex{1,0,0});
                                 }
                                 paintPoint((int)i,(int)j,col);
                             }

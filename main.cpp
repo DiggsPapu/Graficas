@@ -2,7 +2,7 @@
 
 using namespace std;
 int main (){
-    const std::string filename = "./Image/image70.bmp";
+    const std::string filename = "./Image/image71.bmp";
     Render render(2340 ,1720,filename);
     render.clearAllImage();
     // Texture texture1("/home/dieggspapu/UVG/Graficas/Textures/PIEDRA_MURO_PUNTA-SAL_1.bmp");

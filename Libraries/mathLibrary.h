@@ -337,17 +337,24 @@ void normalizeVertex(Vertex& v) {
     v.y /= length;
     v.z /= length;
 }
-Vertex crossProduct(const Vertex& u, const Vertex& v) {
-    Vertex result;
-    
-    result.x = u.y * v.z - u.z * v.y;
-    result.y = u.z * v.x - u.x * v.z;
-    result.z = u.x * v.y - u.y * v.x;
-    result.w = 0.0f; // Assuming w component is not used for the cross product
-    
-    return result;
+Vertex crossProduct(const Vertex& A, const Vertex& B) 
+{
+    return Vertex{(A.y*B.z-B.y*A.z), -1.0f*(A.x*B.z-B.x*A.z), (A.x*B.y-B.x*A.y), 0.0f};
 }
 Vertex negativeVertex(const Vertex& vector)
 {
     return Vertex{-1.0f*vector.x,-1.0f*vector.y,-1.0f*vector.z,-1.0f*vector.w};
+}
+float dotProductVertex(Vertex v1, Vertex v2)
+{
+    return v1.x*v2.x+v1.y*v2.y+v1.z*v2.z+v1.w*v2.w;
+}
+Vertex inverseVertex(Vertex v1)
+{
+    return Vertex{v1.z, v1.y, v1.x};
+}
+// Norma del vertex/vector
+float vertexNorm(const Vertex& vertex) {
+    float norm = std::sqrt(vertex.x * vertex.x + vertex.y * vertex.y + vertex.z * vertex.z);
+    return norm;
 }

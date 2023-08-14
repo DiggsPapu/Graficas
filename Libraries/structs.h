@@ -5,6 +5,10 @@
 #include <algorithm>
 #include <vector>
 // Structs
+struct Pixel {
+    unsigned char red, green, blue;
+};
+#pragma pack(push, 1)
 struct BmpHeader 
 {
     uint16_t signature;
