@@ -377,7 +377,8 @@ class Render {
                                     float v = done1.x*textureCoords[0].v+done1.y*textureCoords[1].v+done1.z*textureCoords[2].v;
                                     // col = fragmentShader(activeTexture, u,v, normal, Vertex{1,0,0});
                                     // col = flatShader(activeTexture, u, v, normals, Vertex{1,0,0});
-                                    col = inverseShader(activeTexture, u, v, normals, Vertex{1,0,0});
+                                    // col = inverseShader(activeTexture, u, v, normals, Vertex{1,0,0});
+                                    col = heatMapShader(activeTexture, u, v, normals, Vertex{1,0,0});
                                 }
                                 paintPoint((int)i,(int)j,col);
                             }

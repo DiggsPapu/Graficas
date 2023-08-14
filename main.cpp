@@ -2,7 +2,7 @@
 
 using namespace std;
 int main (){
-    const std::string filename = "./Image/inverseShader.bmp";
+    const std::string filename = "./Image/heatMapShader.bmp";
     Render render(2340 ,1720,filename);
     render.clearAllImage();
     // Texture texture1("/home/dieggspapu/UVG/Graficas/Textures/PIEDRA_MURO_PUNTA-SAL_1.bmp");
