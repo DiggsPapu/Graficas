@@ -1,5 +1,2 @@
-## R3
-El r2 es sobre la aplicacion de texturas sobre el model 3d.
-Fue desarrollado por Diego Andres Alonzo Medinilla 20172
-En la carpeta de image estan las imagenes generadas mediante el codigo y ademas con traslaciones y en caso de que se quiere hacer una imagen multicolor entonces solo se aplica true en el model.
-5469.
+## Lab 2
+Lab2 aplicacion de shaders, de manera que se desarrollaron 3 shaders, el primero que era un shader de heat map de manera que se utiliza la luz para determinar el calor de donde cae la luz, luego estaria el shader de inverse colors que genera una imagen con los colores invertidos y finalmente un twist que genera vertices cuando se twistean de manera que da un efecto twist.
