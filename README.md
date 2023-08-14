@@ -12,4 +12,5 @@ En la carpeta de image estan las imagenes generadas mediante el codigo y ademas 
 
 ![image](https://github.com/DiggsPapu/Graficas/assets/84475020/ac52d84f-4643-4082-acfd-9cbd1466ce01)
 * High angle
+
 ![image](https://github.com/DiggsPapu/Graficas/assets/84475020/55f84d00-be3d-47b3-9a79-915a9ad0823c)
