@@ -54,7 +54,7 @@ Pixel inverseShader(Texture &activeTexture, float u, float v, vector<Vertex> nor
     Pixel color = {static_cast<unsigned char>(255.0f-text.x*intensity),static_cast<unsigned char>(255.0f-text.y*intensity),static_cast<unsigned char>(255.0f-text.z*intensity)};
     return color;  
 }
-Pixel fragmentShader(Texture &activeTexture, float u, float v, Vertex normal, Vertex dLight)
+Pixel fragmentShader(Texture &activeTexture, float u, float v)
 {
     return activeTexture.getColor(u,v);
 }

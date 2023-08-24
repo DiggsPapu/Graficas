@@ -291,7 +291,7 @@ class Render {
                 }
             }    
         }
-    void renderModel(Model *model, bool multicolor){
+    void renderModel(Model *model, int vShader, int fShader){
         std::vector<Face> faces = model->getFaces();
         std::vector<Vertex> verts = model->getVertices();
         std::vector<TextureCoord> cords = model->getCords();
@@ -315,16 +315,20 @@ class Render {
             normal1 = model->getNormals()[faces[i].vertices[1].normalIndex-1];
             normal2 = model->getNormals()[faces[i].vertices[2].normalIndex-1];
             vector<Vertex> normals{normal0, normal1, normal2};
-            // VertexShader
-            // vert0 = vertexShader(verts[faces[i].vertices[0].vertexIndex-1],camera.finalM,model->glMatrix);
-            // vert1 = vertexShader(verts[faces[i].vertices[1].vertexIndex-1],camera.finalM,model->glMatrix);
-            // vert2 = vertexShader(verts[faces[i].vertices[2].vertexIndex-1],camera.finalM,model->glMatrix);
-            // SpikyShader
-            // triangle = spikyShader(triangle,camera.finalM,model->glMatrix);
-            // waveDeformationShader
-            vert0 = twistDeformationShader(verts[faces[i].vertices[0].vertexIndex-1],camera.finalM,model->glMatrix,100);
-            vert1 = twistDeformationShader(verts[faces[i].vertices[1].vertexIndex-1],camera.finalM,model->glMatrix,100);
-            vert2 = twistDeformationShader(verts[faces[i].vertices[2].vertexIndex-1],camera.finalM,model->glMatrix,100);
+            if (vShader==1)
+            {
+                // waveDeformationShader
+                vert0 = twistDeformationShader(verts[faces[i].vertices[0].vertexIndex-1],camera.finalM,model->glMatrix,100);
+                vert1 = twistDeformationShader(verts[faces[i].vertices[1].vertexIndex-1],camera.finalM,model->glMatrix,100);
+                vert2 = twistDeformationShader(verts[faces[i].vertices[2].vertexIndex-1],camera.finalM,model->glMatrix,100);
+            }
+            else
+            {
+                // VertexShader
+                vert0 = vertexShader(verts[faces[i].vertices[0].vertexIndex-1],camera.finalM,model->glMatrix);
+                vert1 = vertexShader(verts[faces[i].vertices[1].vertexIndex-1],camera.finalM,model->glMatrix);
+                vert2 = vertexShader(verts[faces[i].vertices[2].vertexIndex-1],camera.finalM,model->glMatrix);    
+            }
             triangle.v1 = vert0;
             triangle.v2 = vert1;
             triangle.v3 = vert2;
@@ -336,19 +340,24 @@ class Render {
                 // normals
                 normal3 = model->getNormals()[faces[i].vertices[3].normalIndex-1];
                 // Transformation
-                // vert3 = vertexShader(verts[faces[i].vertices[3].vertexIndex-1],camera.finalM,model->glMatrix);
-                vert3 = twistDeformationShader(verts[faces[i].vertices[3].vertexIndex-1],camera.finalM,model->glMatrix,100);
-                // vert3 = spikyVertexShader(verts[faces[i].vertices[3].vertexIndex-1],camera.finalM,model->glMatrix,1);
+                if (vShader==1)
+                {
+                    vert3 = twistDeformationShader(verts[faces[i].vertices[3].vertexIndex-1],camera.finalM,model->glMatrix,100);
+                }
+                else
+                {
+                    vert3 = vertexShader(verts[faces[i].vertices[3].vertexIndex-1],camera.finalM,model->glMatrix);
+                }
                 vector<Vertex> normals2{normal0,normal2,normal3};
                 vector<TextureCoord> textureCoords2 = {vt0,vt2,vt3};
                 Triangle triangle2 = {vert0,vert3,vert2};
-                renderBarycentricTriangle(triangle2,textureCoords2, normals2, multicolor);
+                renderBarycentricTriangle(triangle2,textureCoords2, normals2, fShader);
             }
-            renderBarycentricTriangle(triangle,textureCoords, normals, multicolor);
+            renderBarycentricTriangle(triangle,textureCoords, normals, fShader);
         }
     }
     void paintPoint(int x, int y, Pixel color){if (x<=image.width && y<=image.height){image.imageData[getPixelIndex(x,y)].red =color.red;image.imageData[getPixelIndex(x,y)].blue =color.blue;image.imageData[getPixelIndex(x,y)].green =color.green;}}
-    void renderBarycentricTriangle(Triangle triangle, vector<TextureCoord> textureCoords, vector<Vertex> normals,bool multicolor)
+    void renderBarycentricTriangle(Triangle triangle, vector<TextureCoord> textureCoords, vector<Vertex> normals,int fShader)
     {
         Pixel col{0,0,0};
         vector<Vertex> verts;
@@ -373,20 +382,30 @@ class Render {
                             
                             if (z<image.zbuffer[getPixelIndex((int)i,(int)j)])
                             {
+
+                                // fragment shader
+                                float u = done1.x*textureCoords[0].u+done1.y*textureCoords[1].u+done1.z*textureCoords[2].u;
+                                float v = done1.x*textureCoords[0].v+done1.y*textureCoords[1].v+done1.z*textureCoords[2].v;
                                 image.zbuffer[getPixelIndex((int)i,(int)j)] = (float)z;
-                                if (multicolor)
+                                if (fShader ==1 )
+                                {
+                                    col = flatShader(activeTexture, u, v, normals, Vertex{-1.0f,0.0f,0.0f});
+                                }
+                                else if (fShader == 2)
+                                {
+                                    col = inverseShader(activeTexture, u, v, normals, Vertex{1,0,0});
+                                }
+                                else if (fShader == 3)
+                                {
+                                    col = heatMapShader(activeTexture, u, v, normals, Vertex{1,0,0});
+                                }
+                                else if (fShader == 4)
                                 {
                                     col.red = 255*done1.x;col.blue = 255*done1.y;col.green = 255*done1.z;
                                 }
                                 else
                                 {
-                                    // fragment shader
-                                    float u = done1.x*textureCoords[0].u+done1.y*textureCoords[1].u+done1.z*textureCoords[2].u;
-                                    float v = done1.x*textureCoords[0].v+done1.y*textureCoords[1].v+done1.z*textureCoords[2].v;
-                                    // col = fragmentShader(activeTexture, u,v, normal, Vertex{1,0,0});
-                                    col = flatShader(activeTexture, u, v, normals, Vertex{1,0,0});
-                                    // col = inverseShader(activeTexture, u, v, normals, Vertex{1,0,0});
-                                    // col = heatMapShader(activeTexture, u, v, normals, Vertex{1,0,0});
+                                    col = fragmentShader(activeTexture, u, v);
                                 }
                                 paintPoint((int)i,(int)j,col);
                             }

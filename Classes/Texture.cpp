@@ -25,11 +25,9 @@ public:
         image.seekg(10);
         int headerSize;
         image.read(reinterpret_cast<char*>(&headerSize), 4);
-
         image.seekg(18);
         image.read(reinterpret_cast<char*>(&width), 4);
         image.read(reinterpret_cast<char*>(&height), 4);
-
         image.seekg(headerSize, std::ios::beg);
         pixels = new Pixel[height*width];
         colors = new Vertex[height*width];
