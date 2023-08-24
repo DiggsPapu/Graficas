@@ -1,7 +1,7 @@
-*/*.bmp
-*/*.obj
-*/*.png
-*/*.jpg
-*/*.jpeg
-*/*.gif
-*/*.tga
+*.bmp
+*.obj
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.tga
