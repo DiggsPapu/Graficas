@@ -3,8 +3,9 @@
 using namespace std;
 int main (){
     const std::string filename = "./Image/project1.bmp";
-    Render render(2340 ,1720,filename);
+    Render render(3840,2160,filename);
     render.clearAllImage();
+    render.renderBackground("/home/dieggspapu/UVG/Graficas/Textures/background.bmp");
     // Texture texture1("/home/dieggspapu/UVG/Graficas/Textures/PIEDRA_MURO_PUNTA-SAL_1.bmp");
     // Texture texture1("/home/dieggspapu/UVG/Graficas/Textures/dog.bmp");
     Texture texture1("/home/dieggspapu/UVG/Graficas/Textures/Brick2.bmp");
@@ -31,6 +32,9 @@ int main (){
     model.loadTexture(texture3);
     render.renderModel(&model, 2,5);
     model = Model(-0.06f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0007f,0.0007f,0.0007f,"/home/dieggspapu/UVG/Graficas/Obj/Raptor/Raptor.obj",texture4);
+    model.loadTexture(texture4);
+    render.renderModel(&model, 2,4);
+    model = Model(-0.06f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0007f,0.0007f,0.0007f,"/home/dieggspapu/UVG/Graficas/Obj/Bot.obj",texture4);
     model.loadTexture(texture4);
     render.renderModel(&model, 2,4);
     render.writeBmp();

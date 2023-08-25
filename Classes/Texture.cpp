@@ -80,5 +80,17 @@ public:
         }
         return color;
     }
-
+    Pixel getColorBackground(int x, int y)
+    {
+        if (0<x && x<width && 0<x && y<height )
+        {
+            Pixel pixel{
+                static_cast<unsigned char>(pixels[getPixelIndex(x, y)].red ),
+                static_cast<unsigned char>(pixels[getPixelIndex(x, y)].green),
+                static_cast<unsigned char>(pixels[getPixelIndex(x, y)].blue)
+            };
+            return pixel;
+        }
+        return Pixel{0,0,0};
+    }
 };

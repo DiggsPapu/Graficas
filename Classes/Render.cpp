@@ -423,4 +423,14 @@ class Render {
     {
         camera.lookAt(campX, campY, campZ, eyeX, eyeY, eyeZ);
     }
+    void renderBackground(const std::string file){
+        Texture texture(file);
+        for (size_t i = 0; i < image.width; i++)
+        {
+            for (size_t j = 0; j < image.height; j++)
+            {
+                paintPoint(i,j,texture.getColorBackground(i,j));
+            }
+        }        
+    }
 };
