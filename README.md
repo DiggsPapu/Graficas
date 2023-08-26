@@ -8,3 +8,5 @@ Es la parte para hacer un Rasterizador.
 * R1: Es hacer un obj, se encuentra en la branch de R1.
 * R2: Es hacer que un obj se rellene, se encuentra en la branch de R2.
 * R3: Es hacer camaras de manera que pueda moverse la camara y dar angulacion, se encuentra en la branch de R3. Hice una version de python que nunca termine asi que descartela.
+# Proyecto de Rasterizador 
+Es el proyecto 1 de hacer un rasterizador en c++.
