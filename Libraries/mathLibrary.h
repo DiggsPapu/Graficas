@@ -17,6 +17,19 @@
 #include <threads.h>
 #include "structs.h"
 using namespace std;
+Vertex vertexMultiplyVertex(Vertex vect1, Vertex vect2)
+{
+    return Vertex{vect1.x*vect2.x, vect1.y*vect2.y,vect1.z*vect2.z, vect1.w*vect2.w}; //suma de
+}
+float moduleFun(float dividend, float divisor) {
+    if (divisor == 0) {
+        std::cerr << "Error: Division by zero" << std::endl;
+        return 0;
+    }
+    float result = dividend - divisor * static_cast<int>(dividend / divisor);
+    return result;
+}
+
 std::vector<float> getIntersect(std::vector<float>& p1,std::vector<float>& p2)
 {
     while(p1!=p2)

@@ -5,3 +5,8 @@
 *.jpeg
 *.gif
 *.tga
+*.zip
+*.gz
+*.bz2
+*.rar
+!Image/*

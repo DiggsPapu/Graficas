@@ -7,6 +7,7 @@
 #include <threads.h>
 #include <list>
 #include "../Libraries/structs.h"
+#include "../Libraries/mathLibrary.h"
 using namespace std;
 class Texture {
 private:
@@ -70,6 +71,14 @@ public:
     }
     Vertex getColorFloat(float u, float v) {
         Vertex color {0,0,0};
+        if (u>1.0f)
+        {
+            u = moduleFun(u,1.0f);
+        }
+        if (v>1.0f)
+        {
+            v = moduleFun(v,1.0f);
+        }
         if (0 <= u && u < 1 && 0 <= v && v < 1) {
             int x = static_cast<int>(u * width);
             int y = static_cast<int>(v * height);

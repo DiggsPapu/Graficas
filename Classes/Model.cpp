@@ -21,8 +21,11 @@ class Model {
         std::vector<TextureCoord> textureCoords;
         std::vector<Face> faces;
         std::vector<Vertex> normals;
+        Model(){}
         Model(float tX, float tY, float tZ, float rX, float rY, float rZ, float sX, float sY, float sZ, const std::string& filename,Texture texture1)
         {
+            int vtMax = 0;
+            int vnMax = 0;
             translationMatrix = getTranslationMatrix(tX,tY,tZ);
             rotMatrix = getRotationMatrix(rX, rY, rZ);
             scaleMatrix = getScaleMatrix(sX, sY, sZ);
@@ -82,14 +85,23 @@ class Model {
                         FaceVertex faceVertex;
 
                         viss >> faceVertex.vertexIndex;
-                        if (viss.peek() == '/') {
+                        if (viss.peek() == '/'||viss.peek() != ' ') {
+                            // cout<<viss.peek()<<endl;
                             viss.ignore();
-                            if (viss.peek() != '/') {
+                            if (viss.peek() != '/'||viss.peek() != ' ') {
                                 viss >> faceVertex.textureIndex;
+                                if (vtMax<faceVertex.textureIndex)
+                                {
+                                    vtMax = faceVertex.textureIndex;
+                                }
                             }
-                            if (viss.peek() == '/') {
+                            if (viss.peek() == '/'||viss.peek() != ' ') {
                                 viss.ignore();
                                 viss >> faceVertex.normalIndex;
+                                if (vnMax<faceVertex.textureIndex)
+                                {
+                                    vnMax = faceVertex.textureIndex;
+                                }
                             }
                         }
 
@@ -136,6 +148,62 @@ class Model {
         void loadTexture(Texture texture)
         {
             this->texture = texture;
+        }
+        void parseOBJSpace(const std::string& filename) {
+            std::ifstream file(filename);
+            if (!file) {
+                std::cerr << "Error opening file: " << filename << std::endl;
+                return;
+            }
+
+            std::string line;
+            while (std::getline(file, line)) {
+                std::istringstream iss(line);
+                std::string type;
+                iss >> type;
+
+                if (type == "v") {
+                    Vertex vertex;
+                    iss >> vertex.x >> vertex.y >> vertex.z;
+                    vertices.push_back(vertex);
+                } else if (type == "vt") {
+                    TextureCoord texCoord;
+                    iss >> texCoord.u >> texCoord.v;
+                    textureCoords.push_back(texCoord);
+                } else if (type == "vn") {
+                    Vertex normal;
+                    iss >> normal.x >> normal.y >> normal.z;
+                    normals.push_back(normal);
+                } else if (type == "f") {
+                    Face face;
+                    while (iss) {
+                        std::string vertexInfo;
+                        iss >> vertexInfo;
+                        if (vertexInfo.empty()) {
+                            break;
+                        }
+
+                        std::istringstream viss(vertexInfo);
+                        FaceVertex faceVertex;
+
+                        viss >> faceVertex.vertexIndex;
+                        if (viss.peek() == ' ') {
+                            viss.ignore();
+                            if (viss.peek() != ' ') {
+                                viss >> faceVertex.textureIndex;
+                            }
+                            if (viss.peek() == ' ') {
+                                viss.ignore();
+                                viss >> faceVertex.normalIndex;
+                            }
+                        }
+
+                        face.vertices.push_back(faceVertex);
+                    }
+                    faces.push_back(face);
+                }
+            }
+            file.close();
         }
         void parseOBJ(const std::string& filename) {
             std::ifstream file(filename);

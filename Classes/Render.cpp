@@ -291,7 +291,7 @@ class Render {
                 }
             }    
         }
-    void renderModel(Model *model, int vShader, int fShader){
+    void renderModel(Model *model, int vShader, int fShader, Vertex dLight){
         std::vector<Face> faces = model->getFaces();
         std::vector<Vertex> verts = model->getVertices();
         std::vector<TextureCoord> cords = model->getCords();
@@ -304,23 +304,76 @@ class Render {
         activeTexture = model->getTexture();
         for (size_t i = 0; i < faces.size(); i++)
         {
-
             // Coords
-            vt0 = model->getCords()[faces[i].vertices[0].textureIndex-1];
-            vt1 = model->getCords()[faces[i].vertices[1].textureIndex-1];
-            vt2 = model->getCords()[faces[i].vertices[2].textureIndex-1];
+            if (faces[i].vertices[0].textureIndex-1>=model->getCords().size())
+            {
+                vt0 = TextureCoord{0,0,0};
+            }
+            else
+            {
+                vt0 = model->getCords()[faces[i].vertices[0].textureIndex-1];
+            }
+            if (faces[i].vertices[1].textureIndex-1>=model->getCords().size())
+            {
+                vt1 = TextureCoord{0,0,0};
+            }
+            else
+            {
+                vt1 = model->getCords()[faces[i].vertices[1].textureIndex-1];
+            }
+            if (faces[i].vertices[2].textureIndex-1>=model->getCords().size())
+            {
+                vt2 = TextureCoord{0,0,0};
+            }
+            else
+            {
+                vt2 = model->getCords()[faces[i].vertices[2].textureIndex-1];
+            }
             vector<TextureCoord> textureCoords{vt0,vt1,vt2};
             // Normals
-            normal0 = model->getNormals()[faces[i].vertices[0].normalIndex-1];
-            normal1 = model->getNormals()[faces[i].vertices[1].normalIndex-1];
-            normal2 = model->getNormals()[faces[i].vertices[2].normalIndex-1];
+            if (faces[i].vertices[0].normalIndex-1>=model->getNormals().size())
+            {
+                normal0 = Vertex{0,0,0,0};
+            }
+            else
+            {
+                normal0 = model->getNormals()[faces[i].vertices[0].normalIndex-1];
+            }
+            if (faces[i].vertices[1].normalIndex-1>=model->getNormals().size())
+            {
+                normal1 = Vertex{0,0,0,0};
+            }
+            else
+            {
+                normal1 = model->getNormals()[faces[i].vertices[1].normalIndex-1];
+            }
+            if (faces[i].vertices[2].normalIndex-1>=model->getNormals().size())
+            {
+                normal2 = Vertex{0,0,0,0};
+            }
+            else
+            {
+                normal2 = model->getNormals()[faces[i].vertices[2].normalIndex-1];
+            }
             vector<Vertex> normals{normal0, normal1, normal2};
-            if (vShader==1)
+            if (vShader == 1)
             {
                 // waveDeformationShader
-                vert0 = twistDeformationShader(verts[faces[i].vertices[0].vertexIndex-1],camera.finalM,model->glMatrix,100);
-                vert1 = twistDeformationShader(verts[faces[i].vertices[1].vertexIndex-1],camera.finalM,model->glMatrix,100);
-                vert2 = twistDeformationShader(verts[faces[i].vertices[2].vertexIndex-1],camera.finalM,model->glMatrix,100);
+                vert0 = twistDeformationShader(verts[faces[i].vertices[0].vertexIndex-1],camera.finalM,model->glMatrix,i);
+                vert1 = twistDeformationShader(verts[faces[i].vertices[1].vertexIndex-1],camera.finalM,model->glMatrix,i);
+                vert2 = twistDeformationShader(verts[faces[i].vertices[2].vertexIndex-1],camera.finalM,model->glMatrix,i);
+            }
+            else if (vShader == 2)
+            {
+                vert0 = fragmentationShader(verts[faces[i].vertices[0].vertexIndex-1],camera.finalM,model->glMatrix,i,150.0f);
+                vert1 = fragmentationShader(verts[faces[i].vertices[1].vertexIndex-1],camera.finalM,model->glMatrix,i,150.0f);
+                vert2 = fragmentationShader(verts[faces[i].vertices[2].vertexIndex-1],camera.finalM,model->glMatrix,i,150.0f);    
+            }
+            else if (vShader == 3)
+            {
+                vert0 = rotateShader(verts[faces[i].vertices[0].vertexIndex-1],camera.finalM,model->glMatrix,30.0f);
+                vert1 = rotateShader(verts[faces[i].vertices[1].vertexIndex-1],camera.finalM,model->glMatrix,30.0f);
+                vert2 = rotateShader(verts[faces[i].vertices[2].vertexIndex-1],camera.finalM,model->glMatrix,30.0f);    
             }
             else
             {
@@ -335,14 +388,37 @@ class Render {
             if(faces[i].vertices.size()>3)
             {
                 // textures
-                vt3 = model->getCords()[faces[i].vertices[3].textureIndex-1];
+                if (faces[i].vertices[3].textureIndex-1>=model->getCords().size())
+                {
+                    vt3 = TextureCoord{0,0,0};
+                }
+                else
+                {
+                    vt3 = model->getCords()[faces[i].vertices[3].textureIndex-1];
+                }                
                 textureCoords.push_back(vt3);
                 // normals
-                normal3 = model->getNormals()[faces[i].vertices[3].normalIndex-1];
+
+                if (faces[i].vertices[3].normalIndex-1>=model->getNormals().size())
+                {
+                    normal3 = Vertex{0,0,0,0};
+                }
+                else
+                {
+                    normal3 = model->getNormals()[faces[i].vertices[3].normalIndex-1];
+                }
                 // Transformation
                 if (vShader==1)
                 {
-                    vert3 = twistDeformationShader(verts[faces[i].vertices[3].vertexIndex-1],camera.finalM,model->glMatrix,100);
+                    vert3 = twistDeformationShader(verts[faces[i].vertices[3].vertexIndex-1],camera.finalM,model->glMatrix,i);
+                }
+                else if (vShader == 2)
+                {
+                    vert3 = fragmentationShader(verts[faces[i].vertices[2].vertexIndex-1],camera.finalM,model->glMatrix,i,250.0f);  
+                }
+                else if (vShader == 3)
+                {
+                    vert3 = rotateShader(verts[faces[i].vertices[2].vertexIndex-1],camera.finalM,model->glMatrix,30.0f);  
                 }
                 else
                 {
@@ -351,13 +427,13 @@ class Render {
                 vector<Vertex> normals2{normal0,normal2,normal3};
                 vector<TextureCoord> textureCoords2 = {vt0,vt2,vt3};
                 Triangle triangle2 = {vert0,vert3,vert2};
-                renderBarycentricTriangle(triangle2,textureCoords2, normals2, fShader);
+                renderBarycentricTriangle(triangle2,textureCoords2, normals2, fShader, dLight);
             }
-            renderBarycentricTriangle(triangle,textureCoords, normals, fShader);
+            renderBarycentricTriangle(triangle,textureCoords, normals, fShader, dLight);
         }
     }
     void paintPoint(int x, int y, Pixel color){if (x<=image.width && y<=image.height){image.imageData[getPixelIndex(x,y)].red =color.red;image.imageData[getPixelIndex(x,y)].blue =color.blue;image.imageData[getPixelIndex(x,y)].green =color.green;}}
-    void renderBarycentricTriangle(Triangle triangle, vector<TextureCoord> textureCoords, vector<Vertex> normals,int fShader)
+    void renderBarycentricTriangle(Triangle triangle, vector<TextureCoord> textureCoords, vector<Vertex> normals,int fShader, Vertex dLight)
     {
         Pixel col{0,0,0};
         vector<Vertex> verts;
@@ -389,19 +465,29 @@ class Render {
                                 image.zbuffer[getPixelIndex((int)i,(int)j)] = (float)z;
                                 if (fShader ==1 )
                                 {
-                                    col = flatShader(activeTexture, u, v, normals, Vertex{-1.0f,0.0f,0.0f});
+                                    // col = flatShader(activeTexture, u, v, normals, Vertex{-1.0f,0.0f,0.0f});
+                                    col = flatShader(activeTexture, u, v, normals, dLight);
                                 }
                                 else if (fShader == 2)
                                 {
-                                    col = inverseShader(activeTexture, u, v, normals, Vertex{1,0,0});
+                                    // col = inverseShader(activeTexture, u, v, normals, Vertex{1,0,0});
+                                    col = inverseShader(activeTexture, u, v, normals, dLight);
                                 }
                                 else if (fShader == 3)
                                 {
-                                    col = heatMapShader(activeTexture, u, v, normals, Vertex{1,0,0});
+                                    col = heatMapShader(activeTexture, u, v, normals, dLight);
                                 }
                                 else if (fShader == 4)
                                 {
                                     col.red = 255*done1.x;col.blue = 255*done1.y;col.green = 255*done1.z;
+                                }
+                                else if (fShader == 5)
+                                {
+                                    col = sepiaToneShader(activeTexture, u, v, normals, dLight);
+                                }
+                                else if (fShader == 6)
+                                {
+                                    col = inverseNormal(activeTexture, u, v, normals, dLight);
                                 }
                                 else
                                 {

@@ -2,41 +2,41 @@
 
 using namespace std;
 int main (){
-    const std::string filename = "./Image/project1.bmp";
+    const std::string filename = "./Image/project1Night2.bmp";
     Render render(3840,2160,filename);
     render.clearAllImage();
-    render.renderBackground("/home/dieggspapu/UVG/Graficas/Textures/background.bmp");
-    // Texture texture1("/home/dieggspapu/UVG/Graficas/Textures/PIEDRA_MURO_PUNTA-SAL_1.bmp");
-    // Texture texture1("/home/dieggspapu/UVG/Graficas/Textures/dog.bmp");
-    Texture texture1("/home/dieggspapu/UVG/Graficas/Textures/Brick2.bmp");
-    Texture texture2("/home/dieggspapu/UVG/Graficas/Textures/ufo_diffuse_glow.bmp");
-    Texture texture3("/home/dieggspapu/UVG/Graficas/Textures/TREX.bmp");
-    Texture texture4("/home/dieggspapu/UVG/Graficas/Textures/Raptor_SP.bmp");
-    Texture texture5("/home/dieggspapu/UVG/Graficas/Textures/Triceratops_body_BaseColor2K.bmp");
-    
-    // Look at 
-    render.lookAt(0.0f,0.0f,10.0f,0.0f,0.0f,0.0f);//Medium shot 
-    Model model(0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.005f,0.005f,0.005f,"/home/dieggspapu/UVG/Graficas/Obj/Raptor2/RAPTOR_CAGE_MODEL.OBJ",texture1);
-    model.loadTexture(texture1);
-    render.renderModel(&model, 2,3);
-    model = Model(0.05f,0.0f,0.0f,90.0f,80.0f,60.0f,0.005f,0.005f,0.005f,"/home/dieggspapu/UVG/Graficas/Obj/bird.obj",texture1);
-    model.loadTexture(texture1);
-    render.renderModel(&model, 2,2);
-    model = Model(0.04f,0.05f,0.0f,0.0f,0.0f,0.0f,0.001f,0.001f,0.001f,"/home/dieggspapu/UVG/Graficas/Obj/UFO/UFO.obj",texture1);
-    model.loadTexture(texture2);
-    render.renderModel(&model, 2,3);
-    model = Model(-0.04f,0.05f,0.0f,0.0f,-150.0f,0.0f,0.005f,0.005f,0.005f,"/home/dieggspapu/UVG/Graficas/Obj/Triceratops.obj",texture5);
+    render.renderBackground("./Textures/Background3.bmp");
+    Texture texture3("./Textures/TREX.bmp");
+    Texture texture4("./Textures/Raptor.bmp");
+    Texture texture5("./Textures/Triceratops_body_BaseColor2K.bmp");
+    Texture texture1("./Textures/suntext.bmp");
+    Texture texture6("./Textures/Carnotaurus.bmp");
+    render.lookAt(0.0f,1.0f,8.0f,0.0f,0.0f,0.0f);
+    Model model; 
+    model = Model(0.08f,0.01f,0.0f,0.0f,20.0f,0.0f,0.009f,0.009f,0.009f,"./Obj/Carnotaurus/Carnotaurus.obj",texture6);
+    model.loadTexture(texture6);
+    render.renderModel(&model, 0,2,Vertex{-1.0f,-1.0f,1.0f});      
+    model = Model(0.15f,0.0f,0.0f,0.0f,-120.0f,0.0f,0.01f,0.01f,0.01f,"./Obj/Carnotaurus/Carnotaurus.obj",texture6);
+    model.loadTexture(texture6);
+    render.renderModel(&model, 0,5,Vertex{-1.0f,-1.0f,1.0f});    
+    model = Model(0.14f,-0.03f,0.0f,0.0f,30.0f,0.0f,0.02f,0.02f,0.02f,"./Obj/Triceratops.obj",texture5);
     model.loadTexture(texture5);
-    render.renderModel(&model, 2,1);
-    model = Model(-0.09f,0.05f,0.0f,0.0f,0.0f,0.0f,0.01f,0.01f,0.01f,"/home/dieggspapu/UVG/Graficas/Obj/Trex/Trex.obj",texture3);
+    render.renderModel(&model, 2,2,Vertex{-1.0f,-1.0f,1.0f});    
+    model = Model(-0.05f,-0.05f,0.0f,0.0f,-30.0f,0.0f,0.02f,0.02f,0.02f,"./Obj/Triceratops.obj",texture5);
+    model.loadTexture(texture5);
+    render.renderModel(&model, 1,6,Vertex{-1.0f,0.0f,0.0f}); 
+    model = Model(-0.06f,0.02f,-0.11f,0.0f,0.0f,0.0f,0.008f,0.008f,0.008f,"./Obj/Raptor2/RAPTOR_CAGE_MODEL.OBJ",texture4);
+    model.loadTexture(texture4);
+    render.renderModel(&model, 0,5,Vertex{0.0f,-1.0f,0.05f});
+    model = Model(-0.03f,-0.03f,-0.09f,0.0f,0.0f,0.0f,0.009f,0.009f,0.009f,"./Obj/Raptor2/RAPTOR_CAGE_MODEL.OBJ",texture4);
+    model.loadTexture(texture4);
+    render.renderModel(&model, 3,3,Vertex{0.0f,-1.0f,0.05f});
+    model = Model(-0.02f,0.01f,-0.1f,0.0f,0.0f,0.0f,0.023f,0.023f,0.023f,"./Obj/Trex/Trex.obj",texture3);
     model.loadTexture(texture3);
-    render.renderModel(&model, 2,5);
-    model = Model(-0.06f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0007f,0.0007f,0.0007f,"/home/dieggspapu/UVG/Graficas/Obj/Raptor/Raptor.obj",texture4);
-    model.loadTexture(texture4);
-    render.renderModel(&model, 2,4);
-    model = Model(-0.06f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0007f,0.0007f,0.0007f,"/home/dieggspapu/UVG/Graficas/Obj/Bot.obj",texture4);
-    model.loadTexture(texture4);
-    render.renderModel(&model, 2,4);
+    render.renderModel(&model, 3,1,Vertex{-1.0f,-1.0f,1.0f});
+    model = Model(0.0f,0.01f,-0.1f,0.0f,90.0f,0.0f,0.023f,0.023f,0.023f,"./Obj/Trex/Trex.obj",texture3);
+    model.loadTexture(texture3);
+    render.renderModel(&model, 2,0,Vertex{-1.0f,-1.0f,1.0f});
     render.writeBmp();
     return 0;
 }
