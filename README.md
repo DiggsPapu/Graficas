@@ -1,5 +1,6 @@
-## Lab 2
-Lab2 aplicacion de shaders, de manera que se desarrollaron 3 shaders, el primero que era un shader de heat map de manera que se utiliza la luz para determinar el calor de donde cae la luz, luego estaria el shader de inverse colors que genera una imagen con los colores invertidos y finalmente un twist que genera vertices cuando se twistean de manera que da un efecto twist.
+## Proyecto 1
+Proyecto 1 el proyecto 1 es para realizar el rasterizador, se tomaron varias pruebas en varios escenarios y todos los resultados se encuentran en la carpeta de Image, se debe de notar que se realizo un git ignore para no subir las texturas ni los obj de los modelos. 
+Estos son ejemplos de shaders aplicados:
 * Twist
 
 
@@ -11,4 +12,23 @@ Lab2 aplicacion de shaders, de manera que se desarrollaron 3 shaders, el primero
 * Inverse colors
 
 ![image](https://github.com/DiggsPapu/Graficas/assets/84475020/7e8ce63c-753a-4e4b-9bd0-8848ad9efe6b)
+Asi mismo, estas son los resultados obtenidos:
+* Background 1
+
+
+![project1](https://github.com/DiggsPapu/Graficas/assets/84475020/7829f921-ba28-43d3-a1aa-f26f9cc321ae)
+* Background 2
+
+![project1Night2](https://github.com/DiggsPapu/Graficas/assets/84475020/275b1185-e0c3-4535-814d-5e91ea57f4ed)
+* Background 3
+
+![project1Night21](https://github.com/DiggsPapu/Graficas/assets/84475020/7281ed7d-70ae-4c6b-927b-8e44289f04a3)
+* Final
+
+![project1Night](https://github.com/DiggsPapu/Graficas/assets/84475020/99aeac7a-3622-44ba-b12a-a44e534030f0)
+  
+
+
+
+
 
