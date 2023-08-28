@@ -19,14 +19,13 @@ Asi mismo, estas son los resultados obtenidos:
 ![project1](https://github.com/DiggsPapu/Graficas/assets/84475020/7829f921-ba28-43d3-a1aa-f26f9cc321ae)
 * Background 2
 
-![project1Night2](https://github.com/DiggsPapu/Graficas/assets/84475020/275b1185-e0c3-4535-814d-5e91ea57f4ed)
+![project1Night](https://github.com/DiggsPapu/Graficas/assets/84475020/99aeac7a-3622-44ba-b12a-a44e534030f0)
 * Background 3
 
 ![project1Night21](https://github.com/DiggsPapu/Graficas/assets/84475020/7281ed7d-70ae-4c6b-927b-8e44289f04a3)
 * Final
 
-![project1Night](https://github.com/DiggsPapu/Graficas/assets/84475020/99aeac7a-3622-44ba-b12a-a44e534030f0)
-  
+![project1Night2](https://github.com/DiggsPapu/Graficas/assets/84475020/275b1185-e0c3-4535-814d-5e91ea57f4ed)  
 
 
 
