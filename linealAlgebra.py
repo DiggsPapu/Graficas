@@ -30,3 +30,5 @@ def scalarMultMatrix(val, matrix):
     return result
 def tupleToArray(tuple):
     return [tuple[x] for x in range(0,len(tuple))]
+def negArray(array):
+    return [array[i]*-1 for i in range(0,len(array))]
