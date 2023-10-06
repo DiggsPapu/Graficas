@@ -25,7 +25,7 @@ eyeTexture = pygame.image.load("./textures/eye.jpg")
 dragonBall = pygame.image.load("./textures/dragonBall.jpg")
 krilinTexture = pygame.image.load("./textures/Krilin.png")
 brick = Material(diffuse=(1,0.4,0.4),spec=8,Ks=0.01)
-brick2 = Material(diffuse=(1,0.4,0.4),spec=0,Ks=1)
+red = Material(diffuse=(1,0,0),spec=0,Ks=1)
 grass = Material(diffuse=(0.4,1,0.4),spec=32,Ks=0.1)
 water = Material(diffuse=(0.4,0.4,1),spec=256,Ks=0.2)
 mirror = Material(diffuse=(0.9,0.9,0.9),spec=64,Ks=0.2,matType=REFLECTIVE)
@@ -41,7 +41,7 @@ diamond = Material(diffuse=(0.9,0.9,0.9),spec=128,Ks=0.2,ior=2.417,matType=TRANS
 water = Material(diffuse=(0.1,0.4,0.9),spec=128,Ks=0.2,ior=1.33,matType=TRANSPARENT)
 raytracer.scene.append(AABB(position = (-1.5,1.5,-5), size = (1,1,1), material=glass))
 
-raytracer.scene.append(AABB(position = (-1.0,-1.5,-5), size = (1,1,1), material=earth))
+raytracer.scene.append(AABB(position = (-1.0,-1.5,-5), size = (1,1,1), material=krilin))
 raytracer.scene.append(AABB(position = (1.0,1.5,-5), size = (1,1,1), material=mirror))
 raytracer.scene.append(AABB(position = (1.5,-1.5,-5), size = (1,1,1), material=eye))
 
@@ -52,13 +52,13 @@ raytracer.scene.append(AABB(position = (1.5,-1.5,-5), size = (1,1,1), material=e
 # raytracer.scene.append(Sphere(position=(+1.7,	-1.5,	-5),		radius=0.8,	material=glass))
 # raytracer.scene.append(Sphere(position=(+1.7,	+1.0,	-5),		radius=0.8,	material=diamond))
 
-raytracer.scene.append(Plane(position=(1,1,10000),normal=(0,-1,0.25),material=mirror))
+raytracer.scene.append(Plane(position=(1,1,10000),normal=(0,-1,0.25),material=glass))
 raytracer.scene.append(Plane(position=(1,1,1),normal=(0,1,0.25),material=blueMirror))
 raytracer.scene.append(Plane(position=(-1,1,1),normal=(1,0,-0.45),material=water))
-raytracer.scene.append(Plane(position=(1,1,1),normal=(1,0,0.45),material=glass))
-raytracer.scene.append(Disk(position=(0,-0,-6),normal=(0,1.5,0.5),radius=1.5,material=brick2))
+raytracer.scene.append(Plane(position=(1,1,1),normal=(1,0,0.45),material=red))
+raytracer.scene.append(Disk(position=(0,-4,-6),normal=(0,1.5,1.5),radius=2,material=mirror))
 
-raytracer.lights.append(AmbientLight(intensity=0.1))
+raytracer.lights.append(AmbientLight(intensity=0.7))
 raytracer.lights.append(DirectionalLight(direction=(-1,-1,-1),intensity=0.9))
 raytracer.lights.append(PointLight(point=(0,-0,-6),intensity=1))
 
