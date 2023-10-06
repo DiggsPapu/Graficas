@@ -33,6 +33,10 @@ krilin = Material(texture=krilinTexture, spec=64, Ks = 0.1, matType=OPAQUE)
 glass = Material(diffuse=(0.9,0.9,0.9),spec=64,Ks=0.15,ior=1.5,matType=TRANSPARENT)
 diamond = Material(diffuse=(0.9,0.9,0.9),spec=128,Ks=0.2,ior=2.417,matType=TRANSPARENT)
 water = Material(diffuse=(0.1,0.4,0.9),spec=128,Ks=0.2,ior=1.33,matType=TRANSPARENT)
+
+red = Material(diffuse=(1,0,0),spec=1,Ks=1, matType = OPAQUE)
+glassWeird = Material(diffuse=(0.5,0.5,0.5),spec=256,Ks=0.4,ior=2.57,matType=TRANSPARENT)
+greenMirror = Material(diffuse=(0.3,0.9,0.3),spec=64,Ks=0.5,matType=REFLECTIVE)
 # raytracer.scene.append(AABB(position = (-1.5,1.5,-5), size = (1,1,1), material=glass))
 
 # raytracer.scene.append(AABB(position = (-1.0,-1.5,-5), size = (1,1,1), material=krilin))
@@ -52,8 +56,8 @@ water = Material(diffuse=(0.1,0.4,0.9),spec=128,Ks=0.2,ior=1.33,matType=TRANSPAR
 # raytracer.scene.append(Plane(position=(1,1,1),normal=(1,0,0.45),material=red))
 # raytracer.scene.append(Disk(position=(0,-4,-6),normal=(0,1.5,1.5),radius=2,material=mirror))
 raytracer.scene.append(Triangle(vertices=[[-1,2,-5],[1,2,-5],[0,0,-5]], material=red))
-raytracer.scene.append(Triangle(vertices=[[-1.5,-1,-6],[-1,1,-5],[1,0,-7]], material=blueMirror))
-raytracer.scene.append(Triangle(vertices=[[0,-1.5,-4],[1,3,-4],[2,-1.5,-4]], material=glass))
+raytracer.scene.append(Triangle(vertices=[[-1.5,-1,-6],[-1,1,-5],[1,0,-7]], material=greenMirror))
+raytracer.scene.append(Triangle(vertices=[[0,-1.5,-4],[1,3,-4],[2,-1.5,-4]], material=glassWeird))
 # raytracer.scene.append(Ellipsoid(position=[-1,2,-5], radii=[1,1,1],material=red))
 # raytracer.scene.append(Ellipsoid(position=[-1.5,-1,-6], radii=[1,1,1],material=blueMirror))
 # raytracer.scene.append(Ellipsoid(position=[0,-1.5,-4], radii=[1,1,1],material=glass))
@@ -77,6 +81,6 @@ while isRunning:
 
 rect = pygame.Rect(0,0,width,height)
 sub = screen.subsurface(rect)
-pygame.image.save(sub,"rt3.jpg")
+pygame.image.save(sub,"lab3.jpg")
 
 pygame.quit()

@@ -194,37 +194,33 @@ class Triangle(object):
         self.material = material
 
     def ray_intersect(self, orig, dir):
+        # extraccion de vertices
         v0, v1, v2 = self.vertices
+        # Calcular lados
         e1 = subtract(v1, v0)
         e2 = subtract(v2, v0)
+        # Vector ortogonal
         h = crossProduct(dir, e2)
         a = dotProduct(e1, h)
-        # Bias
+        # Es paralelo al triangulo
         if a > -0.00001 and a < 0.00001:
             return None
-        
-        f = 1 / a
+        # coordenada de la direccion del rayo
         s = subtract(orig, v0)
-        u = f * dotProduct(s, h)
-
-        if u < 0.0 or u > 1.0:
-            return None
-
+        # Calculo de baricentricas
+        u = dotProduct(s, h) / a
         q = crossProduct(s, e1)
-        v = f * dotProduct(dir, q)
-
-        if v < 0.0 or u + v > 1.0:
+        v = dotProduct(dir, q) / a
+        if u < 0.0 or u > 1.0 or v < 0.0 or u + v > 1.0:
             return None
-
-        t = f * dotProduct(e2, q)
-
+        # Punto de interseccion
+        t = dotProduct(e2, q) / a
+        # Si no es paralelo
         if t > 0.00001:
             intersect_point = add(orig, scalarMultVector(t, dir))
-
             edge1 = subtract(v1, v0)
             edge2 = subtract(v2, v1)
-            normal = crossProduct(edge1, edge2)
-            normal = normalize(normal)
+            normal = normalize(crossProduct(edge1, edge2))
 
             return Intercept(distance=t, point=intersect_point, normal=normal, texcoords=None, obj=self)
 
