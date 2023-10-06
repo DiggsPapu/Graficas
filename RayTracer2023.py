@@ -7,8 +7,8 @@ from lights import *
 from materials import *
 
 
-width = 256
-height = 256
+width = 512
+height = 512
 
 pygame.init()
 
@@ -18,28 +18,49 @@ screen.set_alpha(None)
 raytracer = RayTracer(screen)
 raytracer.envMap = pygame.image.load("./textures/kameHouse.jpeg")
 raytracer.rtClearColor(0.25,0.25,0.25)
+skullTexture = pygame.image.load("./textures/skull.jpeg")
+earthTexture = pygame.image.load("textures/earthDay.bmp")
+wallTexture = pygame.image.load("textures/wall.bmp")
+eyeTexture = pygame.image.load("./textures/eye.jpg")
 dragonBall = pygame.image.load("./textures/dragonBall.jpg")
 krilinTexture = pygame.image.load("./textures/Krilin.png")
 brick = Material(diffuse=(1,0.4,0.4),spec=8,Ks=0.01)
+brick2 = Material(diffuse=(1,0.4,0.4),spec=0,Ks=1)
 grass = Material(diffuse=(0.4,1,0.4),spec=32,Ks=0.1)
 water = Material(diffuse=(0.4,0.4,1),spec=256,Ks=0.2)
 mirror = Material(diffuse=(0.9,0.9,0.9),spec=64,Ks=0.2,matType=REFLECTIVE)
 blueMirror = Material(diffuse=(0.4,0.4,0.9),spec=32,Ks=0.15,matType=REFLECTIVE)
+earth = Material(texture = earthTexture,spec=64,Ks=0.1,matType=OPAQUE)
+wall = Material(texture = wallTexture,spec=64,Ks=0.1,matType=REFLECTIVE)
+eye = Material(texture=eyeTexture, spec=64, Ks = 0.1, matType=OPAQUE)
 dragonBall = Material(texture=dragonBall, spec=64, Ks = 0.1, matType=OPAQUE)
 krilin = Material(texture=krilinTexture, spec=64, Ks = 0.1, matType=OPAQUE)
+skull = Material(texture=skullTexture, spec=64, Ks = 0.1, matType=OPAQUE)
 glass = Material(diffuse=(0.9,0.9,0.9),spec=64,Ks=0.15,ior=1.5,matType=TRANSPARENT)
 diamond = Material(diffuse=(0.9,0.9,0.9),spec=128,Ks=0.2,ior=2.417,matType=TRANSPARENT)
-water = Material(diffuse=(0.4,0.4,0.9),spec=128,Ks=0.2,ior=1.33,matType=TRANSPARENT)
+water = Material(diffuse=(0.1,0.4,0.9),spec=128,Ks=0.2,ior=1.33,matType=TRANSPARENT)
+raytracer.scene.append(AABB(position = (-1.5,1.5,-5), size = (1,1,1), material=glass))
 
-raytracer.scene.append(Sphere(position=(-1.7,	+1.0,	-5),		radius=0.8,	material=dragonBall))
-raytracer.scene.append(Sphere(position=(-1.7,	-1.5,	-5),		radius=0.8,	material=krilin))
-raytracer.scene.append(Sphere(position=(+0.0,	-1.5,	-5),		radius=0.8,	material=mirror))
-raytracer.scene.append(Sphere(position=(+0.0,	+1.0,	-5),		radius=0.8,	material=blueMirror))
-raytracer.scene.append(Sphere(position=(+1.7,	-1.5,	-5),		radius=0.8,	material=glass))
-raytracer.scene.append(Sphere(position=(+1.7,	+1.0,	-5),		radius=0.8,	material=diamond))
+raytracer.scene.append(AABB(position = (-1.0,-1.5,-5), size = (1,1,1), material=earth))
+raytracer.scene.append(AABB(position = (1.0,1.5,-5), size = (1,1,1), material=mirror))
+raytracer.scene.append(AABB(position = (1.5,-1.5,-5), size = (1,1,1), material=eye))
+
+# raytracer.scene.append(Sphere(position=(-1.7,	+1.0,	-5),		radius=0.8,	material=dragonBall))
+# raytracer.scene.append(Sphere(position=(-1.7,	-1.5,	-5),		radius=0.8,	material=krilin))
+# raytracer.scene.append(Sphere(position=(+0.0,	-1.5,	-5),		radius=0.8,	material=mirror))
+# raytracer.scene.append(Sphere(position=(+0.0,	+1.0,	-5),		radius=0.8,	material=blueMirror))
+# raytracer.scene.append(Sphere(position=(+1.7,	-1.5,	-5),		radius=0.8,	material=glass))
+# raytracer.scene.append(Sphere(position=(+1.7,	+1.0,	-5),		radius=0.8,	material=diamond))
+
+raytracer.scene.append(Plane(position=(1,1,10000),normal=(0,-1,0.25),material=mirror))
+raytracer.scene.append(Plane(position=(1,1,1),normal=(0,1,0.25),material=blueMirror))
+raytracer.scene.append(Plane(position=(-1,1,1),normal=(1,0,-0.45),material=water))
+raytracer.scene.append(Plane(position=(1,1,1),normal=(1,0,0.45),material=glass))
+raytracer.scene.append(Disk(position=(0,-0,-6),normal=(0,1.5,0.5),radius=1.5,material=brick2))
 
 raytracer.lights.append(AmbientLight(intensity=0.1))
 raytracer.lights.append(DirectionalLight(direction=(-1,-1,-1),intensity=0.9))
+raytracer.lights.append(PointLight(point=(0,-0,-6),intensity=1))
 
 raytracer.rtClear()
 raytracer.rtRender()
@@ -57,6 +78,6 @@ while isRunning:
 
 rect = pygame.Rect(0,0,width,height)
 sub = screen.subsurface(rect)
-pygame.image.save(sub,"dragonBall.jpg")
+pygame.image.save(sub,"rt3.jpg")
 
 pygame.quit()

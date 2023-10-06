@@ -101,8 +101,8 @@ class RayTracer(object):
         surfaceColor = material.diffuse
         
         if material.texture and intercept.texcoords:
-            tX= intercept.texcoords[0] * material.texture.get_width()
-            tY = intercept.texcoords[1] * material.texture.get_height()
+            tX= intercept.texcoords[0] * material.texture.get_width() - 1
+            tY = intercept.texcoords[1] * material.texture.get_height() - 1
             texcolor = material.texture.get_at((int(tX),int(tY)))
             texcolor = [i/255 for i in texcolor]
             surfaceColor = [surfaceColor[i]*texcolor[i] for i in range(3)]
