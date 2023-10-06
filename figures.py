@@ -184,6 +184,94 @@ class AABB(Shape):
                          normal=intersect.normal,
                          texcoords=(u, v),
                          obj=self)
-        super().ray_intersect(orig, dir)
+
+
+class Triangle(object):
+    def __init__(self, vertices, material):
+        if len(vertices) != 3:
+            raise ValueError("A triangle must have exactly three vertices.")
+        self.vertices = vertices
+        self.material = material
+
+    def ray_intersect(self, orig, dir):
+        v0, v1, v2 = self.vertices
+        e1 = subtract(v1, v0)
+        e2 = subtract(v2, v0)
+        h = crossProduct(dir, e2)
+        a = dotProduct(e1, h)
+        # Bias
+        if a > -0.00001 and a < 0.00001:
+            return None
+        
+        f = 1 / a
+        s = subtract(orig, v0)
+        u = f * dotProduct(s, h)
+
+        if u < 0.0 or u > 1.0:
+            return None
+
+        q = crossProduct(s, e1)
+        v = f * dotProduct(dir, q)
+
+        if v < 0.0 or u + v > 1.0:
+            return None
+
+        t = f * dotProduct(e2, q)
+
+        if t > 0.00001:
+            intersect_point = add(orig, scalarMultVector(t, dir))
+
+            edge1 = subtract(v1, v0)
+            edge2 = subtract(v2, v1)
+            normal = crossProduct(edge1, edge2)
+            normal = normalize(normal)
+
+            return Intercept(distance=t, point=intersect_point, normal=normal, texcoords=None, obj=self)
+
+        return None
     
-    
+
+class Ellipsoid(object):
+    def __init__(self, position, radii, material):
+        self.position = position
+        self.radii = radii
+        self.material = material
+
+    def ray_intersect(self, orig, dir):
+        # Transform ray into ellipsoid's local coordinate system
+        orig = subtract(orig, self.position)
+        dir = normalize(dir)
+
+        # Apply scaling factors to the ray
+        dir = [dir[0] / self.radii[0], dir[1] / self.radii[1], dir[2] / self.radii[2]]
+
+        # Calculate coefficients of the quadratic equation
+        a = dotProduct(dir, dir)
+        b = 2 * dotProduct(orig, dir)
+        c = dotProduct(orig, orig) - 1  # Assuming the ellipsoid is unit-sized
+
+        # Calculate discriminant
+        discriminant = b * b - 4 * a * c
+
+        if discriminant < 0:
+            return None  # No intersection
+
+        # Calculate two possible solutions for t (parameter along the ray)
+        t1 = (-b - (discriminant)**0.5) / (2 * a)
+        t2 = (-b + (discriminant)**0.5) / (2 * a)
+
+        if t1 >= 0 or t2 >= 0:
+            # At least one intersection point is in front of the ray's origin
+            t = min(t1, t2) if t1 >= 0 and t2 >= 0 else max(t1, t2)
+
+            # Calculate intersection point and normal in local coordinates
+            intersection_point_local = add(orig, scalarMultVector(t, dir))
+            normal_local = normalize(intersection_point_local)
+
+            # Transform intersection point and normal back to world coordinates
+            intersection_point = add(self.position, intersection_point_local)
+            normal = scalarMultVector(1.0 / self.radii[0], normal_local)
+
+            return Intercept(distance=t, point=intersection_point, normal=normal, texcoords=None, obj=self)
+
+        return None  # No intersection
