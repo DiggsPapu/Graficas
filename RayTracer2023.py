@@ -1,14 +1,13 @@
 import pygame
 from pygame.locals import *
-
+from obj import *
 from rt import RayTracer
 from figures import *
 from lights import *
 from materials import *
 
-
-width = 512
-height = 512
+width = 64
+height = 64
 
 pygame.init()
 
@@ -16,7 +15,7 @@ screen = pygame.display.set_mode((width,height),pygame.DOUBLEBUF|pygame.HWACCEL|
 screen.set_alpha(None)
 
 raytracer = RayTracer(screen)
-raytracer.envMap = pygame.image.load("./textures/kameHouse.jpeg")
+raytracer.envMap = pygame.image.load("./textures/blueB.png")
 raytracer.rtClearColor(0.25,0.25,0.25)
 eyeTexture = pygame.image.load("./textures/eye.jpg")
 dragonBall = pygame.image.load("./textures/dragonBall.jpg")
@@ -37,6 +36,10 @@ water = Material(diffuse=(0.1,0.4,0.9),spec=128,Ks=0.2,ior=1.33,matType=TRANSPAR
 red = Material(diffuse=(1,0,0),spec=1,Ks=1, matType = OPAQUE)
 glassWeird = Material(diffuse=(0.5,0.5,0.5),spec=256,Ks=0.4,ior=2.57,matType=TRANSPARENT)
 greenMirror = Material(diffuse=(0.3,0.9,0.3),spec=64,Ks=0.5,matType=REFLECTIVE)
+
+val = Model('./model/eye.obj',material=red,scale=(1,1,1),translate=(0,0,-10))
+raytracer.scene.extend(val.primitives)
+
 # raytracer.scene.append(AABB(position = (-1.5,1.5,-5), size = (1,1,1), material=glass))
 
 # raytracer.scene.append(AABB(position = (-1.0,-1.5,-5), size = (1,1,1), material=krilin))
@@ -49,20 +52,21 @@ greenMirror = Material(diffuse=(0.3,0.9,0.3),spec=64,Ks=0.5,matType=REFLECTIVE)
 # raytracer.scene.append(Sphere(position=(+0.0,	+1.0,	-5),		radius=0.8,	material=blueMirror))
 # raytracer.scene.append(Sphere(position=(+1.7,	-1.5,	-5),		radius=0.8,	material=glass))
 # raytracer.scene.append(Sphere(position=(+1.7,	+1.0,	-5),		radius=0.8,	material=diamond))
-
+# raytracer.scene.append(Cylinder(position=[-1.7,	+1.0,	-5], radius=1,height=1,material=red))
 # raytracer.scene.append(Plane(position=(1,1,10000),normal=(0,-1,0.25),material=glass))
 # raytracer.scene.append(Plane(position=(1,1,1),normal=(0,1,0.25),material=blueMirror))
 # raytracer.scene.append(Plane(position=(-1,1,1),normal=(1,0,-0.45),material=water))
 # raytracer.scene.append(Plane(position=(1,1,1),normal=(1,0,0.45),material=red))
 # raytracer.scene.append(Disk(position=(0,-4,-6),normal=(0,1.5,1.5),radius=2,material=mirror))
-raytracer.scene.append(Triangle(vertices=[[-1,2,-5],[1,2,-5],[0,0,-5]], material=red))
-raytracer.scene.append(Triangle(vertices=[[-1.5,-1,-6],[-1,1,-5],[1,0,-7]], material=greenMirror))
-raytracer.scene.append(Triangle(vertices=[[0,-1.5,-4],[1,3,-4],[2,-1.5,-4]], material=glassWeird))
+# raytracer.scene.append(Triangle(vertices=[[-1,2,-5],[1,2,-5],[0,0,-5]], material=red))
+# raytracer.scene.append(Triangle(vertices=[[-1.5,-1,-6],[-1,1,-5],[1,0,-7]], material=greenMirror))
+
+# raytracer.scene.append(Triangle(vertices=[[0,-1.5,-4],[1,3,-4],[2,-1.5,-4]], material=glassWeird))
 # raytracer.scene.append(Ellipsoid(position=[-1,2,-5], radii=[1,1,1],material=red))
 # raytracer.scene.append(Ellipsoid(position=[-1.5,-1,-6], radii=[1,1,1],material=blueMirror))
 # raytracer.scene.append(Ellipsoid(position=[0,-1.5,-4], radii=[1,1,1],material=glass))
-# raytracer.lights.append(AmbientLight(intensity=0.3))
-raytracer.lights.append(DirectionalLight(direction=(-1,-1,-1),intensity=0.9))
+raytracer.lights.append(AmbientLight(intensity=0.9))
+# raytracer.lights.append(DirectionalLight(direction=(-1,-1,-1),intensity=0.9))
 # raytracer.lights.append(PointLight(point=(0,-0,-6),intensity=1))
 
 raytracer.rtClear()
@@ -81,6 +85,6 @@ while isRunning:
 
 rect = pygame.Rect(0,0,width,height)
 sub = screen.subsurface(rect)
-pygame.image.save(sub,"lab3.jpg")
+pygame.image.save(sub,"project2.jpg")
 
 pygame.quit()

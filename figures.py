@@ -225,49 +225,52 @@ class Triangle(object):
             return Intercept(distance=t, point=intersect_point, normal=normal, texcoords=None, obj=self)
 
         return None
-    
 
-class Ellipsoid(object):
-    def __init__(self, position, radii, material):
-        self.position = position
-        self.radii = radii
-        self.material = material
+class Cylinder(Shape):
+    def __init__(self, position, radius, height, material):
+        super().__init__(position, material)
+        self.radius = radius
+        self.height = height
 
     def ray_intersect(self, orig, dir):
-        # Transform ray into ellipsoid's local coordinate system
-        orig = subtract(orig, self.position)
-        dir = normalize(dir)
+        # Check if the ray is parallel to the y-axis
+        if abs(dir[0]) < 0.00001 and abs(dir[2]) < 0.00001:
+            return None
 
-        # Apply scaling factors to the ray
-        dir = [dir[0] / self.radii[0], dir[1] / self.radii[1], dir[2] / self.radii[2]]
+        t0 = -1
+        t1 = -1
 
-        # Calculate coefficients of the quadratic equation
-        a = dotProduct(dir, dir)
-        b = 2 * dotProduct(orig, dir)
-        c = dotProduct(orig, orig) - 1  # Assuming the ellipsoid is unit-sized
+        # Solve for t0 and t1 where the ray intersects the cylinder's lateral surface
+        dy = orig[1] - self.position[1]
+        a = dir[0] * dir[0] + dir[2] * dir[2]
+        b = 2 * (dir[0] * (orig[0] - self.position[0]) + dir[2] * (orig[2] - self.position[2]))
+        c = (orig[0] - self.position[0]) ** 2 + (orig[2] - self.position[2]) ** 2 - self.radius ** 2
 
-        # Calculate discriminant
-        discriminant = b * b - 4 * a * c
+        discriminant = b ** 2 - 4 * a * c
 
-        if discriminant < 0:
-            return None  # No intersection
+        if discriminant > 0:
+            t0 = (-b - (discriminant)**(0.5)) / (2 * a)
+            t1 = (-b + (discriminant)**(0.5)) / (2 * a)
 
-        # Calculate two possible solutions for t (parameter along the ray)
-        t1 = (-b - (discriminant)**0.5) / (2 * a)
-        t2 = (-b + (discriminant)**0.5) / (2 * a)
+        # Check if t0 and t1 are within the height range of the cylinder
+        if t0 > t1:
+            t0, t1 = t1, t0
 
-        if t1 >= 0 or t2 >= 0:
-            # At least one intersection point is in front of the ray's origin
-            t = min(t1, t2) if t1 >= 0 and t2 >= 0 else max(t1, t2)
+        if t0 < 0:
+            t0 = t1  # If t0 is negative, use t1
 
-            # Calculate intersection point and normal in local coordinates
-            intersection_point_local = add(orig, scalarMultVector(t, dir))
-            normal_local = normalize(intersection_point_local)
+        if t0 < 0:
+            return None  # Both t0 and t1 are negative, no intersection
 
-            # Transform intersection point and normal back to world coordinates
-            intersection_point = add(self.position, intersection_point_local)
-            normal = scalarMultVector(1.0 / self.radii[0], normal_local)
+        y0 = orig[1] + t0 * dir[1]
+        if y0 < self.position[1] or y0 > self.position[1] + self.height:
+            return None  # Intersection is outside the height of the cylinder
 
-            return Intercept(distance=t, point=intersection_point, normal=normal, texcoords=None, obj=self)
+        intersect_point = add(orig, scalarMultVector(t0, dir))
 
-        return None  # No intersection
+        # Calculate normal vector at the intersection point
+        normal = subtract(intersect_point, self.position)
+        normal[1] = 0  # Set the y-component to 0 to ensure it's perpendicular to the lateral surface
+        normal = normalize(normal)
+
+        return Intercept(distance=t0, point=intersect_point, normal=normal, texcoords=None, obj=self)
