@@ -39,7 +39,6 @@ class Model(object):
         self.material = material
         self.primitives = []
         self.convertToRayTracer()
-        # self.calculate_bounds()
     def convertToRayTracer(self):
         # Para cada cara del modelo
         for face in self.faces:
@@ -109,27 +108,4 @@ class Model(object):
         
         # Se multiplican las tres para obtener la matriz del objeto final
         self.finalMatrix = matrixMatrixMultiplication(matrixMatrixMultiplication(translation,rotMat),scaleMat)
-
-    def calculate_bounds(self):
-        min_X = self.transformedVerts[0][0]
-        max_X = self.transformedVerts[0][0]
-        min_Y = self.transformedVerts[0][1]
-        max_Y = self.transformedVerts[0][1]
-        min_Z = self.transformedVerts[0][2]
-        max_Z = self.transformedVerts[0][2]
-        for vert in self.transformedVerts[1:]:
-            if vert[0] > max_X:
-                max_X = vert[0] 
-            if vert[0] < min_X:
-                min_X = vert[0]
-            if vert[1] > max_Y:
-                max_Y = vert[1] 
-            if vert[1] < min_Y:
-                min_Y = vert[1]
-            if vert[2] > max_Z:
-                max_Z = vert[2] 
-            if vert[2] < min_Z:
-                min_Z = vert[2]
-        self.minBox = [min_X,min_Y,min_Z]
-        self.maxBox = [max_X,max_Y,max_Z]
    
