@@ -6,7 +6,6 @@ import random
 
 from materials import *
 from lights import reflectVector, refractVector, totalInternalReflection, fresnel
-
 MAX_RECURSION_DEPTH = 3
 
 class RayTracer(object):
