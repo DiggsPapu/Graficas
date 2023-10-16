@@ -50,9 +50,9 @@ raytracer.scene.append(Cylinder(position=[-1.0,	-1.25,	-5], radius=1.5,height=0.
 ovni = Material(diffuse=(0.8,0.67,0.3),spec=256,Ks=0.4,ior=2.57,matType=REFLECTIVE)
 raytracer.scene.append(Cylinder(position=[3.0,	2.3,	-5], radius=1.5,height=0.5,material=ovni))
 
-pinkMirror = Material(diffuse=(0.9,0.4,0.4),spec=32,Ks=0.15,matType=REFLECTIVE)
-val = Model('./model/astronaut.obj',material=pinkMirror,scale=(1,1,1),translate=(-1.7,-2.0,-4.0))
-raytracer.scene.extend(val.primitives)
+# pinkMirror = Material(diffuse=(0.9,0.4,0.4),spec=32,Ks=0.15,matType=REFLECTIVE)
+# val = Model('./model/astronaut.obj',material=pinkMirror,scale=(1,1,1),translate=(-1.7,-2.0,-4.0))
+# raytracer.scene.extend(val.primitives)
 
 raytracer.lights.append(AmbientLight(intensity=0.3))
 raytracer.lights.append(DirectionalLight(direction=(-1,-1,-1),intensity=0.9))

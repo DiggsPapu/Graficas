@@ -1,7 +1,13 @@
-# Lab3:
-Se trato acerca de desarrollar mediante un RayTracer, 1 triangulo como shape de manera que se pueda usar con diferentes materiales y demas.
+# Proyecto 2:
+## Contexto
+Se trató de desarrollar un RayTracer de manera que se implementaron diferentes clases para desarrollarlo en python, sin embargo, los tiempos de ejecución fueron extremadamente largos, por ende, se intentó paralelizar pero no se pudo debido al lenguaje.
+
+## Historia de la imagen
+Se creó una imagen pensando en cómo se verían los planetas alineados, así mismo, se propuso que la estrella madre, el sol estuviera compuesto de dos triángulos y que esta estrella fuera opaca debido a que ya estaría en sus últimos momentos de vida.
+Así mismo, en la parte superior derecha se puede observar una especie de mancha amarillenta, y es que en este plano extraterrestres estarían llegando al sistema solar a conquistarla, y en la parte inferior izquierda estaría un cilindro simulando una especie de agujero de gusano de dónde estaría saliendo un astronauta que proviene del pasado para cambiar la historia.
 
 
 
-![rt3](https://github.com/DiggsPapu/Graficas/assets/84475020/d07826b1-15f8-4869-b8ed-e3d03326e4fa)
-![lab3](https://github.com/DiggsPapu/Graficas/assets/84475020/2b426035-7e37-4c6b-b601-f510cc0d4d47)
+## Links de chat:
+
+Para intentar implementar threads (no se puede por GLI), generar el algoritmo de ray intercept para triángulos y cilindros: https://chat.openai.com/share/97a78ecd-f492-43c9-8cca-fbf0da3556d7

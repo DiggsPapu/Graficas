@@ -233,58 +233,54 @@ class Cylinder(Shape):
         self.height = height
 
     def ray_intersect(self, orig, dir):
-        # Check if the ray is parallel to the y-axis
+        # Determinar si el rayo es paralelo al eje y
         if abs(dir[0]) < 0.00001 and abs(dir[2]) < 0.00001:
             if self.position[1] <= orig[1] <= self.position[1] + self.height:
-                # Ray is parallel and within the height range
+                # En caso de que el rayo sea paralelo y con el mismo rango de altura.
                 t_cylinder = ((self.position[0] - orig[0]) ** 2 + (self.position[2] - orig[2]) ** 2 - self.radius ** 2) / (dir[0] ** 2 + dir[2] ** 2)
                 y_cylinder = orig[1] + t_cylinder * dir[1]
 
                 if self.position[1] <= y_cylinder <= self.position[1] + self.height:
-                    # Ray intersects the lateral surface of the cylinder
-                    # Calculate intersection point and normal
                     intersect_point = add(orig, scalarMultVector(t_cylinder, dir))
                     normal = subtract(intersect_point, self.position)
                     normal[1] = 0
                     normal = normalize(normal)
                     return Intercept(distance=t_cylinder, point=intersect_point, normal=normal, texcoords=None, obj=self)
-
+        # Aqui se haran los calculos en caso de que se intersecte con el lateral
         val = self.intersectsLateral(orig, dir)
         if val!=None:
             return val
         else:
+            # Aquí se haran los calculos en caso de qeu se intersecte con la parte superior o inferior
             return self.intersectsTopBottom(orig, dir)
         
     def intersectsTopBottom(self, orig, dir):
-        # Rest of the code for lateral surface intersection remains the same
-
-        # Now, check for intersections with the top and bottom caps
         t_caps = []
 
-        # Intersection with top cap (y = position[1] + height)
+        # Interseccion superior
         t_top = (self.position[1] + self.height - orig[1]) / dir[1]
         if self.radius ** 2 >= (orig[0] + t_top * dir[0] - self.position[0]) ** 2 + (orig[2] + t_top * dir[2] - self.position[2]) ** 2:
             t_caps.append(t_top)
 
-        # Intersection with bottom cap (y = position[1])
+        # Interseccion inferior
         t_bottom = (self.position[1] - orig[1]) / dir[1]
         if self.radius ** 2 >= (orig[0] + t_bottom * dir[0] - self.position[0]) ** 2 + (orig[2] + t_bottom * dir[2] - self.position[2]) ** 2:
             t_caps.append(t_bottom)
 
         if not t_caps:
-            return None  # No intersections with caps
+            return None  # Sin intersecciones
 
-        # Choose the smallest positive t value from t_caps
+        # Elegir el valor minimo
         t_caps = [t for t in t_caps if t > 0]
         if not t_caps:
-            return None  # Both intersections with caps are behind the ray's origin
+            return None  # Las intersecciones estan detras del origen
 
         t_caps.sort()
         t_cylinder = t_caps[0]
 
         intersect_point = add(orig, scalarMultVector(t_cylinder, dir))
 
-        # Calculate normal vector at the intersection point
+        # Calcular la normal en el punto de interseccion
         normal = subtract(intersect_point, self.position)
         normal[1] = 0
         normal = normalize(normal)
@@ -295,8 +291,7 @@ class Cylinder(Shape):
         t0 = -1
         t1 = -1
 
-        # Solve for t0 and t1 where the ray intersects the cylinder's lateral surface
-        dy = orig[1] - self.position[1]
+        # resolver donde es que se intersecta en t0 y t1
         a = dir[0] * dir[0] + dir[2] * dir[2]
         b = 2 * (dir[0] * (orig[0] - self.position[0]) + dir[2] * (orig[2] - self.position[2]))
         c = (orig[0] - self.position[0]) ** 2 + (orig[2] - self.position[2]) ** 2 - self.radius ** 2
@@ -307,15 +302,15 @@ class Cylinder(Shape):
             t0 = (-b - (discriminant)**(0.5)) / (2 * a)
             t1 = (-b + (discriminant)**(0.5)) / (2 * a)
 
-        # Check if t0 and t1 are within the height range of the cylinder
+        # Chequear si estan en el rango
         if t0 > t1:
             t0, t1 = t1, t0
-
+        # Se utilizara t1 en caso de que t0 sea negativa
         if t0 < 0:
             t0 = t1  # If t0 is negative, use t1
-
+        # No hay interseccion si ambos son negativos
         if t0 < 0:
-            return None  # Both t0 and t1 are negative, no intersection
+            return None
 
         y0 = orig[1] + t0 * dir[1]
         if y0 < self.position[1] or y0 > self.position[1] + self.height:
@@ -323,9 +318,9 @@ class Cylinder(Shape):
 
         intersect_point = add(orig, scalarMultVector(t0, dir))
 
-        # Calculate normal vector at the intersection point
+        # Calcular la normal
         normal = subtract(intersect_point, self.position)
-        normal[1] = 0  # Set the y-component to 0 to ensure it's perpendicular to the lateral surface
+        normal[1] = 0  # Asegurarse que la componente es perpendicular a la superficie
         normal = normalize(normal)
 
         return Intercept(distance=t0, point=intersect_point, normal=normal, texcoords=None, obj=self)
