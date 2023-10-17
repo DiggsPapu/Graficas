@@ -29,7 +29,8 @@ class Sphere(Shape):
         lengthL = norm(L)
         tca = dotProduct(L,dir)
         d = (lengthL**2-tca**2)**0.5
-        
+        if type(d)==complex:
+            return None
         if d>self.radius:
             return None
         
@@ -237,7 +238,15 @@ class Cylinder(Shape):
         if abs(dir[0]) < 0.00001 and abs(dir[2]) < 0.00001:
             if self.position[1] <= orig[1] <= self.position[1] + self.height:
                 # En caso de que el rayo sea paralelo y con el mismo rango de altura.
-                t_cylinder = ((self.position[0] - orig[0]) ** 2 + (self.position[2] - orig[2]) ** 2 - self.radius ** 2) / (dir[0] ** 2 + dir[2] ** 2)
+                
+                if dir[2]==0 and dir[0]==0:
+                    t_cylinder = ((self.position[0] - orig[0]) ** 2 + (self.position[2] - orig[2]) ** 2 - self.radius ** 2) / (0.000000009  ** 2 + 0.000000009  ** 2)
+                elif dir[0]==0:
+                    t_cylinder = ((self.position[0] - orig[0]) ** 2 + (self.position[2] - orig[2]) ** 2 - self.radius ** 2) / (0.00000009 ** 2 + dir[2] ** 2)    
+                elif dir[2]==0:
+                    t_cylinder = ((self.position[0] - orig[0]) ** 2 + (self.position[2] - orig[2]) ** 2 - self.radius ** 2) / (dir[0] ** 2 + 0.000000009 ** 2)
+                else:
+                    t_cylinder = ((self.position[0] - orig[0]) ** 2 + (self.position[2] - orig[2]) ** 2 - self.radius ** 2) / (dir[0] ** 2 + dir[2] ** 2)   
                 y_cylinder = orig[1] + t_cylinder * dir[1]
 
                 if self.position[1] <= y_cylinder <= self.position[1] + self.height:
@@ -258,12 +267,19 @@ class Cylinder(Shape):
         t_caps = []
 
         # Interseccion superior
-        t_top = (self.position[1] + self.height - orig[1]) / dir[1]
+        
+        if dir[1]==0:
+            t_top = (self.position[1] + self.height - orig[1]) / 0.0000009
+        else:
+            t_top = (self.position[1] + self.height - orig[1]) / dir[1]    
         if self.radius ** 2 >= (orig[0] + t_top * dir[0] - self.position[0]) ** 2 + (orig[2] + t_top * dir[2] - self.position[2]) ** 2:
             t_caps.append(t_top)
 
         # Interseccion inferior
-        t_bottom = (self.position[1] - orig[1]) / dir[1]
+        if dir[1]==0:
+            t_bottom = (self.position[1] - orig[1]) /  0.0000009
+        else:
+            t_bottom = (self.position[1] - orig[1]) / dir[1]   
         if self.radius ** 2 >= (orig[0] + t_bottom * dir[0] - self.position[0]) ** 2 + (orig[2] + t_bottom * dir[2] - self.position[2]) ** 2:
             t_caps.append(t_bottom)
 
