@@ -90,6 +90,6 @@ while isRunning:
 
 rect = pygame.Rect(0,0,width,height)
 sub = screen.subsurface(rect)
-pygame.image.save(sub,"project1.jpg")
+pygame.image.save(sub,"project2_1.jpg")
 
 pygame.quit()

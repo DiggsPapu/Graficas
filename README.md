@@ -11,6 +11,16 @@ Así mismo, en la parte superior derecha se puede observar una especie de mancha
 
 ![project2](https://github.com/DiggsPapu/Graficas/assets/84475020/4feb947e-51f5-4186-9f88-cce7a452a7c1)
 
+## Imagen 2_1:
+Esta imagen está basada en la imagen base.jpeg que fue obtenida de google:
+
+![base](./base.jpeg)
+
+Así mismo, quedó de esta forma:
+
+![project2_1](./project2_1.jpg)
+
+Se le añadieron light points para darle otra estética, así mismo, el sol se modificó y se dieron nuevos materiales, además que se añadió un astronauta.
 
 ## Links de chat:
 
