@@ -2,6 +2,9 @@
 ## Contexto
 Se trató de desarrollar un RayTracer de manera que se implementaron diferentes clases para desarrollarlo en python, sin embargo, los tiempos de ejecución fueron extremadamente largos, por ende, se intentó paralelizar pero no se pudo debido al lenguaje.
 
+![tiempo](https://github.com/DiggsPapu/Graficas/assets/84475020/1f3ecd35-0f40-4a54-80ff-030a852bec25)
+
+
 ## Historia de la imagen
 Se creó una imagen pensando en cómo se verían los planetas alineados, así mismo, se propuso que la estrella madre, el sol estuviera compuesto de dos triángulos y que esta estrella fuera opaca debido a que ya estaría en sus últimos momentos de vida.
 Así mismo, en la parte superior derecha se puede observar una especie de mancha amarillenta, y es que en este plano extraterrestres estarían llegando al sistema solar a conquistarla, y en la parte inferior izquierda estaría un cilindro simulando una especie de agujero de gusano de dónde estaría saliendo un astronauta que proviene del pasado para cambiar la historia.
