@@ -18,10 +18,12 @@ class Renderer(object):
         glEnable(GL_DEPTH_TEST  )
         glViewport(0,0,self.width,self.height)
 
+        self.elapsedTime = 0.0
+        
         self.scene = []
         self.activeShader = None
         
-        self.elapsedTime = 0.0
+        self.dirLight = glm.vec3(1,0,0)    
         
         # View Matrix
         self.camPosition = glm.vec3(0,0,0)
@@ -71,6 +73,8 @@ class Renderer(object):
                                1, GL_FALSE, glm.value_ptr(self.projectionMatrix))
             
             glUniform1f( glGetUniformLocation(self.activeShader, "time"), self.elapsedTime)
+            
+            glUniform3fv( glGetUniformLocation(self.activeShader, "dirLight"), 1, glm.value_ptr(self.dirLight))
         
         for obj in self.scene:
             if self.activeShader is not None:

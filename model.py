@@ -65,7 +65,7 @@ class Model(object):
             3,                          # Size
             GL_FLOAT,                   # Type
             GL_FALSE,                   # Is it normalized
-            4 * 5,                      # Stride
+            4 * 8,                      # Stride
             ctypes.c_void_p(0))          # Offset
         
         glEnableVertexAttribArray(0)
@@ -76,11 +76,23 @@ class Model(object):
             2,                          # Size
             GL_FLOAT,                   # Type
             GL_FALSE,                   # Is it normalized
-            4 * 5,                      # Stride
-            ctypes.c_void_p(4*3)             # Offset
+            4 * 8,                      # Stride
+            ctypes.c_void_p(4*3)        # Offset
         )
         
         glEnableVertexAttribArray(1)
+        
+         # Atributo de normales
+        glVertexAttribPointer(
+            2,                          # Attribute Number
+            3,                          # Size
+            GL_FLOAT,                   # Type
+            GL_FALSE,                   # Is it normalized
+            4 * 8,                      # Stride
+            ctypes.c_void_p(4*5)        # Offset
+        )
+        
+        glEnableVertexAttribArray(2)
         
         # Activar la textura
         glActiveTexture( GL_TEXTURE0 )
@@ -97,5 +109,5 @@ class Model(object):
         glGenerateTextureMipmap(self.textureBuffer)
         
         
-        glDrawArrays(GL_TRIANGLES, 0,int( len(self.vertBuffer) / 5))
+        glDrawArrays(GL_TRIANGLES, 0,int( len(self.vertBuffer) / 8))
         

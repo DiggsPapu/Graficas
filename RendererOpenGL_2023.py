@@ -19,14 +19,14 @@ rend = Renderer(screen)
 
 rend.setShaders(vertex_shader, fragment_shader)
 
-#               POSITIONS                     UVs
-triangleData = [-0.5,   -0.5,   0.0,          0.0,    0.0,
-                -0.5,    0.5,   0.0,          0.0,    1.0,
-                 0.5,   -0.5,   0.0,          1.0,    0.0,
+#               POSITIONS                     UVs                   NORMALS
+triangleData = [-0.5,   -0.5,   0.0,          0.0,    0.0,          0.0, 0.0, 1.0,
+                -0.5,    0.5,   0.0,          0.0,    1.0,          0.0, 0.0, 1.0,
+                 0.5,   -0.5,   0.0,          1.0,    0.0,          0.0, 0.0, 1.0,
 
-                -0.5,    0.5,   0.0,          0.0,    1.0,
-                0.5,     0.5,   0.0,          1.0,    1.0,
-                0.5,    -0.5,   0.0,          1.0,    0.0
+                -0.5,    0.5,   0.0,          0.0,    1.0,          0.0, 0.0, 1.0,
+                0.5,     0.5,   0.0,          1.0,    1.0,          0.0, 0.0, 1.0,
+                0.5,    -0.5,   0.0,          1.0,    0.0,          0.0, 0.0, 1.0
                  ]
 
 
@@ -93,7 +93,7 @@ while isRunning:
         if rend.clearColor[2] > 0.0:
             rend.clearColor[2] -= deltaTime
     deltaTime = clock.tick(60) / 1000
-    
+    triangleModel.rotation.y += 45 * deltaTime
     rend.elapsedTime += deltaTime
     
     rend.render()
