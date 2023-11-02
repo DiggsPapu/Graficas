@@ -1,7 +1,7 @@
 import pygame 
 from pygame.locals import *
 import glm
-
+from Obj import *
 from gl import Renderer
 from model import Model
 from shaders import *
@@ -28,19 +28,39 @@ triangleData = [-0.5,   -0.5,   0.0,          0.0,    0.0,          0.0, 0.0, 1.
                 0.5,     0.5,   0.0,          1.0,    1.0,          0.0, 0.0, 1.0,
                 0.5,    -0.5,   0.0,          1.0,    0.0,          0.0, 0.0, 1.0
                  ]
+# astronautData = Obj("./model/astronaut.obj")
+# astronaut = Model(astronautData.data)
+# astronaut.position.z = -10
+# astronaut.scale = glm.vec3(1,1,1)
+# astronaut.loadTexture("./textures/pavoreal.jpg")
+# rend.scene.append( astronaut )
 
+# astronautData = Obj("./model/toonRocket.obj")
+# astronaut = Model(astronautData.data)
+# astronaut.position.z = -10
+# astronaut.scale = glm.vec3(1,1,1)
+# astronaut.loadTexture("./textures/toonRocket.bmp")
+# rend.scene.append( astronaut )
 
-triangleModel = Model(triangleData)
-triangleModel.loadTexture("./textures/pavoreal.jpg")
-triangleModel.position.z = -10
-triangleModel.scale = glm.vec3(5,5,5)
+carnotaurusData = Obj("./model/Carnotaurus.obj")
+carnotaurs = Model(carnotaurusData.data)
+carnotaurs.position.z = -10
+carnotaurs.scale = glm.vec3(1,1,1)
+carnotaurs.loadTexture("./textures/Carnotaurus.bmp")
+rend.scene.append( carnotaurs )
 
-rend.scene.append( triangleModel )
+# triangleModel = Model(triangleData)
+# triangleModel.loadTexture("./textures/pavoreal.jpg")
+# triangleModel.position.z = -10
+# triangleModel.scale = glm.vec3(5,5,5)
+
+# rend.scene.append( triangleModel )
 
 
 
 isRunning = True
 while isRunning:
+    deltaTime = clock.tick(60) / 1000
     keys = pygame.key.get_pressed()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -83,7 +103,6 @@ while isRunning:
     if keys[K_DOWN]:
         if rend.clearColor[1] > 0.0:
             rend.clearColor[1] -= deltaTime
-    deltaTime = clock.tick(60) / 1000
     
     if keys[K_z]:
         if rend.clearColor[2] < 1.0:
@@ -92,8 +111,7 @@ while isRunning:
     if keys[K_x]:
         if rend.clearColor[2] > 0.0:
             rend.clearColor[2] -= deltaTime
-    deltaTime = clock.tick(60) / 1000
-    triangleModel.rotation.y += 45 * deltaTime
+    carnotaurs.rotation.y += 45 * deltaTime
     rend.elapsedTime += deltaTime
     
     rend.render()

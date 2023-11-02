@@ -15,7 +15,7 @@ class Renderer(object):
 
         self.clearColor = [0,0,0]
         
-        glEnable(GL_DEPTH_TEST  )
+        glEnable(GL_DEPTH_TEST)
         glViewport(0,0,self.width,self.height)
 
         self.elapsedTime = 0.0
