@@ -1,12 +1,14 @@
-## Graficas
-Repositorio de graficas por computadora realizado por Diego Andres Alonzo Medinilla 20172 de la UVG, asi mismo, este es desarrollado en C++.
-# Labs
-* Lab1: Fill a polygon, se trata sobre rellenar un poligono, esta el la branch de Lab1.
-* Lab2: Shaders, se trata sobre crear shaders, esta en la branch lab2
-# R's
-Es la parte para hacer un Rasterizador.
-* R1: Es hacer un obj, se encuentra en la branch de R1.
-* R2: Es hacer que un obj se rellene, se encuentra en la branch de R2.
-* R3: Es hacer camaras de manera que pueda moverse la camara y dar angulacion, se encuentra en la branch de R3. Hice una version de python que nunca termine asi que descartela.
-# Proyecto de Rasterizador 
-Es el proyecto 1 de hacer un rasterizador en c++.
+## OpenGL1
+Se trato de implementar un lector de obj's usando opengl, se obtuvieron los siguientes resultados:
+
+Foto 1:
+
+![Carnotaurus3](https://github.com/DiggsPapu/Graficas/assets/84475020/9af12a74-678b-46c2-9915-c135a3b4409c)
+
+Foto 2:
+
+![Carnotaurus2](https://github.com/DiggsPapu/Graficas/assets/84475020/72302ac9-2971-4661-b0de-43eab1aae972)
+
+Foto 3:
+
+![Carnotaurus](https://github.com/DiggsPapu/Graficas/assets/84475020/5e824dfd-e081-43cc-92ad-362b9da1f463)
