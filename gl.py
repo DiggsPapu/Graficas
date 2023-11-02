@@ -23,7 +23,7 @@ class Renderer(object):
         self.scene = []
         self.activeShader = None
         
-        self.dirLight = glm.vec3(1,0,0)    
+        self.dirLight = glm.vec3(-1,0,0)    
         
         # View Matrix
         self.camPosition = glm.vec3(0,0,0)
