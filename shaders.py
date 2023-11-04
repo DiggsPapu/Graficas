@@ -74,12 +74,13 @@ in float time2;
 out vec4 fragColor;
 
 void main()
-{
+{    
+    fragColor = texture(tex, UVs);
+    if (fragColor.r>0.5 && fragColor.b>0.5 && fragColor.g>0.5 || fragColor.r<0.4 && fragColor.b<0.4 && fragColor.g<0.4){discard;}
     
     float intensity = dot(outNormals, -dirLight);
     
-    fragColor = texture(tex, UVs);
-    if (fragColor.r>0.5 && fragColor.b>0.5 && fragColor.g>0.5 || fragColor.r<0.4 && fragColor.b<0.4 && fragColor.g<0.4){discard;}
+    fragColor = texture(tex, UVs) * max(0, (min(1, intensity)));
 }
 '''
 fragmentation_shader = '''

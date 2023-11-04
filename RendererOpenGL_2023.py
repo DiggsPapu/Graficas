@@ -80,7 +80,7 @@ while isRunning:
                     [0,1,0],[0,-1,0],
                     [0,0,1],[0,0,1]
                     ]
-                dirl = o[counter_direction%3]
+                dirl = o[counter_direction%6]
                 rend.dirLight = glm.vec3(dirl[0], dirl[1], dirl[2])
             if event.key == K_o:
                 if rend.intensidad<1:
