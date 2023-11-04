@@ -9,7 +9,7 @@ Inverse shader:
 
 ![image](https://github.com/DiggsPapu/Graficas/assets/84475020/991def66-8c74-40b8-860b-ceb8d1676682)
 
+Temperature shader:
 
-Foto 3:
+![image](https://github.com/DiggsPapu/Graficas/assets/84475020/f544641d-0098-40f4-bcfa-4043fcdca15a)
 
-![Carnotaurus](https://github.com/DiggsPapu/Graficas/assets/84475020/5e824dfd-e081-43cc-92ad-362b9da1f463)
