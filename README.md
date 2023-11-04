@@ -1,13 +1,14 @@
-## OpenGL1
-Se trato de implementar un lector de obj's usando opengl, se obtuvieron los siguientes resultados:
+## OpenGL2
+Se trató de implementar nuevos shaders, se implementó un shader para twistear, invertir colores:
 
-Foto 1:
+Twist shader:
 
-![Carnotaurus3](https://github.com/DiggsPapu/Graficas/assets/84475020/9af12a74-678b-46c2-9915-c135a3b4409c)
+![WhatsApp Image 2023-11-03 at 20 08 43_c39f0cc9](https://github.com/DiggsPapu/Graficas/assets/84475020/be46b524-0c12-44a5-a49c-21556ed436b9)
 
-Foto 2:
+Inverse shader:
 
-![Carnotaurus2](https://github.com/DiggsPapu/Graficas/assets/84475020/72302ac9-2971-4661-b0de-43eab1aae972)
+![image](https://github.com/DiggsPapu/Graficas/assets/84475020/991def66-8c74-40b8-860b-ceb8d1676682)
+
 
 Foto 3:
 
