@@ -17,12 +17,14 @@ uniform float time;
 
 out vec2 UVs;
 out vec3 outNormals;
+out float time2;
 
 void main()
 {
     gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(position, 1.0);
     UVs = texCoords;
     outNormals = (modelMatrix * vec4(normals, 0.0)).xyz;
+    time2 = time;
 }
 '''
 
@@ -40,6 +42,7 @@ uniform float time;
 
 out vec2 UVs;
 out vec3 outNormals;
+out float time2;
 
 void main()
 {
@@ -54,33 +57,29 @@ void main()
     gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(newX, newY, position.z, 1.0);
     UVs = texCoords;
     outNormals = (modelMatrix * vec4(normals, 0.0)).xyz;
+    time2 = time;
 }
 '''
 fragmentation_shader1 = '''
 #version 450 core
 
-layout (location = 0) in vec3 position;
-layout (location = 1) in vec2 texCoords;
-layout (location = 2) in vec3 normals;
+layout (binding = 0) uniform sampler2D tex;
 
-uniform mat4 modelMatrix;
-uniform mat4 viewMatrix;
-uniform mat4 projectionMatrix;
+uniform vec3 dirLight;
 
-uniform float time;
+in vec2 UVs;
+in vec3 outNormals;
+in float time2;
 
-out vec2 UVs;
-out vec3 outNormals;
+out vec4 fragColor;
 
 void main()
 {
-    UVs = texCoords;
-    outNormals = (modelMatrix * vec4(normals,0.0)).xyz;  
-    outNormals = normalize(outNormals);
-    float x = position.x +  150.0f * sin(noise(100));
-    float y = position.y +  150.0f * cos(noise(100));
-     
-    gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(x, y, position.z, 1.0);
+    
+    float intensity = dot(outNormals, -dirLight);
+    
+    fragColor = texture(tex, UVs);
+    if (fragColor.r>0.5 && fragColor.b>0.5 && fragColor.g>0.5 || fragColor.r<0.4 && fragColor.b<0.4 && fragColor.g<0.4){discard;}
 }
 '''
 fragmentation_shader = '''
@@ -104,9 +103,9 @@ void main()
     UVs = texCoords;
     outNormals = (modelMatrix * vec4(normals,0.0)).xyz;  
     outNormals = normalize(outNormals);
-    float x = position.x - normals.x * 0.1;
-    float y = position.y - normals.y * 0.1;
-    float z = position.z - normals.z * 0.1;
+    float x = position.x - normals.x * sin(time);
+    float y = position.y - normals.y * sin(time);
+    float z = position.z - normals.z * sin(time);
      
     gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(x, y, z, 1.0);
 }
@@ -127,7 +126,7 @@ out vec4 fragColor;
 void main()
 {
     float intensity = dot(outNormals, -dirLight);
-    vec4 originalColor = texture(tex, UVs);
+    vec4 originalColor = texture(tex, UVs) * max(0, (min(1, intensity)));
     vec4 invertedColor = 1.0 - originalColor;
     fragColor = invertedColor;
 }
@@ -168,4 +167,38 @@ void main()
 {
     fragColor = texture(tex, UVs);
 }
+'''
+temperature_shader = '''
+#version 450 core
+
+layout (binding = 0) uniform sampler2D tex;
+
+uniform vec3 dirLight;
+
+in vec2 UVs;
+in vec3 outNormals;
+
+out vec4 fragColor;
+
+void main()
+{
+    float intensity = dot(outNormals, -dirLight);
+    vec4 originalColor = texture(tex, UVs);
+    
+    // Remap intensity to [0, 1]
+    intensity = clamp(intensity, 0.0, 1.0);
+
+    // Calculate the new color based on the intensity
+    vec3 newColor;
+    if (intensity <= 0.33) {
+        newColor = vec3(0.1 * originalColor.x * intensity, intensity / 0.33, 1.0);
+    } else if (intensity <= 0.66) {
+        newColor = vec3(0.1 * originalColor.x * intensity, 1.0, (intensity - 0.33) / 0.33);
+    } else {
+        newColor = vec3(1.0, (intensity - 0.66) / 0.33, 0.1 * originalColor.z * intensity);
+    }
+    
+    fragColor = vec4(newColor, originalColor.a);
+}
+
 '''

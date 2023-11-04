@@ -20,7 +20,7 @@ class Renderer(object):
         glViewport(0,0,self.width,self.height)
 
         self.elapsedTime = 0.0
-        
+        self.intensidad = 0.0
         self.scene = []
         self.activeShader = None
         

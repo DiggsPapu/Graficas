@@ -5,7 +5,7 @@ from Obj import *
 from gl import Renderer
 from model import Model
 from shaders import *
-
+from linearalgebra import *
  
 width = 960
 height = 540
@@ -17,8 +17,11 @@ clock = pygame.time.Clock()
 
 rend = Renderer(screen)
 
-rend.setShaders(vertex_shader, fragment_shader0)
 
+vert_s = vertex_shader
+frag_s = fragment_shader0
+rend.setShaders(vertex_shader, fragment_shader0)
+intensity = 0.0
 #               POSITIONS                     UVs                   NORMALS
 triangleData = [-0.5,   -0.5,   0.0,          0.0,    0.0,          0.0, 0.0, 1.0,
                 -0.5,    0.5,   0.0,          0.0,    1.0,          0.0, 0.0, 1.0,
@@ -48,7 +51,6 @@ carnotaurs.position.z = -10
 carnotaurs.scale = glm.vec3(1,1,1)
 carnotaurs.loadTexture("./textures/Carnotaurus.bmp")
 rend.scene.append( carnotaurs )
-
 # triangleModel = Model(triangleData)
 # triangleModel.loadTexture("./textures/pavoreal.jpg")
 # triangleModel.position.z = -10
@@ -57,7 +59,7 @@ rend.scene.append( carnotaurs )
 # rend.scene.append( triangleModel )
 
 
-
+counter_direction = 0
 isRunning = True
 while isRunning:
     deltaTime = clock.tick(60) / 1000
@@ -71,6 +73,21 @@ while isRunning:
                 isRunning = False
             if event.key == pygame.K_SPACE:
                 rend.toggleFilledMode()
+            # Direction of light
+            if event.key == K_l:
+                counter_direction+=1
+                o = [[1,0,0],[-1,0,0],
+                    [0,1,0],[0,-1,0],
+                    [0,0,1],[0,0,1]
+                    ]
+                dirl = o[counter_direction%3]
+                rend.dirLight = glm.vec3(dirl[0], dirl[1], dirl[2])
+            if event.key == K_o:
+                if rend.intensidad<1:
+                    rend.intensidad +=0.1
+            if event.key == K_p:
+                if rend.intensidad>0:
+                    rend.intensidad -=0.1
                 
     if keys[K_d]:
         rend.camPosition.x += 5 * deltaTime
@@ -114,17 +131,33 @@ while isRunning:
         if rend.clearColor[2] > 0.0:
             rend.clearColor[2] -= deltaTime
     
-    if keys[K_t]:
-        rend.setShaders(twistDeformationShader, fragment_shader0)
-    if keys[K_v]:        
-        rend.setShaders(vertex_shader, fragment_shader0)
-    
-    if keys[K_i]:        
-        rend.setShaders(vertex_shader, inverse_shader)
+    # Vertex shader
+    if keys[K_6]:
+        vert_s = twistDeformationShader
+        rend.setShaders(vert_s, frag_s)
         
-    if keys[K_f]:        
-        rend.setShaders(fragmentation_shader, fragment_shader0)
-    # carnotaurs.rotation.y += 45 * deltaTime        
+    if keys[K_7]:        
+        vert_s = fragmentation_shader
+        rend.setShaders(vert_s, frag_s)  
+          
+    if keys[K_3]:        
+        frag_s = fragmentation_shader1
+        rend.setShaders(vert_s, frag_s)
+    # Fragment shader
+        
+    if keys[K_0]: 
+        frag_s = fragment_shader0       
+        rend.setShaders(vert_s, frag_s)
+    
+    if keys[K_1]: 
+        frag_s = inverse_shader   
+        rend.setShaders(vert_s, frag_s)
+        
+    if keys[K_2]:
+        frag_s = temperature_shader
+        rend.setShaders(vert_s, temperature_shader)
+    
+    carnotaurs.rotation.y += 45 * deltaTime        
     rend.elapsedTime += deltaTime
     
     rend.update()

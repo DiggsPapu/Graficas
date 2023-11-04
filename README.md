@@ -13,3 +13,6 @@ Temperature shader:
 
 ![image](https://github.com/DiggsPapu/Graficas/assets/84475020/f544641d-0098-40f4-bcfa-4043fcdca15a)
 
+GPT reference:
+
+https://chat.openai.com/share/5a163d32-c3a3-46aa-a45a-dc0351f7a423
