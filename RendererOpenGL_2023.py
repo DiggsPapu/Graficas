@@ -17,7 +17,7 @@ clock = pygame.time.Clock()
 
 rend = Renderer(screen)
 
-rend.setShaders(vertex_shader, fragment_shader)
+rend.setShaders(vertex_shader, fragment_shader0)
 
 #               POSITIONS                     UVs                   NORMALS
 triangleData = [-0.5,   -0.5,   0.0,          0.0,    0.0,          0.0, 0.0, 1.0,
@@ -69,6 +69,8 @@ while isRunning:
         elif event.type == pygame.KEYDOWN:
             if event.key == K_ESCAPE:
                 isRunning = False
+            if event.key == pygame.K_SPACE:
+                rend.toggleFilledMode()
                 
     if keys[K_d]:
         rend.camPosition.x += 5 * deltaTime
@@ -111,9 +113,21 @@ while isRunning:
     if keys[K_x]:
         if rend.clearColor[2] > 0.0:
             rend.clearColor[2] -= deltaTime
-    carnotaurs.rotation.y += 45 * deltaTime
+    
+    if keys[K_t]:
+        rend.setShaders(twistDeformationShader, fragment_shader0)
+    if keys[K_v]:        
+        rend.setShaders(vertex_shader, fragment_shader0)
+    
+    if keys[K_i]:        
+        rend.setShaders(vertex_shader, inverse_shader)
+        
+    if keys[K_f]:        
+        rend.setShaders(fragmentation_shader, fragment_shader0)
+    # carnotaurs.rotation.y += 45 * deltaTime        
     rend.elapsedTime += deltaTime
     
+    rend.update()
     rend.render()
     pygame.display.flip()
 
