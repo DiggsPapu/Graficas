@@ -217,3 +217,28 @@ void main()
 }
 
 '''
+wave_draw_lines = '''
+#version 450 core
+
+layout (binding = 0) uniform sampler2D tex;
+
+uniform vec3 dirLight;
+
+in vec2 UVs;
+in vec3 outNormals;
+in float time2;
+in float intensidad;
+
+out vec4 fragColor;
+
+void main()
+{    
+    float intensity = dot(outNormals, -dirLight);
+    vec4 originalColor = texture(tex, UVs);
+    vec2 coord = vec2(UVs.x/940 * 540, UVs.y/940 * 540);
+    float color = 0.0;
+    color += sin(coord.x * 6.0 + sin(time2+coord.y*90.0 + cos(coord.x * 30.0 + time2 * 2.0) ) ) * 0.5;
+    vec3 newColor = vec3(color * originalColor.x, color * originalColor.y, color * originalColor.z);
+    fragColor = vec4(newColor,1.0);
+}
+'''

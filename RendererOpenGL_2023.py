@@ -21,7 +21,6 @@ rend = Renderer(screen)
 vert_s = vertex_shader
 frag_s = fragment_shader0
 rend.setShaders(vertex_shader, fragment_shader0)
-intensity = 0.0
 #               POSITIONS                     UVs                   NORMALS
 triangleData = [-0.5,   -0.5,   0.0,          0.0,    0.0,          0.0, 0.0, 1.0,
                 -0.5,    0.5,   0.0,          0.0,    1.0,          0.0, 0.0, 1.0,
@@ -57,8 +56,6 @@ rend.scene.append( carnotaurs )
 # triangleModel.scale = glm.vec3(5,5,5)
 
 # rend.scene.append( triangleModel )
-
-
 counter_direction = 0
 isRunning = True
 while isRunning:
@@ -88,6 +85,8 @@ while isRunning:
             if event.key == K_p:
                 if rend.intensidad>0:
                     rend.intensidad -=0.1
+                
+        
                 
     if keys[K_d]:
         rend.camPosition.x += 5 * deltaTime
@@ -139,10 +138,6 @@ while isRunning:
     if keys[K_7]:        
         vert_s = fragmentation_shader
         rend.setShaders(vert_s, frag_s)  
-          
-    if keys[K_3]:        
-        frag_s = fragmentation_shader1
-        rend.setShaders(vert_s, frag_s)
     # Fragment shader
         
     if keys[K_0]: 
@@ -158,8 +153,15 @@ while isRunning:
         frag_s = temperature_shader
         rend.setShaders(vert_s, temperature_shader)
     
+    if keys[K_3]:
+        frag_s = wave_draw_lines
+        rend.setShaders(vert_s, wave_draw_lines)
+    if keys[K_4]:        
+        frag_s = fragmentation_shader1
+        rend.setShaders(vert_s, frag_s)
     carnotaurs.rotation.y += 45 * deltaTime        
     rend.elapsedTime += deltaTime
+    
     
     rend.update()
     rend.render()
