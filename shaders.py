@@ -14,10 +14,12 @@ uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
 
 uniform float time;
+uniform float intensidad;
 
 out vec2 UVs;
 out vec3 outNormals;
 out float time2;
+out float intensidad2;
 
 void main()
 {
@@ -25,6 +27,7 @@ void main()
     UVs = texCoords;
     outNormals = (modelMatrix * vec4(normals, 0.0)).xyz;
     time2 = time;
+    intensidad2 = intensidad;
 }
 '''
 
@@ -39,10 +42,12 @@ uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
 uniform float time;
+uniform float intensidad;
 
 out vec2 UVs;
 out vec3 outNormals;
 out float time2;
+out float intensidad2;
 
 void main()
 {
@@ -58,6 +63,7 @@ void main()
     UVs = texCoords;
     outNormals = (modelMatrix * vec4(normals, 0.0)).xyz;
     time2 = time;
+    intensidad2 = intensidad;
 }
 '''
 fragmentation_shader1 = '''
@@ -70,6 +76,7 @@ uniform vec3 dirLight;
 in vec2 UVs;
 in vec3 outNormals;
 in float time2;
+in float intensidad;
 
 out vec4 fragColor;
 
@@ -95,19 +102,22 @@ uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
 
 uniform float time;
+uniform float intensidad;
 
 out vec2 UVs;
 out vec3 outNormals;
+out float intensidad2;
 
 void main()
 {
     UVs = texCoords;
+    intensidad2 = intensidad;
     outNormals = (modelMatrix * vec4(normals,0.0)).xyz;  
     outNormals = normalize(outNormals);
     float x = position.x - normals.x * sin(time);
     float y = position.y - normals.y * sin(time);
     float z = position.z - normals.z * sin(time);
-     
+    
     gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(x, y, z, 1.0);
 }
 '''
@@ -121,6 +131,7 @@ uniform vec3 dirLight;
 
 in vec2 UVs;
 in vec3 outNormals;
+in float intensidad;
 
 out vec4 fragColor;
 
@@ -139,6 +150,7 @@ layout (binding = 0) uniform sampler2D tex;
 
 uniform vec3 dirLight;
 
+in float intensidad;
 in vec2 UVs;
 in vec3 outNormals;
 
@@ -159,6 +171,7 @@ layout (binding = 0) uniform sampler2D tex;
 
 uniform vec3 dirLight;
 
+in float intensidad;
 in vec2 UVs;
 in vec3 outNormals;
 
@@ -176,6 +189,7 @@ layout (binding = 0) uniform sampler2D tex;
 
 uniform vec3 dirLight;
 
+in float intensidad;
 in vec2 UVs;
 in vec3 outNormals;
 

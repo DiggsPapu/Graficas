@@ -146,7 +146,8 @@ while isRunning:
     # Fragment shader
         
     if keys[K_0]: 
-        frag_s = fragment_shader0       
+        vert_s = vertex_shader
+        frag_s = fragment_shader     
         rend.setShaders(vert_s, frag_s)
     
     if keys[K_1]: 
