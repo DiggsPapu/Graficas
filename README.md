@@ -19,6 +19,9 @@ Fragmentation shader:
 
 ![image](https://github.com/DiggsPapu/Graficas/assets/84475020/31a24a37-7e81-4399-9095-0fcadf920e24)
 
+Video:
+
+https://github.com/DiggsPapu/Graficas/assets/84475020/f7365aff-7c26-4fd6-8939-53841799dcd7
 
 GPT reference:
 
