@@ -23,6 +23,17 @@ Video:
 
 https://github.com/DiggsPapu/Graficas/assets/84475020/f7365aff-7c26-4fd6-8939-53841799dcd7
 
+Controles: Al presionar alguna de las siguientes teclas así variará la tupla de (vertexShader, fragmentShader)
+
+* L, cambia la dirección de la luz.
+* 0, cambia el shader a original, fragment shader y vertex shader. Varía vertex y fragment shaders.
+* 1, cambia a inverse shader que varía según la dirección de la luz. Varía fragment shader.
+* 2, cambia al shader de temperatura, que varía según la dirección de la luz. Varía fragment shader.
+* 3, cambia al shader de wave lines, que varía según el tiempo. Varía fragment shader.
+* 4, cambia al shader de fragmentation, que varía según la dirección de la luz. Varía fragment shader.
+* 6, cambia al shader de deformation, que varía según el tiempo. Varía vertex shader.
+* 7, cambia al shader de twist, que varía según el tiempo. Varía vertex shader.
+
 GPT reference:
 
 https://chat.openai.com/share/5a163d32-c3a3-46aa-a45a-dc0351f7a423
