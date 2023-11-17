@@ -1,4 +1,4 @@
-## OpenGL2
+## Proyecto 3
 Se trató de implementar nuevos shaders, se implementó un shader para twistear, invertir colores, cambiar la temperatura, y realizar una fragmentacion, notese que para el twist shader es con tiempo, y para los demás se utiliza la dirección de manera que se pueda cambiar la dirección de la luz.
 
 Twist shader:
