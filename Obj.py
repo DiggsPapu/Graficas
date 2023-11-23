@@ -1,3 +1,4 @@
+import glm
 class Obj(object):
     def __init__(self, filename):
         # Se crean los contenedores de los datos del modelo.
@@ -27,7 +28,9 @@ class Obj(object):
                 self.normals.append( list(map(float, value.split(" "))) )
             elif prefix == "f": # Faces
                 self.faces.append([list(map(int, vert.split("/"))) for vert in value.split(" ") ] )
-        
+        # if len(self.normals)<1:
+        #     self.normals = [[0.0, 0.0, 0.0] for _ in range(len(self.vertices))]
+        index = 0
         for face in self.faces:
             vertCount = len(face)
             # Vertex 
@@ -47,11 +50,26 @@ class Obj(object):
                 vt3 = self.texcoords[face[3][1] - 1]
                 vt3 = [vt3[0],vt3[1]]
             # Normal coords
-            vn0 = self.normals[face[0][2]-1]
-            vn1 = self.normals[face[1][2]-1]
-            vn2 = self.normals[face[2][2]-1]
-            if vertCount == 4:
-                vn3 = self.normals[face[3][2]-1]
+            if len(face[0])<3:
+                edge1 = [v1[0] - v0[0], v1[1] - v0[1], v1[2] - v0[2]]
+                edge2 = [v2[0] - v0[0], v2[1] - v0[1], v2[2] - v0[2]]
+                face_normal = glm.normalize(glm.cross(edge1, edge2))  # Calculate face normal
+                normal = [face_normal.x,face_normal.y,face_normal.z]
+                self.normals.append(normal)
+                self.normals.append(normal)
+                self.normals.append(normal)
+                if vertCount == 4:
+                    self.normals.append(normal)
+                vn0 = normal
+                vn1 = normal 
+                vn2 = normal
+            else:
+                vn0 = self.normals[face[0][2]-1]
+                vn1 = self.normals[face[1][2]-1]
+                vn2 = self.normals[face[2][2]-1]
+                if vertCount == 4:
+                    vn3 = self.normals[face[3][2]-1]
+            index+=1
             # Vertex0
             self.data.extend(v0)
             self.data.extend(vt0)

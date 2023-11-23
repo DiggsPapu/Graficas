@@ -83,14 +83,26 @@ out vec4 fragColor;
 void main()
 {    
     fragColor = texture(tex, UVs);
-    if (fragColor.r>0.5 && fragColor.b>0.5 && fragColor.g>0.5 || fragColor.r<0.4 && fragColor.b<0.4 && fragColor.g<0.4){discard;}
-    
-    float intensity = dot(outNormals, -dirLight);
-    
-    fragColor = texture(tex, UVs) * max(0, (min(1, intensity)));
+    if (
+        (
+               abs(fragColor.r*sin(time2))<0.2
+            && abs(fragColor.b*cos(time2))<0.2
+        )
+        ||
+        (
+               abs(fragColor.r*sin(time2))>0.5
+            && abs(fragColor.r*cos(time2))<0.55
+            && abs(fragColor.b*cos(time2))>0.5
+            && abs(fragColor.b*cos(time2))<0.55
+        )
+    )
+    {
+        discard;
+    }
+    fragColor = texture(tex, UVs);
 }
 '''
-fragmentation_shader = '''
+big_shader = '''
 #version 450 core
 
 layout (location = 0) in vec3 position;
@@ -132,14 +144,25 @@ uniform vec3 dirLight;
 in vec2 UVs;
 in vec3 outNormals;
 in float intensidad;
+in float time2;
 
 out vec4 fragColor;
 
 void main()
 {
     float intensity = dot(outNormals, -dirLight);
-    vec4 originalColor = texture(tex, UVs) * max(0, (min(1, intensity)));
-    vec4 invertedColor = 1.0 - originalColor;
+    vec4 originalColor = texture(tex, UVs);
+    
+    vec4 invertedColor; // Declare invertedColor outside the conditional blocks
+
+    if (sin(time2)>0 )
+    {
+        invertedColor = 1.0 - originalColor - sin(time2)/2;
+    }
+    else if (sin(time2)<0)
+    {
+        invertedColor = 1.0 - originalColor - abs(sin(time2))/2;
+    }
     fragColor = invertedColor;
 }
 '''
@@ -204,15 +227,15 @@ void main()
     intensity = clamp(intensity, 0.0, 1.0);
 
     // Calculate the new color based on the intensity
-    vec3 newColor;
-    if (intensity <= 0.33) {
+    vec3 newColor; 
+    if (intensity <= 0.333){
         newColor = vec3(0.1 * originalColor.x * intensity, intensity / 0.33, 1.0);
-    } else if (intensity <= 0.66) {
+    } 
+    else if (intensity <= 0.66) {
         newColor = vec3(0.1 * originalColor.x * intensity, 1.0, (intensity - 0.33) / 0.33);
     } else {
         newColor = vec3(1.0, (intensity - 0.66) / 0.33, 0.1 * originalColor.z * intensity);
     }
-    
     fragColor = vec4(newColor, originalColor.a);
 }
 
@@ -240,5 +263,35 @@ void main()
     color += sin(coord.x * 6.0 + sin(time2+coord.y*90.0 + cos(coord.x * 30.0 + time2 * 2.0) ) ) * 0.5;
     vec3 newColor = vec3(color * originalColor.x, color * originalColor.y, color * originalColor.z);
     fragColor = vec4(newColor,1.0);
+}
+'''
+skybox_vertex_shader = '''
+#version 450 core
+
+layout (location = 0) in vec3 inPosition;
+
+uniform mat4 viewMatrix;
+uniform mat4 projectionMatrix;
+
+out vec3 texCoords;
+
+void main()
+{
+    texCoords = inPosition;
+    gl_Position = projectionMatrix * viewMatrix * vec4(inPosition,1.0);
+}
+'''
+skybox_fragment_shader = '''
+#version 450 core
+
+uniform samplerCube skybox;
+
+in vec3 texCoords;
+
+out vec4 fragColor;
+
+void main() 
+{
+    fragColor = texture(skybox, texCoords);
 }
 '''
