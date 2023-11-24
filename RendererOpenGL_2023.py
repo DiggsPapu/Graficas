@@ -17,13 +17,12 @@ clock = pygame.time.Clock()
 
 rend = Renderer(screen)
 
-skyboxTextures = ["./textures/skybox/px.png",
-                  "./textures/skybox/nx.png",
-                  "./textures/skybox/py.png",
-                  "./textures/skybox/ny.png",
-                  "./textures/skybox/pz.png",
-                  "./textures/skybox/nz.png"]
-
+skyboxTextures = ["./textures/skybox2/px.png",
+                  "./textures/skybox2/nx.png",
+                  "./textures/skybox2/py.png",
+                  "./textures/skybox2/ny.png",
+                  "./textures/skybox2/pz.png",
+                  "./textures/skybox2/nz.png"]
 rend.createSkybox(skyboxTextures, skybox_vertex_shader, skybox_fragment_shader)
 vert_s = vertex_shader
 frag_s = fragment_shader0
@@ -90,6 +89,14 @@ while isRunning:
                 rend.dirLight = glm.vec3(dirl[0], dirl[1], dirl[2])
 
             if event.key == K_m:
+                skyboxTextures = [
+                    "./textures/skybox2/px.png",
+                    "./textures/skybox2/nx.png",
+                    "./textures/skybox2/py.png",
+                    "./textures/skybox2/ny.png",
+                    "./textures/skybox2/pz.png",
+                    "./textures/skybox2/nz.png"]
+                rend.createSkybox(skyboxTextures, skybox_vertex_shader, skybox_fragment_shader)
                 modelo = carnotaurus
                 modelo.position = [0,-5,-10]
                 modelo.scale = glm.vec3(1,1,1)
@@ -105,6 +112,14 @@ while isRunning:
                 
 
             if event.key == K_n:
+                skyboxTextures = [
+                    "./textures/skybox3/px.png",
+                    "./textures/skybox3/nx.png",
+                    "./textures/skybox3/py.png",
+                    "./textures/skybox3/ny.png",
+                    "./textures/skybox3/pz.png",
+                    "./textures/skybox3/nz.png"]
+                rend.createSkybox(skyboxTextures, skybox_vertex_shader, skybox_fragment_shader)
                 modelo = springtrap
                 modelo.position = [0,-10,-10]
                 modelo.scale = glm.vec3(0.1,0.1,0.1)
@@ -119,6 +134,14 @@ while isRunning:
                 belowTheSurface.play(loops=-1)
                 
             if event.key == K_b:
+                skyboxTextures = [
+                    "./textures/skybox4/px.png",
+                    "./textures/skybox4/nx.png",
+                    "./textures/skybox4/py.png",
+                    "./textures/skybox4/ny.png",
+                    "./textures/skybox4/pz.png",
+                    "./textures/skybox4/nz.png"]
+                rend.createSkybox(skyboxTextures, skybox_vertex_shader, skybox_fragment_shader)
                 modelo = miles
                 modelo.position = [0,-5,-10]
                 modelo.scale = glm.vec3(2,2,2)
@@ -133,6 +156,14 @@ while isRunning:
                 ironmanChest.play()
 
             if event.key == K_v:
+                skyboxTextures = [
+                    "./textures/skybox5/px.png",
+                    "./textures/skybox5/nx.png",
+                    "./textures/skybox5/py.png",
+                    "./textures/skybox5/ny.png",
+                    "./textures/skybox5/pz.png",
+                    "./textures/skybox5/nz.png"]
+                rend.createSkybox(skyboxTextures, skybox_vertex_shader, skybox_fragment_shader)
                 modelo = ironman
                 modelo.position = [0,-15,-15]
                 modelo.scale = glm.vec3(1,1,1)
@@ -148,22 +179,22 @@ while isRunning:
                 highWay.play(loops=-1)
 
     # Direcciones                            
-    if keys[K_d] and rend.camPosition.x>-5:
+    if keys[K_d] :
         rend.camPosition.x -= 5 * deltaTime
     
-    if keys[K_a] and rend.camPosition.x<5:
+    if keys[K_a] :
         rend.camPosition.x += 5 * deltaTime
     
-    if keys[K_w] and rend.camPosition.z<20:
+    if keys[K_w] :
         rend.camPosition.z += 5 * deltaTime
     
-    if keys[K_s] and rend.camPosition.z>-5:
+    if keys[K_s] :
         rend.camPosition.z -= 5 * deltaTime
     
-    if keys[K_q] and rend.camPosition.y<10:
+    if keys[K_q] :
         rend.camPosition.y += 5 * deltaTime
     
-    if keys[K_e] and rend.camPosition.y>-10:
+    if keys[K_e] :
         rend.camPosition.y -= 5 * deltaTime
 
     # Colores

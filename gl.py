@@ -23,6 +23,8 @@ class Renderer(object):
 
         self.elapsedTime = 0.0
         self.target = glm.vec3(0, 0, 0)
+        self.camAngle = 0.0
+        self.camR = 0.0
         self.intensidad = 0.0
         self.scene = []
         self.activeShader = None
