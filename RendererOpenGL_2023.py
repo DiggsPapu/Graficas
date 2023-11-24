@@ -220,7 +220,7 @@ while isRunning:
                 rend.renderSkyBox(skyboxindex)
 
     # Directions of the camera                            
-    if keys[K_d] :
+    if keys[K_a] :
         rend.camAngle -=1
         if rend.camAngle == 0.0:
             rend.camAngle = 360
@@ -233,18 +233,18 @@ while isRunning:
         rend.camPosition.x = rend.target[0] + abs(modelo.position[2]) * sin(rend.camAngle * 2 * pi / 360)
         rend.camPosition.z = rend.target[2] + abs(modelo.position[2]) * cos(rend.camAngle * 2 * pi / 360)
     
-    if keys[K_a] :
+    if keys[K_d] :
         rend.camAngle +=1
         if rend.camAngle == 360:
             rend.camAngle = 0.0
         rend.camPosition.x = rend.target[0] + abs(modelo.position[2]) * sin(rend.camAngle * 2 * pi / 360)
         rend.camPosition.z = rend.target[2] + abs(modelo.position[2]) * cos(rend.camAngle * 2 * pi / 360)
     
-    if keys[K_w]:
+    if keys[K_s]:
         if rend.camPosition.z <10:
             rend.camPosition.z += 5 * deltaTime
     
-    if keys[K_s]:
+    if keys[K_w]:
         if rend.camPosition.z >-10:
             rend.camPosition.z -= 5 * deltaTime
     
