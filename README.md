@@ -38,3 +38,6 @@ Inputs del teclado:
 * space: cambiar a visión de solo triángulos.
 * right, left, up, down, z y x: cambiar el color del fondo en rgb, solo se ve cuando se cambia a visión de solo triángulos sin skybox.
 * esc: salir del programa
+
+Ejecución:
+https://youtu.be/TF8sr8W_YNQ
