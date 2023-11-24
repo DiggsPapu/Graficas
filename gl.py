@@ -14,7 +14,9 @@ class Renderer(object):
     def __init__(self, screen):
         self.screen = screen
         _, _, self.width, self.height = screen.get_rect()
-
+        
+        self.skybox_textures = []
+        
         self.clearColor = [0,0,0]
         
         glEnable(GL_DEPTH_TEST)
@@ -52,6 +54,7 @@ class Renderer(object):
             glPolygonMode(GL_FRONT, GL_FILL)
         else:
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
+    
     
     def createSkybox(self, textureList, vertexShader, fragmentShader):
         
@@ -104,12 +107,33 @@ class Renderer(object):
         self.skyboxShader = compileProgram(compileShader(vertexShader, GL_VERTEX_SHADER),
                                                compileShader(fragmentShader, GL_FRAGMENT_SHADER) )
         
+        # self.skyboxTexture = glGenTextures(1)
+        # glBindTexture(GL_TEXTURE_CUBE_MAP, self.skyboxTexture)
+        # for i in range(len(textureList)): # 6 textures
+        #     texture = pygame.image.load(textureList[i])
+        #     textureData = pygame.image.tostring(texture, "RGB", False)
+            
+        #     glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,# Texture Type
+        #                 0,                                  # Positions
+        #                 GL_RGB,                             # Internal Format
+        #                 texture.get_width(),                # Width
+        #                 texture.get_height(),               # Height
+        #                 0,                                  # Border
+        #                 GL_RGB,                             # Format
+        #                 GL_UNSIGNED_BYTE,                   # Type
+        #                 textureData)                        # Data
+        # glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+        # glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+        # glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
+        # glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
+        # glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE)
+        
+    def loadSkyBox(self, textureList):
         self.skyboxTexture = glGenTextures(1)
         glBindTexture(GL_TEXTURE_CUBE_MAP, self.skyboxTexture)
-        for i in range(len(textureList)): # 6 textures
+        for i in range(len(textureList)):
             texture = pygame.image.load(textureList[i])
             textureData = pygame.image.tostring(texture, "RGB", False)
-            
             glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,# Texture Type
                         0,                                  # Positions
                         GL_RGB,                             # Internal Format
@@ -123,12 +147,12 @@ class Renderer(object):
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
-        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE)
-            
-    def renderSkyBox(self):
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE) 
+        self.skybox_textures.append(self.skyboxTexture)
         
+    def renderSkyBox(self, index):
         if self.skyboxShader == None:
-            return 
+            return None
         glDepthMask(GL_FALSE)
         
         glUseProgram(self.skyboxShader)
@@ -159,7 +183,7 @@ class Renderer(object):
         
         glEnableVertexAttribArray(0)
         
-        glBindTexture(GL_TEXTURE_CUBE_MAP, self.skyboxTexture)
+        glBindTexture(GL_TEXTURE_CUBE_MAP, self.skybox_textures[index%len(self.skybox_textures)])
         
         glDrawArrays(GL_TRIANGLES, 0, 36)
         
@@ -191,12 +215,12 @@ class Renderer(object):
         # self.viewMatrix = self.getViewMatrix()
         self.viewMatrix = glm.lookAt(self.camPosition, self.target, glm.vec3(0,1,0))
         
-    def render(self):
+    def render(self, index):
         glClearColor(self.clearColor[0],self.clearColor[1],self.clearColor[2], 1)
         
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         
-        self.renderSkyBox()
+        self.renderSkyBox(index)
         
         if self.activeShader is not None:
             glUseProgram(self.activeShader)

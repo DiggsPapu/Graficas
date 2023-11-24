@@ -6,7 +6,9 @@ from gl import Renderer
 from model import Model
 from shaders import *
 from linearalgebra import *
-
+import glm
+from OpenGL.GL import *
+from math import pi, sin, cos
 width = 960
 height = 540
 
@@ -16,14 +18,46 @@ screen = pygame.display.set_mode((width, height), pygame.OPENGL | pygame.DOUBLEB
 clock = pygame.time.Clock()
 
 rend = Renderer(screen)
-
-skyboxTextures = ["./textures/skybox2/px.png",
+# Crear skyboxes
+dinosaurAmbient = ["./textures/skybox2/px.png",
                   "./textures/skybox2/nx.png",
                   "./textures/skybox2/py.png",
                   "./textures/skybox2/ny.png",
                   "./textures/skybox2/pz.png",
                   "./textures/skybox2/nz.png"]
-rend.createSkybox(skyboxTextures, skybox_vertex_shader, skybox_fragment_shader)
+caveAmbient = [
+                    "./textures/skybox3/px.png",
+                    "./textures/skybox3/nx.png",
+                    "./textures/skybox3/py.png",
+                    "./textures/skybox3/ny.png",
+                    "./textures/skybox3/pz.png",
+                    "./textures/skybox3/nz.png"]    
+freddysAmbient = [
+                    "./textures/skybox4/px.png",
+                    "./textures/skybox4/nx.png",
+                    "./textures/skybox4/py.png",
+                    "./textures/skybox4/ny.png",
+                    "./textures/skybox4/pz.png",
+                    "./textures/skybox4/nz.png"]
+infinityWarAmbient = [
+                    "./textures/skybox5/px.png",
+                    "./textures/skybox5/nx.png",
+                    "./textures/skybox5/py.png",
+                    "./textures/skybox5/ny.png",
+                    "./textures/skybox5/pz.png",
+                    "./textures/skybox5/nz.png"]
+    
+skyboxes = [dinosaurAmbient, 
+            freddysAmbient, 
+            infinityWarAmbient, 
+            # caveAmbient
+            ]
+for x in skyboxes:
+    rend.loadSkyBox(x)
+skyboxindex = 0
+rend.createSkybox(dinosaurAmbient, skybox_vertex_shader, skybox_fragment_shader)
+rend.renderSkyBox(skyboxindex)
+
 vert_s = vertex_shader
 frag_s = fragment_shader0
 rend.setShaders(vertex_shader, fragment_shader0)
@@ -31,40 +65,54 @@ rend.setShaders(vertex_shader, fragment_shader0)
 # Carnotaurus
 carnotaurusData = Obj("./model/Carnotaurus.obj")
 carnotaurus = Model(carnotaurusData.data)
+carnotaurus.position = [0,0,-10]
+carnotaurus.scale = glm.vec3(1,1,1)
+carnotaurus.loadTexture("./textures/Carnotaurus.bmp")
 # Springtrap
 springtrapData = Obj("./model/springtrap.obj")
 springtrap = Model(springtrapData.data)
+springtrap.position = [0,0,-10]
+springtrap.scale = glm.vec3(0.1,0.1,0.1)
+springtrap.loadTexture("./textures/springtrap.png")
 # Freddy Fazbear
-milesData = Obj("./model/hulkBuster.obj")
-miles = Model(milesData.data)
+hulkbusterData = Obj("./model/hulkBuster.obj")
+hulkbuster = Model(hulkbusterData.data)
+hulkbuster.position = [0,0,-10]
+hulkbuster.scale = glm.vec3(2,2,2)
+hulkbuster.loadTexture("./textures/hulkBuster.png")
 # Iron man
 ironmanData = Obj("./model/Mark1.obj")
 ironman = Model(ironmanData.data)
+ironman.position = [0,0,-15]
+ironman.scale = glm.vec3(1,1,1)
+ironman.loadTexture("./textures/ironman.png")
 # Modelo
 modelo = carnotaurus
-modelo.position = [0,-5,-10]
-modelo.scale = glm.vec3(1,1,1)
-modelo.loadTexture("./textures/Carnotaurus.bmp")
 rend.scene.append( modelo )
 
 counter_direction = 0
 
-rend.camPosition = glm.vec3([modelo.position[0],modelo.position[1]], 0)
+# rend.camPosition = glm.vec3([modelo.position[0],modelo.position[1]], 0)
 rend.target = modelo.position
-rend.camRotation = 0.0
+# rend.camRotation = 0.0
 
 isRunning = True
+# SOUNDS
 pygame.mixer.init()
+# Sounds
 springTrapScream = pygame.mixer.Sound("./sounds/springTrapScream.mp3")
 ironmanRepulsor = pygame.mixer.Sound("./sounds/ironmanRepulsor.mp3")
 ironmanChest = pygame.mixer.Sound("./sounds/ironmanChest.mp3")
 tyranosaurus = pygame.mixer.Sound("./sounds/tyranosaurus.ogg")
+# Music
 jurassicPark = pygame.mixer.Sound("./sounds/JurassicPark.mp3")
 belowTheSurface = pygame.mixer.Sound("./sounds/belowTheSurface.mp3")
 highWay = pygame.mixer.Sound("./sounds/highway2Hell.mp3")
+avengers = pygame.mixer.Sound("./sounds/Avengers.mp3")
 
 tyranosaurus.play()
 jurassicPark.play(loops=-1)
+
 while isRunning:
     deltaTime = clock.tick(60) / 1000
     keys = pygame.key.get_pressed()
@@ -82,70 +130,40 @@ while isRunning:
             if event.key == K_l:
                 counter_direction+=1
                 o = [[1,0,0],[-1,0,0], 
-                    [0,1,0],[0,-1,0],
-                    [0,0,1],[0,0,1]
+                    [0,1,0],
+                    [0,0,1],[0,0,-1]
                     ]
-                dirl = o[counter_direction%6]
+                dirl = o[counter_direction%5]
                 rend.dirLight = glm.vec3(dirl[0], dirl[1], dirl[2])
 
             if event.key == K_m:
-                skyboxTextures = [
-                    "./textures/skybox2/px.png",
-                    "./textures/skybox2/nx.png",
-                    "./textures/skybox2/py.png",
-                    "./textures/skybox2/ny.png",
-                    "./textures/skybox2/pz.png",
-                    "./textures/skybox2/nz.png"]
-                rend.createSkybox(skyboxTextures, skybox_vertex_shader, skybox_fragment_shader)
                 modelo = carnotaurus
-                modelo.position = [0,-5,-10]
-                modelo.scale = glm.vec3(1,1,1)
-                modelo.loadTexture("./textures/Carnotaurus.bmp")
                 tyranosaurus.stop()
                 ironmanChest.stop()
                 ironmanRepulsor.stop()
                 springTrapScream.stop()
                 jurassicPark.stop()
                 belowTheSurface.stop()
+                avengers.stop()
+                highWay.stop()
                 tyranosaurus.play()
                 jurassicPark.play(loops=-1)
-                
 
             if event.key == K_n:
-                skyboxTextures = [
-                    "./textures/skybox3/px.png",
-                    "./textures/skybox3/nx.png",
-                    "./textures/skybox3/py.png",
-                    "./textures/skybox3/ny.png",
-                    "./textures/skybox3/pz.png",
-                    "./textures/skybox3/nz.png"]
-                rend.createSkybox(skyboxTextures, skybox_vertex_shader, skybox_fragment_shader)
                 modelo = springtrap
-                modelo.position = [0,-10,-10]
-                modelo.scale = glm.vec3(0.1,0.1,0.1)
-                modelo.loadTexture("./textures/springtrap.png")
                 tyranosaurus.stop()
                 ironmanChest.stop()
                 ironmanRepulsor.stop()
                 springTrapScream.stop()
                 jurassicPark.stop()
                 belowTheSurface.stop()
+                avengers.stop()
+                highWay.stop()
                 springTrapScream.play()
                 belowTheSurface.play(loops=-1)
                 
             if event.key == K_b:
-                skyboxTextures = [
-                    "./textures/skybox4/px.png",
-                    "./textures/skybox4/nx.png",
-                    "./textures/skybox4/py.png",
-                    "./textures/skybox4/ny.png",
-                    "./textures/skybox4/pz.png",
-                    "./textures/skybox4/nz.png"]
-                rend.createSkybox(skyboxTextures, skybox_vertex_shader, skybox_fragment_shader)
-                modelo = miles
-                modelo.position = [0,-5,-10]
-                modelo.scale = glm.vec3(2,2,2)
-                modelo.loadTexture("./textures/hulkBuster.png")
+                modelo = hulkbuster
                 tyranosaurus.stop()
                 ironmanChest.stop()
                 ironmanRepulsor.stop()
@@ -153,21 +171,12 @@ while isRunning:
                 jurassicPark.stop()
                 belowTheSurface.stop()
                 highWay.stop()
+                avengers.stop()
                 ironmanChest.play()
+                avengers.play(loops=-1)
 
             if event.key == K_v:
-                skyboxTextures = [
-                    "./textures/skybox5/px.png",
-                    "./textures/skybox5/nx.png",
-                    "./textures/skybox5/py.png",
-                    "./textures/skybox5/ny.png",
-                    "./textures/skybox5/pz.png",
-                    "./textures/skybox5/nz.png"]
-                rend.createSkybox(skyboxTextures, skybox_vertex_shader, skybox_fragment_shader)
                 modelo = ironman
-                modelo.position = [0,-15,-15]
-                modelo.scale = glm.vec3(1,1,1)
-                modelo.loadTexture("./textures/ironman.png")
                 tyranosaurus.stop()
                 ironmanChest.stop()
                 ironmanRepulsor.stop()
@@ -175,28 +184,52 @@ while isRunning:
                 jurassicPark.stop()
                 belowTheSurface.stop()
                 highWay.stop()
+                avengers.stop()
                 ironmanRepulsor.play()
                 highWay.play(loops=-1)
+            
+            if event.key == K_c:
+                skyboxindex+=1
+                rend.renderSkyBox(skyboxindex)
 
     # Direcciones                            
     if keys[K_d] :
-        rend.camPosition.x -= 5 * deltaTime
+        rend.camAngle -=1
+        if rend.camAngle == 0.0:
+            rend.camAngle = 360
+        cambio = 5*deltaTime
+        # Parametricas, no funcionaron
+        # if rend.camPosition.x+ cambio < abs(modelo.position[2]):
+        #     rend.camPosition.x = (abs(modelo.position[2])**2-(rend.camPosition.z-modelo.position[2])**2)**(0.5)- cambio
+            # rend.camPosition.z = (abs(modelo.position[2])**2-(rend.camPosition.x-modelo.position[0])**2)**(0.5)- cambio
+        # Polares
+        rend.camPosition.x = rend.target[0] + abs(modelo.position[2]) * sin(rend.camAngle * 2 * pi / 360)
+        rend.camPosition.z = rend.target[2] + abs(modelo.position[2]) * cos(rend.camAngle * 2 * pi / 360)
     
     if keys[K_a] :
-        rend.camPosition.x += 5 * deltaTime
+        rend.camAngle +=1
+        if rend.camAngle == 360:
+            rend.camAngle = 0.0
+        rend.camPosition.x = rend.target[0] + abs(modelo.position[2]) * sin(rend.camAngle * 2 * pi / 360)
+        rend.camPosition.z = rend.target[2] + abs(modelo.position[2]) * cos(rend.camAngle * 2 * pi / 360)
     
-    if keys[K_w] :
-        rend.camPosition.z += 5 * deltaTime
+    if keys[K_w]:
+        if rend.camPosition.z <10:
+            rend.camPosition.z += 5 * deltaTime
     
-    if keys[K_s] :
-        rend.camPosition.z -= 5 * deltaTime
+    if keys[K_s]:
+        if rend.camPosition.z >-10:
+            rend.camPosition.z -= 5 * deltaTime
     
     if keys[K_q] :
-        rend.camPosition.y += 5 * deltaTime
+        if rend.camPosition.y <10:
+            rend.camPosition.y += 5 * deltaTime
     
     if keys[K_e] :
-        rend.camPosition.y -= 5 * deltaTime
-
+        if rend.camPosition.z >-10:
+            rend.camPosition.y -= 5 * deltaTime
+            
+    
     # Colores
     if keys[K_RIGHT]:
         if rend.clearColor[0] < 1.0:
@@ -265,7 +298,7 @@ while isRunning:
     rend.elapsedTime += deltaTime
 
     rend.update()
-    rend.render()
+    rend.render(skyboxindex)
 
     pygame.display.flip()
 
