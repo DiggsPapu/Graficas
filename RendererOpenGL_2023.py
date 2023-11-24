@@ -18,6 +18,7 @@ screen = pygame.display.set_mode((width, height), pygame.OPENGL | pygame.DOUBLEB
 clock = pygame.time.Clock()
 
 rend = Renderer(screen)
+o = [[1,0,0],[-1,0,0], [0,1,0],[0,0,1],[0,0,-1]]
 # Crear skyboxes
 dinosaurAmbient = ["./textures/skybox2/px.png",
                   "./textures/skybox2/nx.png",
@@ -92,9 +93,7 @@ rend.scene.append( modelo )
 
 counter_direction = 0
 
-# rend.camPosition = glm.vec3([modelo.position[0],modelo.position[1]], 0)
 rend.target = modelo.position
-# rend.camRotation = 0.0
 
 isRunning = True
 # SOUNDS
@@ -119,23 +118,51 @@ while isRunning:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             isRunning = False
-
+        # Mouse wheel
+        elif event.type == pygame.MOUSEWHEEL:
+            if event.y == -1 and rend.camPosition.z <10:
+                rend.camPosition.z += 50 * deltaTime
+            elif event.y == 1 and rend.camPosition.z > -10:
+                rend.camPosition.z -= 50 * deltaTime
+        # Cambio de perspectiva del modelo
+        elif event.type == pygame.MOUSEMOTION and event.buttons[0] == 1:
+            rel = pygame.mouse.get_rel()
+            sensitivity = 0.2 
+            modelo.rotation.x += rel[1] * sensitivity
+            modelo.rotation.y += rel[0] * sensitivity    
+        # le da direccion en x para rotar con el boton del scroll
+        elif event.type == pygame.MOUSEMOTION and event.buttons[2]==1:
+            rel = pygame.mouse.get_rel()
+            # Para que no haya division por 0
+            if rel[0]!=0:
+                rend.camAngle +=rel[0]/abs(rel[0])
+                if rend.camAngle == 0.0:
+                    rend.camAngle = 360
+                cambio = 5*deltaTime
+                # Parametricas, no funcionaron
+                # if rend.camPosition.x+ cambio < abs(modelo.position[2]):
+                #     rend.camPosition.x = (abs(modelo.position[2])**2-(rend.camPosition.z-modelo.position[2])**2)**(0.5)- cambio
+                    # rend.camPosition.z = (abs(modelo.position[2])**2-(rend.camPosition.x-modelo.position[0])**2)**(0.5)- cambio
+                # Polares
+                rend.camPosition.x = rend.target[0] + abs(modelo.position[2]) * sin(rend.camAngle * 2 * pi / 360)
+                rend.camPosition.z = rend.target[2] + abs(modelo.position[2]) * cos(rend.camAngle * 2 * pi / 360)
+        elif event.type == pygame.MOUSEMOTION and event.buttons[1]==1:
+            rel = pygame.mouse.get_rel()
+            if rel[1] != 0 and rend.camPosition.y>-10 and rend.camPosition.y<10:
+                rend.camPosition.y += 5 * deltaTime * rel[1]/abs(rel[1])
         elif event.type == pygame.KEYDOWN:
+            # Exit
             if event.key == K_ESCAPE:
                 isRunning = False
+            # Just triangles and without skybox
             if event.key == pygame.K_SPACE:
                 rend.toggleFilledMode()
-
             # Direction of light
             if event.key == K_l:
                 counter_direction+=1
-                o = [[1,0,0],[-1,0,0], 
-                    [0,1,0],
-                    [0,0,1],[0,0,-1]
-                    ]
                 dirl = o[counter_direction%5]
                 rend.dirLight = glm.vec3(dirl[0], dirl[1], dirl[2])
-
+            # CHANGE MODELS
             if event.key == K_m:
                 modelo = carnotaurus
                 tyranosaurus.stop()
@@ -192,7 +219,7 @@ while isRunning:
                 skyboxindex+=1
                 rend.renderSkyBox(skyboxindex)
 
-    # Direcciones                            
+    # Directions of the camera                            
     if keys[K_d] :
         rend.camAngle -=1
         if rend.camAngle == 0.0:
@@ -221,15 +248,14 @@ while isRunning:
         if rend.camPosition.z >-10:
             rend.camPosition.z -= 5 * deltaTime
     
-    if keys[K_q] :
+    if keys[K_e] and rend.camPosition.y < 10:
         if rend.camPosition.y <10:
             rend.camPosition.y += 5 * deltaTime
     
-    if keys[K_e] :
-        if rend.camPosition.z >-10:
+    if keys[K_q]:
+        if rend.camPosition.y >-10:
             rend.camPosition.y -= 5 * deltaTime
             
-    
     # Colores
     if keys[K_RIGHT]:
         if rend.clearColor[0] < 1.0:
