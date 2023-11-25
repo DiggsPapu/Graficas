@@ -40,4 +40,7 @@ Inputs del teclado:
 * esc: salir del programa
 
 Ejecución:
+
+https://drive.google.com/file/d/1S-tOXKrV1jsJh08oynXDyPhKpcQUFiGx/view?usp=sharing
+Este se bloqueo por derechos de autor de las canciones
 https://youtu.be/TF8sr8W_YNQ
