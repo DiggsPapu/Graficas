@@ -29,6 +29,6 @@ Ejercicios para desarrollo de un renderer en OpenGL.
 ## Projects
 
 Son los proyectos.
-* project1: Es el proyecto para hacer un rasterizador en c++.
-* project2: Es el proyecto para renderizar una imagen mediante un raytracer en python.
-* project3: Es el proyecto para hacer un renderer mediante opengl en pytho.
+* project1: Es el proyecto para hacer un rasterizador en c++, se utilizó gcc 11.4.0.
+* project2: Es el proyecto para renderizar una imagen mediante un raytracer en python, python 3.11.6 de 64 bits.
+* project3: Es el proyecto para hacer un renderer mediante opengl en python. Se utilizó la versión de 3.12 de 32 bits de python para instalar opengl, glm, etc.
